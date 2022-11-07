@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -16,7 +16,6 @@
 
 package io.sui.models;
 
-
 /**
  * The enum Object status.
  *
@@ -24,16 +23,10 @@ package io.sui.models;
  * @since 2022.11
  */
 public enum ObjectStatus {
-  /**
-   * Exists object status.
-   */
+  /** Exists object status. */
   Exists,
-  /**
-   * Not exists object status.
-   */
+  /** Not exists object status. */
   NotExists,
-  /**
-   * Deleted object status.
-   */
+  /** Deleted object status. */
   Deleted
 }

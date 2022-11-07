@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -16,8 +16,8 @@
 
 package io.sui.models;
 
-import java.util.Objects;
 
+import java.util.Objects;
 
 /**
  * The type Execution status.
@@ -27,17 +27,11 @@ import java.util.Objects;
  */
 public class ExecutionStatus {
 
-  /**
-   * The enum Execution status type.
-   */
+  /** The enum Execution status type. */
   public enum ExecutionStatusType {
-    /**
-     * Success execution status type.
-     */
+    /** Success execution status type. */
     success,
-    /**
-     * Failure execution status type.
-     */
+    /** Failure execution status type. */
     failure
   }
 
@@ -100,11 +94,6 @@ public class ExecutionStatus {
 
   @Override
   public String toString() {
-    return "ExecutionStatus{"
-        + "status=" + status
-        + ", error='" + error + '\''
-        + '}';
+    return "ExecutionStatus{" + "status=" + status + ", error='" + error + '\'' + '}';
   }
-
-
 }

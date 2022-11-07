@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -27,16 +27,10 @@ import java.util.Objects;
  */
 public class GetObjectResponse {
 
-  /**
-   * The interface Get object response details.
-   */
-  public interface GetObjectResponseDetails {
+  /** The interface Get object response details. */
+  public interface GetObjectResponseDetails {}
 
-  }
-
-  /**
-   * The type Object id response details.
-   */
+  /** The type Object id response details. */
   public static class ObjectIdResponseDetails implements GetObjectResponseDetails {
 
     private String objectId;
@@ -78,9 +72,7 @@ public class GetObjectResponse {
 
     @Override
     public String toString() {
-      return "ObjectIdResponseDetails{"
-          + "objectId='" + objectId + '\''
-          + '}';
+      return "ObjectIdResponseDetails{" + "objectId='" + objectId + '\'' + '}';
     }
   }
 
@@ -143,9 +135,6 @@ public class GetObjectResponse {
 
   @Override
   public String toString() {
-    return "GetObjectResponse{"
-        + "status=" + status
-        + ", details=" + details
-        + '}';
+    return "GetObjectResponse{" + "status=" + status + ", details=" + details + '}';
   }
 }

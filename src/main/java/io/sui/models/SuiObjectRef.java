@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -97,8 +97,9 @@ public class SuiObjectRef implements GetObjectResponse.GetObjectResponseDetails 
       return false;
     }
     SuiObjectRef that = (SuiObjectRef) o;
-    return digest.equals(that.digest) && objectId.equals(that.objectId) && version.equals(
-        that.version);
+    return digest.equals(that.digest)
+        && objectId.equals(that.objectId)
+        && version.equals(that.version);
   }
 
   @Override
@@ -109,10 +110,14 @@ public class SuiObjectRef implements GetObjectResponse.GetObjectResponseDetails 
   @Override
   public String toString() {
     return "SuiObjectRef{"
-        + "digest='" + digest + '\''
-        + ", objectId='" + objectId + '\''
-        + ", version=" + version
+        + "digest='"
+        + digest
+        + '\''
+        + ", objectId='"
+        + objectId
+        + '\''
+        + ", version="
+        + version
         + '}';
   }
-
 }

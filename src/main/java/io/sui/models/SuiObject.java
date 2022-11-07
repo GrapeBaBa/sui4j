@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -16,9 +16,9 @@
 
 package io.sui.models;
 
+
 import java.math.BigInteger;
 import java.util.Objects;
-
 
 /**
  * The type Sui object.
@@ -137,9 +137,11 @@ public class SuiObject implements GetObjectResponse.GetObjectResponseDetails {
       return false;
     }
     SuiObject suiObject = (SuiObject) o;
-    return data.equals(suiObject.data) && owner.equals(suiObject.owner)
-        && previousTransaction.equals(suiObject.previousTransaction) && storageRebate.equals(
-        suiObject.storageRebate) && reference.equals(suiObject.reference);
+    return data.equals(suiObject.data)
+        && owner.equals(suiObject.owner)
+        && previousTransaction.equals(suiObject.previousTransaction)
+        && storageRebate.equals(suiObject.storageRebate)
+        && reference.equals(suiObject.reference);
   }
 
   @Override
@@ -150,11 +152,17 @@ public class SuiObject implements GetObjectResponse.GetObjectResponseDetails {
   @Override
   public String toString() {
     return "SuiObject{"
-        + "data=" + data
-        + ", owner=" + owner
-        + ", previousTransaction='" + previousTransaction + '\''
-        + ", storageRebate=" + storageRebate
-        + ", reference=" + reference
+        + "data="
+        + data
+        + ", owner="
+        + owner
+        + ", previousTransaction='"
+        + previousTransaction
+        + '\''
+        + ", storageRebate="
+        + storageRebate
+        + ", reference="
+        + reference
         + '}';
   }
 }

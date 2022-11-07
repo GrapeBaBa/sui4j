@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -16,7 +16,6 @@
 
 package io.sui.models;
 
-
 /**
  * The enum Balance change type.
  *
@@ -24,16 +23,10 @@ package io.sui.models;
  * @since 2022.11
  */
 public enum BalanceChangeType {
-  /**
-   * Gas balance change type.
-   */
+  /** Gas balance change type. */
   Gas,
-  /**
-   * Pay balance change type.
-   */
+  /** Pay balance change type. */
   Pay,
-  /**
-   * Receive balance change type.
-   */
+  /** Receive balance change type. */
   Receive
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -20,7 +20,6 @@ package io.sui.models;
 import java.util.Map;
 import java.util.Objects;
 
-
 /**
  * The interface Sui data.
  *
@@ -29,9 +28,7 @@ import java.util.Objects;
  */
 public interface SuiData {
 
-  /**
-   * The type Package object.
-   */
+  /** The type Package object. */
   class PackageObject implements SuiData {
 
     private String dataType;
@@ -94,15 +91,16 @@ public interface SuiData {
     @Override
     public String toString() {
       return "PackageObject{"
-          + "dataType='" + dataType + '\''
-          + ", disassembled=" + disassembled
+          + "dataType='"
+          + dataType
+          + '\''
+          + ", disassembled="
+          + disassembled
           + '}';
     }
   }
 
-  /**
-   * The type Move object.
-   */
+  /** The type Move object. */
   class MoveObject implements SuiData {
 
     private String dataType;
@@ -196,8 +194,10 @@ public interface SuiData {
         return false;
       }
       MoveObject that = (MoveObject) o;
-      return has_public_transfer == that.has_public_transfer && dataType.equals(that.dataType)
-          && type.equals(that.type) && fields.equals(that.fields);
+      return has_public_transfer == that.has_public_transfer
+          && dataType.equals(that.dataType)
+          && type.equals(that.type)
+          && fields.equals(that.fields);
     }
 
     @Override
@@ -208,12 +208,17 @@ public interface SuiData {
     @Override
     public String toString() {
       return "MoveObject{"
-          + "dataType='" + dataType + '\''
-          + ", has_public_transfer=" + has_public_transfer
-          + ", type='" + type + '\''
-          + ", fields=" + fields
+          + "dataType='"
+          + dataType
+          + '\''
+          + ", has_public_transfer="
+          + has_public_transfer
+          + ", type='"
+          + type
+          + '\''
+          + ", fields="
+          + fields
           + '}';
     }
   }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -16,7 +16,6 @@
 
 package io.sui.jsonrpc;
 
-
 /**
  * The interface Json handler.
  *
@@ -28,9 +27,9 @@ public interface JsonHandler {
   /**
    * From json json rpc 20 response.
    *
-   * @param <T>      the type parameter
+   * @param <T> the type parameter
    * @param response the response
-   * @param clazz    the t class
+   * @param clazz the t class
    * @return the json rpc 20 response
    */
   <T> JsonRpc20Response<T> fromJson(String response, Class<T> clazz);

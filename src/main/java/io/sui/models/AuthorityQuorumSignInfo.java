@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -16,10 +16,10 @@
 
 package io.sui.models;
 
+
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Objects;
-
 
 /**
  * The type Authority quorum sign info.
@@ -98,8 +98,9 @@ public class AuthorityQuorumSignInfo {
       return false;
     }
     AuthorityQuorumSignInfo that = (AuthorityQuorumSignInfo) o;
-    return epoch.equals(that.epoch) && signature.equals(that.signature) && Arrays.equals(signersMap,
-        that.signersMap);
+    return epoch.equals(that.epoch)
+        && signature.equals(that.signature)
+        && Arrays.equals(signersMap, that.signersMap);
   }
 
   @Override
@@ -110,10 +111,14 @@ public class AuthorityQuorumSignInfo {
   @Override
   public String toString() {
     return "AuthorityQuorumSignInfo{"
-        + "epoch=" + epoch
-        + ", signature='" + signature + '\''
-        + ", signersMap='" + Arrays.toString(signersMap) + '\''
+        + "epoch="
+        + epoch
+        + ", signature='"
+        + signature
+        + '\''
+        + ", signersMap='"
+        + Arrays.toString(signersMap)
+        + '\''
         + '}';
   }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -15,6 +15,7 @@
  */
 
 package io.sui.models;
+
 
 import java.util.List;
 import java.util.Objects;
@@ -156,34 +157,65 @@ public class TransactionEffects {
       return false;
     }
     TransactionEffects that = (TransactionEffects) o;
-    return status.equals(that.status) && gasUsed.equals(that.gasUsed) && sharedObjects.equals(
-        that.sharedObjects) && transactionDigest.equals(that.transactionDigest) && created.equals(
-        that.created) && mutated.equals(that.mutated) && unwrapped.equals(that.unwrapped)
-        && deleted.equals(that.deleted) && wrapped.equals(that.wrapped) && gasObject.equals(
-        that.gasObject) && events.equals(that.events) && dependencies.equals(that.dependencies);
+    return status.equals(that.status)
+        && gasUsed.equals(that.gasUsed)
+        && sharedObjects.equals(that.sharedObjects)
+        && transactionDigest.equals(that.transactionDigest)
+        && created.equals(that.created)
+        && mutated.equals(that.mutated)
+        && unwrapped.equals(that.unwrapped)
+        && deleted.equals(that.deleted)
+        && wrapped.equals(that.wrapped)
+        && gasObject.equals(that.gasObject)
+        && events.equals(that.events)
+        && dependencies.equals(that.dependencies);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(status, gasUsed, sharedObjects, transactionDigest, created, mutated,
-        unwrapped, deleted, wrapped, gasObject, events, dependencies);
+    return Objects.hash(
+        status,
+        gasUsed,
+        sharedObjects,
+        transactionDigest,
+        created,
+        mutated,
+        unwrapped,
+        deleted,
+        wrapped,
+        gasObject,
+        events,
+        dependencies);
   }
 
   @Override
   public String toString() {
     return "TransactionEffects{"
-        + "status=" + status
-        + ", gasUsed=" + gasUsed
-        + ", sharedObjects=" + sharedObjects
-        + ", transactionDigest='" + transactionDigest + '\''
-        + ", created=" + created
-        + ", mutated=" + mutated
-        + ", unwrapped=" + unwrapped
-        + ", deleted=" + deleted
-        + ", wrapped=" + wrapped
-        + ", gasObject=" + gasObject
-        + ", events=" + events
-        + ", dependencies=" + dependencies
+        + "status="
+        + status
+        + ", gasUsed="
+        + gasUsed
+        + ", sharedObjects="
+        + sharedObjects
+        + ", transactionDigest='"
+        + transactionDigest
+        + '\''
+        + ", created="
+        + created
+        + ", mutated="
+        + mutated
+        + ", unwrapped="
+        + unwrapped
+        + ", deleted="
+        + deleted
+        + ", wrapped="
+        + wrapped
+        + ", gasObject="
+        + gasObject
+        + ", events="
+        + events
+        + ", dependencies="
+        + dependencies
         + '}';
   }
 }

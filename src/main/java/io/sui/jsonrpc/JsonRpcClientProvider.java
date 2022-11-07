@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -28,9 +28,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public interface JsonRpcClientProvider {
 
-  /**
-   * The constant nextId.
-   */
+  /** The constant nextId. */
   AtomicLong nextId = new AtomicLong();
 
   /**
@@ -45,12 +43,12 @@ public interface JsonRpcClientProvider {
   /**
    * Call completable future.
    *
-   * @param <T>     the type parameter
+   * @param <T> the type parameter
    * @param request the request
-   * @param url     the url
-   * @param clazz   the t class
+   * @param url the url
+   * @param clazz the t class
    * @return the completable future
    */
-  <T> CompletableFuture<JsonRpc20Response<T>> call(JsonRpc20Request request, String url,
-      Class<T> clazz);
+  <T> CompletableFuture<JsonRpc20Response<T>> call(
+      JsonRpc20Request request, String url, Class<T> clazz);
 }

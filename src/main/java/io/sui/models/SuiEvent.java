@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -16,6 +16,7 @@
 
 package io.sui.models;
 
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Map;
@@ -30,27 +31,17 @@ import java.util.Objects;
 @SuppressWarnings("ALL")
 public abstract class SuiEvent {
 
-  /**
-   * The enum Balance change type.
-   */
+  /** The enum Balance change type. */
   public enum BalanceChangeType {
-    /**
-     * Gas balance change type.
-     */
+    /** Gas balance change type. */
     Gas,
-    /**
-     * Pay balance change type.
-     */
+    /** Pay balance change type. */
     Pay,
-    /**
-     * Receive balance change type.
-     */
+    /** Receive balance change type. */
     Receive
   }
 
-  /**
-   * The type Transfer object event.
-   */
+  /** The type Transfer object event. */
   public static class TransferObjectEvent extends SuiEvent {
 
     private String packageId;
@@ -132,21 +123,23 @@ public abstract class SuiEvent {
         return false;
       }
       TransferObjectEvent that = (TransferObjectEvent) o;
-      return packageId.equals(that.packageId) && transactionModule.equals(that.transactionModule)
-          && sender.equals(that.sender) && recipient.equals(that.recipient) && objectType.equals(
-          that.objectType) && objectId.equals(that.objectId) && version.equals(that.version);
+      return packageId.equals(that.packageId)
+          && transactionModule.equals(that.transactionModule)
+          && sender.equals(that.sender)
+          && recipient.equals(that.recipient)
+          && objectType.equals(that.objectType)
+          && objectId.equals(that.objectId)
+          && version.equals(that.version);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(packageId, transactionModule, sender, recipient, objectType, objectId,
-          version);
+      return Objects.hash(
+          packageId, transactionModule, sender, recipient, objectType, objectId, version);
     }
   }
 
-  /**
-   * The type Move event.
-   */
+  /** The type Move event. */
   public static class MoveEvent extends SuiEvent {
 
     private String bcs;
@@ -162,9 +155,7 @@ public abstract class SuiEvent {
     private Map<String, Object> fields;
   }
 
-  /**
-   * The type Publish event.
-   */
+  /** The type Publish event. */
   public static class PublishEvent extends SuiEvent {
 
     private String packageId;
@@ -172,9 +163,7 @@ public abstract class SuiEvent {
     private String sender;
   }
 
-  /**
-   * The type Coin balance change event.
-   */
+  /** The type Coin balance change event. */
   public static class CoinBalanceChangeEvent extends SuiEvent {
 
     private String packageId;
@@ -196,9 +185,7 @@ public abstract class SuiEvent {
     private BigDecimal amount;
   }
 
-  /**
-   * The type Mutate object event.
-   */
+  /** The type Mutate object event. */
   public static class MutateObjectEvent extends SuiEvent {
 
     private String packageId;
@@ -214,9 +201,7 @@ public abstract class SuiEvent {
     private BigInteger version;
   }
 
-  /**
-   * The type Delete object event.
-   */
+  /** The type Delete object event. */
   public static class DeleteObjectEvent extends SuiEvent {
 
     private String packageId;
@@ -230,9 +215,7 @@ public abstract class SuiEvent {
     private BigInteger version;
   }
 
-  /**
-   * The type New object event.
-   */
+  /** The type New object event. */
   public static class NewObjectEvent extends SuiEvent {
 
     private String packageId;
@@ -250,17 +233,13 @@ public abstract class SuiEvent {
     private BigInteger version;
   }
 
-  /**
-   * The type Epoch change event.
-   */
+  /** The type Epoch change event. */
   public static class EpochChangeEvent extends SuiEvent {
 
     private BigInteger epochChange;
   }
 
-  /**
-   * The type Checkpoint event.
-   */
+  /** The type Checkpoint event. */
   public static class CheckpointEvent extends SuiEvent {
 
     private BigInteger checkpoint;
@@ -283,5 +262,4 @@ public abstract class SuiEvent {
   private EpochChangeEvent epochChange;
 
   private CheckpointEvent checkpoint;
-
 }

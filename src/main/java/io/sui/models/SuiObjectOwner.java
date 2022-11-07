@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -16,9 +16,9 @@
 
 package io.sui.models;
 
+
 import java.math.BigInteger;
 import java.util.Objects;
-
 
 /**
  * The interface Sui object owner.
@@ -28,19 +28,13 @@ import java.util.Objects;
  */
 public interface SuiObjectOwner {
 
-  /**
-   * The enum String sui object owner.
-   */
+  /** The enum String sui object owner. */
   enum StringSuiObjectOwner implements SuiObjectOwner {
-    /**
-     * Immutable string sui object owner.
-     */
+    /** Immutable string sui object owner. */
     Immutable
   }
 
-  /**
-   * The type Address owner.
-   */
+  /** The type Address owner. */
   class AddressOwner implements SuiObjectOwner {
 
     @SuppressWarnings("checkstyle:MemberName")
@@ -66,9 +60,7 @@ public interface SuiObjectOwner {
 
     @Override
     public String toString() {
-      return "AddressOwner{"
-          + "addressOwner='" + AddressOwner + '\''
-          + '}';
+      return "AddressOwner{" + "addressOwner='" + AddressOwner + '\'' + '}';
     }
 
     @Override
@@ -87,12 +79,9 @@ public interface SuiObjectOwner {
     public int hashCode() {
       return Objects.hash(AddressOwner);
     }
-
   }
 
-  /**
-   * The type Object owner.
-   */
+  /** The type Object owner. */
   class ObjectOwner implements SuiObjectOwner {
 
     @SuppressWarnings("checkstyle:MemberName")
@@ -135,20 +124,14 @@ public interface SuiObjectOwner {
 
     @Override
     public String toString() {
-      return "ObjectOwner{"
-          + "objectOwner='" + ObjectOwner + '\''
-          + '}';
+      return "ObjectOwner{" + "objectOwner='" + ObjectOwner + '\'' + '}';
     }
   }
 
-  /**
-   * The type Shared owner.
-   */
+  /** The type Shared owner. */
   class SharedOwner implements SuiObjectOwner {
 
-    /**
-     * The type Shared.
-     */
+    /** The type Shared. */
     public static class Shared {
 
       @SuppressWarnings("checkstyle:MemberName")
@@ -192,9 +175,7 @@ public interface SuiObjectOwner {
 
       @Override
       public String toString() {
-        return "Shared{"
-            + "initialSharedVersion=" + initial_shared_version
-            + '}';
+        return "Shared{" + "initialSharedVersion=" + initial_shared_version + '}';
       }
     }
 
@@ -238,9 +219,7 @@ public interface SuiObjectOwner {
 
     @Override
     public String toString() {
-      return "SharedOwner{"
-          + "shared=" + Shared
-          + '}';
+      return "SharedOwner{" + "shared=" + Shared + '}';
     }
   }
 }

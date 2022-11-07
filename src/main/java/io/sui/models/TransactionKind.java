@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -23,36 +23,20 @@ package io.sui.models;
  * @since 2022.11
  */
 public enum TransactionKind {
-  /**
-   * Transfer object transaction kind.
-   */
+  /** Transfer object transaction kind. */
   TransferObject,
-  /**
-   * Publish transaction kind.
-   */
+  /** Publish transaction kind. */
   Publish,
-  /**
-   * Call transaction kind.
-   */
+  /** Call transaction kind. */
   Call,
-  /**
-   * Transfer sui transaction kind.
-   */
+  /** Transfer sui transaction kind. */
   TransferSui,
-  /**
-   * Pay transaction kind.
-   */
+  /** Pay transaction kind. */
   Pay,
-  /**
-   * Pay sui transaction kind.
-   */
+  /** Pay sui transaction kind. */
   PaySui,
-  /**
-   * Pay all sui transaction kind.
-   */
+  /** Pay all sui transaction kind. */
   PayAllSui,
-  /**
-   * Change epoch transaction kind.
-   */
+  /** Change epoch transaction kind. */
   ChangeEpoch
 }

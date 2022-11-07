@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -30,54 +30,34 @@ import java.util.Objects;
  */
 public class JsonRpc20Response<T> {
 
-  /**
-   * The type Error.
-   */
+  /** The type Error. */
   public static class Error {
 
-    /**
-     * The enum Error code.
-     */
+    /** The enum Error code. */
     public enum ErrorCode {
 
-      /**
-       * Parse error error code.
-       */
+      /** Parse error error code. */
       PARSE_ERROR(-32700),
 
-      /**
-       * Invalid json request error code.
-       */
+      /** Invalid json request error code. */
       INVALID_JSON_REQUEST(-32600),
 
-      /**
-       * Method not found error code.
-       */
+      /** Method not found error code. */
       METHOD_NOT_FOUND(-32601),
 
-      /**
-       * Invalid params error code.
-       */
+      /** Invalid params error code. */
       INVALID_PARAMS(-32602),
 
-      /**
-       * Internal error error code.
-       */
+      /** Internal error error code. */
       INTERNAL_ERROR(-32603),
 
-      /**
-       * Procedure is method error code.
-       */
+      /** Procedure is method error code. */
       PROCEDURE_IS_METHOD(-32604),
 
-      /**
-       * Failure response error code.
-       */
+      /** Failure response error code. */
       FAILURE_RESPONSE(-40000),
 
-      /**
-       * Io error error code.
-       */
+      /** Io error error code. */
       IO_ERROR(-40001);
 
       private static final Map<Integer, ErrorCode> BY_CODE = new HashMap<>();
@@ -89,7 +69,6 @@ public class JsonRpc20Response<T> {
       }
 
       private final int code;
-
 
       ErrorCode(int code) {
         this.code = code;
@@ -116,10 +95,8 @@ public class JsonRpc20Response<T> {
 
       @Override
       public String toString() {
-        return "ErrorCode{"
-            + "code=" + code + '}';
+        return "ErrorCode{" + "code=" + code + '}';
       }
-
     }
 
     private ErrorCode code;
@@ -181,14 +158,9 @@ public class JsonRpc20Response<T> {
 
     @Override
     public String toString() {
-      return "Error{"
-          + "code=" + code
-          + ", message='"
-          + message + '\''
-          + '}';
+      return "Error{" + "code=" + code + ", message='" + message + '\'' + '}';
     }
   }
-
 
   private long id;
 
@@ -299,8 +271,11 @@ public class JsonRpc20Response<T> {
       return false;
     }
     JsonRpc20Response<?> that = (JsonRpc20Response<?>) o;
-    return id == that.id && jsonrpc.equals(that.jsonrpc) && result.equals(that.result)
-        && error.equals(that.error) && throwable.equals(that.throwable);
+    return id == that.id
+        && jsonrpc.equals(that.jsonrpc)
+        && result.equals(that.result)
+        && error.equals(that.error)
+        && throwable.equals(that.throwable);
   }
 
   @Override
@@ -311,12 +286,17 @@ public class JsonRpc20Response<T> {
   @Override
   public String toString() {
     return "JsonRpc20Response{"
-        + "id=" + id
-        + ", jsonrpc='" + jsonrpc + '\''
-        + ", result=" + result
-        + ", error=" + error
-        + ", throwable=" + throwable
+        + "id="
+        + id
+        + ", jsonrpc='"
+        + jsonrpc
+        + '\''
+        + ", result="
+        + result
+        + ", error="
+        + error
+        + ", throwable="
+        + throwable
         + '}';
   }
-
 }

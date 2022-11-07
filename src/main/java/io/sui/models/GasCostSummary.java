@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -16,9 +16,9 @@
 
 package io.sui.models;
 
+
 import java.math.BigInteger;
 import java.util.Objects;
-
 
 /**
  * The type Gas cost summary.
@@ -97,7 +97,8 @@ public class GasCostSummary {
       return false;
     }
     GasCostSummary that = (GasCostSummary) o;
-    return computationCost.equals(that.computationCost) && storageCost.equals(that.storageCost)
+    return computationCost.equals(that.computationCost)
+        && storageCost.equals(that.storageCost)
         && storageRebate.equals(that.storageRebate);
   }
 
@@ -109,10 +110,12 @@ public class GasCostSummary {
   @Override
   public String toString() {
     return "GasCostSummary{"
-        + "computationCost=" + computationCost
-        + ", storageCost=" + storageCost
-        + ", storageRebate=" + storageRebate
+        + "computationCost="
+        + computationCost
+        + ", storageCost="
+        + storageCost
+        + ", storageRebate="
+        + storageRebate
         + '}';
   }
-
 }

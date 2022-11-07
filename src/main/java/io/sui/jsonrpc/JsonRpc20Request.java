@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -117,7 +117,9 @@ public class JsonRpc20Request {
       return false;
     }
     JsonRpc20Request that = (JsonRpc20Request) o;
-    return id == that.id && jsonrpc.equals(that.jsonrpc) && method.equals(that.method)
+    return id == that.id
+        && jsonrpc.equals(that.jsonrpc)
+        && method.equals(that.method)
         && params.equals(that.params);
   }
 
@@ -129,11 +131,16 @@ public class JsonRpc20Request {
   @Override
   public String toString() {
     return "JsonRpc20Request{"
-        + "jsonrpc='" + jsonrpc + '\''
-        + ", method='" + method + '\''
-        + ", params=" + params
-        + ", id=" + id
+        + "jsonrpc='"
+        + jsonrpc
+        + '\''
+        + ", method='"
+        + method
+        + '\''
+        + ", params="
+        + params
+        + ", id="
+        + id
         + '}';
   }
-
 }

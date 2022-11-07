@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -16,8 +16,8 @@
 
 package io.sui.models;
 
-import java.util.Objects;
 
+import java.util.Objects;
 
 /**
  * The type Certified transaction.
@@ -116,8 +116,10 @@ public class CertifiedTransaction {
       return false;
     }
     CertifiedTransaction that = (CertifiedTransaction) o;
-    return authSignInfo.equals(that.authSignInfo) && transactionDigest.equals(
-        that.transactionDigest) && txSignature.equals(that.txSignature) && data.equals(that.data);
+    return authSignInfo.equals(that.authSignInfo)
+        && transactionDigest.equals(that.transactionDigest)
+        && txSignature.equals(that.txSignature)
+        && data.equals(that.data);
   }
 
   @Override
@@ -128,11 +130,16 @@ public class CertifiedTransaction {
   @Override
   public String toString() {
     return "CertifiedTransaction{"
-        + "authSignInfo=" + authSignInfo
-        + ", transactionDigest='" + transactionDigest + '\''
-        + ", txSignature='" + txSignature + '\''
-        + ", data=" + data
+        + "authSignInfo="
+        + authSignInfo
+        + ", transactionDigest='"
+        + transactionDigest
+        + '\''
+        + ", txSignature='"
+        + txSignature
+        + '\''
+        + ", data="
+        + data
         + '}';
   }
-
 }
