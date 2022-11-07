@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright $YEAR 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -14,25 +14,3 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui;
-
-
-import io.sui.models.GetObjectResponse;
-import java.util.concurrent.CompletableFuture;
-
-/**
- * The interface Sui client.
- *
- * @author grapebaba
- * @since 2022.11
- */
-public interface SuiClient {
-
-  /**
-   * Gets object.
-   *
-   * @param id the id
-   * @return the object
-   */
-  CompletableFuture<GetObjectResponse> getObject(String id);
-}

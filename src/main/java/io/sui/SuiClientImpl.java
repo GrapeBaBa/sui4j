@@ -1,5 +1,5 @@
 /*
- * Copyright 281165273grape@gmail.com
+ * Copyright 2022 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -16,13 +16,13 @@
 
 package io.sui;
 
+
 import com.google.common.collect.Lists;
 import io.sui.jsonrpc.JsonRpc20Request;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.models.GetObjectResponse;
 import io.sui.models.SuiApiException;
 import java.util.concurrent.CompletableFuture;
-
 
 /**
  * The type Sui client.
@@ -50,22 +50,26 @@ public class SuiClientImpl implements SuiClient {
     request.setMethod("sui_getObject");
     request.setParams(Lists.newArrayList(id));
     final CompletableFuture<GetObjectResponse> future = new CompletableFuture<>();
-    jsonRpcClientProvider.call(request, "/sui_getObject", GetObjectResponse.class)
-        .thenAccept(suiObjectJsonRpc20Response -> {
-          if (suiObjectJsonRpc20Response.getError() != null) {
-            SuiApiException e = new SuiApiException(suiObjectJsonRpc20Response.getError());
-            if (suiObjectJsonRpc20Response.getThrowable() != null) {
-              e.setCause(suiObjectJsonRpc20Response.getThrowable());
-            }
-            future.completeExceptionally(e);
-          } else {
-            future.complete(suiObjectJsonRpc20Response.getResult());
-          }
-        }).exceptionally(throwable -> {
-          SuiApiException e = new SuiApiException(throwable);
-          future.completeExceptionally(e);
-          return null;
-        });
+    jsonRpcClientProvider
+        .call(request, "/sui_getObject", GetObjectResponse.class)
+        .thenAccept(
+            suiObjectJsonRpc20Response -> {
+              if (suiObjectJsonRpc20Response.getError() != null) {
+                SuiApiException e = new SuiApiException(suiObjectJsonRpc20Response.getError());
+                if (suiObjectJsonRpc20Response.getThrowable() != null) {
+                  e.setCause(suiObjectJsonRpc20Response.getThrowable());
+                }
+                future.completeExceptionally(e);
+              } else {
+                future.complete(suiObjectJsonRpc20Response.getResult());
+              }
+            })
+        .exceptionally(
+            throwable -> {
+              SuiApiException e = new SuiApiException(throwable);
+              future.completeExceptionally(e);
+              return null;
+            });
     return future;
   }
 }
