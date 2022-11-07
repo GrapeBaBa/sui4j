@@ -1,12 +1,21 @@
+/*
+ * Copyright 281165273grape@gmail.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package io.sui.jsonrpc;
 
-
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,119 +31,142 @@ import io.sui.models.SuiData;
 import io.sui.models.SuiObject;
 import io.sui.models.SuiObjectOwner;
 import io.sui.models.SuiObjectRef;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.math.BigInteger;
 
 /**
  * The type Gson json handler.
+ *
+ * @author grapebaba
+ * @since 2022.11
  */
 public class GsonJsonHandler implements JsonHandler {
 
-	/**
-	 * The type Error code deserializer.
-	 */
-	public static class ErrorCodeDeserializer implements JsonDeserializer<JsonRpc20Response.Error.ErrorCode> {
+  /**
+   * The type Error code deserializer.
+   */
+  public static class ErrorCodeDeserializer implements
+      JsonDeserializer<JsonRpc20Response.Error.ErrorCode> {
 
-		@Override
-		public JsonRpc20Response.Error.ErrorCode deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-			return JsonRpc20Response.Error.ErrorCode.valueOfCode(json.getAsInt());
-		}
-	}
+    @Override
+    public JsonRpc20Response.Error.ErrorCode deserialize(JsonElement json, Type typeOfT,
+        JsonDeserializationContext context) throws JsonParseException {
+      return JsonRpc20Response.Error.ErrorCode.valueOfCode(json.getAsInt());
+    }
+  }
 
-	public class SuiDataDeserializer implements JsonDeserializer<SuiData> {
+  /**
+   * The type Sui data deserializer.
+   */
+  public class SuiDataDeserializer implements JsonDeserializer<SuiData> {
 
-		@Override
-		public SuiData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-			if ("package".equals(json.getAsJsonObject().get("dataType").getAsString())) {
-				return gson.fromJson(json, SuiData.PackageObject.class);
-			}
-			if ("moveObject".equals(json.getAsJsonObject().get("dataType").getAsString())) {
-				return gson.fromJson(json, SuiData.MoveObject.class);
-			}
-			return null;
-		}
-	}
+    @Override
+    public SuiData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        throws JsonParseException {
+      if ("package".equals(json.getAsJsonObject().get("dataType").getAsString())) {
+        return gson.fromJson(json, SuiData.PackageObject.class);
+      }
+      if ("moveObject".equals(json.getAsJsonObject().get("dataType").getAsString())) {
+        return gson.fromJson(json, SuiData.MoveObject.class);
+      }
+      return null;
+    }
+  }
 
-	public class SuiObjectOwnerDeserializer implements JsonDeserializer<SuiObjectOwner> {
+  /**
+   * The type Sui object owner deserializer.
+   */
+  public class SuiObjectOwnerDeserializer implements JsonDeserializer<SuiObjectOwner> {
 
-		@Override
-		public SuiObjectOwner deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-			if (json.isJsonObject()) {
-				if (!json.getAsJsonObject().get("AddressOwner").isJsonNull()) {
-					return gson.fromJson(json, SuiObjectOwner.AddressOwner.class);
-				}
-				if (!json.getAsJsonObject().get("ObjectOwner").isJsonNull()) {
-					return gson.fromJson(json, SuiObjectOwner.ObjectOwner.class);
-				}
-				if (!json.getAsJsonObject().get("Shared").isJsonNull()) {
-					return gson.fromJson(json, SuiObjectOwner.SharedOwner.class);
-				}
-			}
-			else {
-				return SuiObjectOwner.StringSuiObjectOwner.Immutable;
-			}
+    @Override
+    public SuiObjectOwner deserialize(JsonElement json, Type typeOfT,
+        JsonDeserializationContext context) throws JsonParseException {
+      if (json.isJsonObject()) {
+        if (!json.getAsJsonObject().get("AddressOwner").isJsonNull()) {
+          return gson.fromJson(json, SuiObjectOwner.AddressOwner.class);
+        }
+        if (!json.getAsJsonObject().get("ObjectOwner").isJsonNull()) {
+          return gson.fromJson(json, SuiObjectOwner.ObjectOwner.class);
+        }
+        if (!json.getAsJsonObject().get("Shared").isJsonNull()) {
+          return gson.fromJson(json, SuiObjectOwner.SharedOwner.class);
+        }
+      } else {
+        return SuiObjectOwner.StringSuiObjectOwner.Immutable;
+      }
 
-			return null;
-		}
-	}
+      return null;
+    }
+  }
 
-	public class GetObjectResponseDetailsDeserializer implements JsonDeserializer<GetObjectResponse.GetObjectResponseDetails> {
+  /**
+   * The type Get object response details deserializer.
+   */
+  public class GetObjectResponseDetailsDeserializer implements
+      JsonDeserializer<GetObjectResponse.GetObjectResponseDetails> {
 
-		@Override
-		public GetObjectResponse.GetObjectResponseDetails deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-			if (json.isJsonObject()) {
-				if (!json.getAsJsonObject().get("data").isJsonNull()) {
-					return gson.fromJson(json, SuiObject.class);
-				}
-				else {
-					return gson.fromJson(json, SuiObjectRef.class);
-				}
-			}
-			else {
-				final GetObjectResponse.ObjectIdResponseDetails objectIdResponseDetails = new GetObjectResponse.ObjectIdResponseDetails();
-				objectIdResponseDetails.setObjectId(json.getAsString());
-				return objectIdResponseDetails;
-			}
-		}
-	}
+    @Override
+    public GetObjectResponse.GetObjectResponseDetails deserialize(JsonElement json, Type typeOfT,
+        JsonDeserializationContext context) throws JsonParseException {
+      if (json.isJsonObject()) {
+        if (!json.getAsJsonObject().get("data").isJsonNull()) {
+          return gson.fromJson(json, SuiObject.class);
+        } else {
+          return gson.fromJson(json, SuiObjectRef.class);
+        }
+      } else {
+        final GetObjectResponse.ObjectIdResponseDetails objectIdResponseDetails
+            = new GetObjectResponse.ObjectIdResponseDetails();
+        objectIdResponseDetails.setObjectId(json.getAsString());
+        return objectIdResponseDetails;
+      }
+    }
+  }
 
-	public static class BigIntegerToNumberPolicy implements ToNumberStrategy {
+  /**
+   * The type Big integer to number policy.
+   */
+  public static class BigIntegerToNumberPolicy implements ToNumberStrategy {
 
-		@Override
-		public Number readNumber(JsonReader in) throws IOException {
-			String value = in.nextString();
+    @Override
+    public Number readNumber(JsonReader in) throws IOException {
+      String value = in.nextString();
 
-			try {
-				return new BigInteger(value);
-			}
-			catch (NumberFormatException e) {
-				throw new JsonParseException("Cannot parse " + value + "; at path " + in.getPreviousPath(), e);
-			}
-		}
-	}
+      try {
+        return new BigInteger(value);
+      } catch (NumberFormatException e) {
+        throw new JsonParseException("Cannot parse " + value + "; at path " + in.getPreviousPath(),
+            e);
+      }
+    }
+  }
 
-	private final Gson gson;
+  private final Gson gson;
 
-	/**
-	 * Instantiates a new Gson json handler.
-	 */
-	public GsonJsonHandler() {
-		this.gson = new GsonBuilder()
-				.setObjectToNumberStrategy(new BigIntegerToNumberPolicy())
-				.setNumberToNumberStrategy(new BigIntegerToNumberPolicy())
-				.registerTypeAdapter(JsonRpc20Response.Error.ErrorCode.class, new ErrorCodeDeserializer())
-				.registerTypeAdapter(SuiObjectOwner.class, new SuiObjectOwnerDeserializer())
-				.registerTypeAdapter(SuiData.class, new SuiDataDeserializer())
-				.registerTypeAdapter(GetObjectResponse.GetObjectResponseDetails.class, new GetObjectResponseDetailsDeserializer())
-				.create();
-	}
+  /**
+   * Instantiates a new Gson json handler.
+   */
+  public GsonJsonHandler() {
+    this.gson = new GsonBuilder()
+        .setObjectToNumberStrategy(new BigIntegerToNumberPolicy())
+        .setNumberToNumberStrategy(new BigIntegerToNumberPolicy())
+        .registerTypeAdapter(JsonRpc20Response.Error.ErrorCode.class, new ErrorCodeDeserializer())
+        .registerTypeAdapter(SuiObjectOwner.class, new SuiObjectOwnerDeserializer())
+        .registerTypeAdapter(SuiData.class, new SuiDataDeserializer())
+        .registerTypeAdapter(GetObjectResponse.GetObjectResponseDetails.class,
+            new GetObjectResponseDetailsDeserializer())
+        .create();
+  }
 
-	@Override
-	public <T> JsonRpc20Response<T> fromJson(String response, Class<T> tClass) {
-		Type type = TypeToken.getParameterized(JsonRpc20Response.class, tClass).getType();
-		return this.gson.fromJson(response, type);
-	}
+  @Override
+  public <T> JsonRpc20Response<T> fromJson(String response, Class<T> clazz) {
+    Type type = TypeToken.getParameterized(JsonRpc20Response.class, clazz).getType();
+    return this.gson.fromJson(response, type);
+  }
 
-	@Override
-	public String toJson(JsonRpc20Request request) {
-		return this.gson.toJson(request);
-	}
+  @Override
+  public String toJson(JsonRpc20Request request) {
+    return this.gson.toJson(request);
+  }
 }

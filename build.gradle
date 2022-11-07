@@ -1,6 +1,8 @@
 plugins {
     id 'java'
+    id "checkstyle"
 }
+
 
 group 'io.sui'
 version '0.1.0-SNAPSHOT'
@@ -22,4 +24,14 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+checkstyle {
+    toolVersion = checkstyleVersion
+    // default checkstyle config -- specific to your team agreement
+    configFile = project(":").file("config/checkstyle/google_checks.xml")
+    // Google style (idiosyncratic to Google):
+    // configFile = project(":").file("config/checkstyle/google_checks.xml")
+    // SUN style (closest to modern Java styles) -- the basis for this project:
+    // configFile = project(":").file("config/checkstyle/sun_checks.xml")
 }

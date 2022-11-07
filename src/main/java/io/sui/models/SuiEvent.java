@@ -1,138 +1,287 @@
+/*
+ * Copyright 281165273grape@gmail.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package io.sui.models;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Map;
+import java.util.Objects;
 
+/**
+ * The type Sui event.
+ *
+ * @author grapebaba
+ * @since 2022.11
+ */
+@SuppressWarnings("ALL")
 public abstract class SuiEvent {
-	public enum BalanceChangeType {
-		Gas,
-		Pay,
-		Receive
-	}
 
-	public static class TransferObjectEvent extends SuiEvent {
-		private String packageId;
+  /**
+   * The enum Balance change type.
+   */
+  public enum BalanceChangeType {
+    /**
+     * Gas balance change type.
+     */
+    Gas,
+    /**
+     * Pay balance change type.
+     */
+    Pay,
+    /**
+     * Receive balance change type.
+     */
+    Receive
+  }
 
-		private String transactionModule;
+  /**
+   * The type Transfer object event.
+   */
+  public static class TransferObjectEvent extends SuiEvent {
 
-		private String sender;
+    private String packageId;
 
-		private SuiObjectOwner recipient;
+    private String transactionModule;
 
-		private String objectType;
+    private String sender;
 
-		private String objectId;
+    private SuiObjectOwner recipient;
 
-		private BigInteger version;
-	}
+    private String objectType;
 
-	public static class MoveEvent extends SuiEvent {
-		private String bcs;
+    private String objectId;
 
-		private String packageId;
+    private BigInteger version;
 
-		private String sender;
+    public String getPackageId() {
+      return packageId;
+    }
 
-		private String transactionModule;
+    public void setPackageId(String packageId) {
+      this.packageId = packageId;
+    }
 
-		private String type;
+    public String getTransactionModule() {
+      return transactionModule;
+    }
 
-		private Map<String, Object> fields;
-	}
+    public void setTransactionModule(String transactionModule) {
+      this.transactionModule = transactionModule;
+    }
 
-	public static class PublishEvent extends SuiEvent {
-		private String packageId;
+    public String getSender() {
+      return sender;
+    }
 
-		private String sender;
-	}
+    public void setSender(String sender) {
+      this.sender = sender;
+    }
 
-	public static class CoinBalanceChangeEvent extends SuiEvent {
-		private String packageId;
+    public SuiObjectOwner getRecipient() {
+      return recipient;
+    }
 
-		private String transactionModule;
+    public void setRecipient(SuiObjectOwner recipient) {
+      this.recipient = recipient;
+    }
 
-		private String sender;
+    public String getObjectType() {
+      return objectType;
+    }
 
-		private SuiObjectOwner owner;
+    public void setObjectType(String objectType) {
+      this.objectType = objectType;
+    }
 
-		private BalanceChangeType changeType;
+    public String getObjectId() {
+      return objectId;
+    }
 
-		private String coinType;
+    public void setObjectId(String objectId) {
+      this.objectId = objectId;
+    }
 
-		private String coinObjectId;
+    public BigInteger getVersion() {
+      return version;
+    }
 
-		private BigInteger version;
+    public void setVersion(BigInteger version) {
+      this.version = version;
+    }
 
-		private BigDecimal amount;
-	}
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      TransferObjectEvent that = (TransferObjectEvent) o;
+      return packageId.equals(that.packageId) && transactionModule.equals(that.transactionModule)
+          && sender.equals(that.sender) && recipient.equals(that.recipient) && objectType.equals(
+          that.objectType) && objectId.equals(that.objectId) && version.equals(that.version);
+    }
 
-	public static class MutateObjectEvent extends SuiEvent {
-		private String packageId;
+    @Override
+    public int hashCode() {
+      return Objects.hash(packageId, transactionModule, sender, recipient, objectType, objectId,
+          version);
+    }
+  }
 
-		private String transactionModule;
+  /**
+   * The type Move event.
+   */
+  public static class MoveEvent extends SuiEvent {
 
-		private String sender;
+    private String bcs;
 
-		private String objectType;
+    private String packageId;
 
-		private String objectId;
+    private String sender;
 
-		private BigInteger version;
-	}
+    private String transactionModule;
 
-	public static class DeleteObjectEvent extends SuiEvent {
-		private String packageId;
+    private String type;
 
-		private String transactionModule;
+    private Map<String, Object> fields;
+  }
 
-		private String sender;
+  /**
+   * The type Publish event.
+   */
+  public static class PublishEvent extends SuiEvent {
 
-		private String objectId;
+    private String packageId;
 
-		private BigInteger version;
-	}
+    private String sender;
+  }
 
-	public static class NewObjectEvent extends SuiEvent {
-		private String packageId;
+  /**
+   * The type Coin balance change event.
+   */
+  public static class CoinBalanceChangeEvent extends SuiEvent {
 
-		private String transactionModule;
+    private String packageId;
 
-		private SuiObjectOwner recipient;
+    private String transactionModule;
 
-		private String sender;
+    private String sender;
 
-		private String objectId;
+    private SuiObjectOwner owner;
 
-		private String objectType;
+    private BalanceChangeType changeType;
 
-		private BigInteger version;
-	}
+    private String coinType;
 
-	public static class EpochChangeEvent extends SuiEvent {
-		private BigInteger epochChange;
-	}
+    private String coinObjectId;
 
-	public static class CheckpointEvent extends SuiEvent {
-		private BigInteger checkpoint;
-	}
+    private BigInteger version;
 
-	private TransferObjectEvent transferObject;
+    private BigDecimal amount;
+  }
 
-	private MoveEvent moveEvent;
+  /**
+   * The type Mutate object event.
+   */
+  public static class MutateObjectEvent extends SuiEvent {
 
-	private PublishEvent publish;
+    private String packageId;
 
-	private CoinBalanceChangeEvent coinBalanceChange;
+    private String transactionModule;
 
-	private MutateObjectEvent mutateObject;
+    private String sender;
 
-	private DeleteObjectEvent deleteObject;
+    private String objectType;
 
-	private NewObjectEvent newObject;
+    private String objectId;
 
-	private EpochChangeEvent epochChange;
+    private BigInteger version;
+  }
 
-	private CheckpointEvent checkpoint;
+  /**
+   * The type Delete object event.
+   */
+  public static class DeleteObjectEvent extends SuiEvent {
+
+    private String packageId;
+
+    private String transactionModule;
+
+    private String sender;
+
+    private String objectId;
+
+    private BigInteger version;
+  }
+
+  /**
+   * The type New object event.
+   */
+  public static class NewObjectEvent extends SuiEvent {
+
+    private String packageId;
+
+    private String transactionModule;
+
+    private SuiObjectOwner recipient;
+
+    private String sender;
+
+    private String objectId;
+
+    private String objectType;
+
+    private BigInteger version;
+  }
+
+  /**
+   * The type Epoch change event.
+   */
+  public static class EpochChangeEvent extends SuiEvent {
+
+    private BigInteger epochChange;
+  }
+
+  /**
+   * The type Checkpoint event.
+   */
+  public static class CheckpointEvent extends SuiEvent {
+
+    private BigInteger checkpoint;
+  }
+
+  private TransferObjectEvent transferObject;
+
+  private MoveEvent moveEvent;
+
+  private PublishEvent publish;
+
+  private CoinBalanceChangeEvent coinBalanceChange;
+
+  private MutateObjectEvent mutateObject;
+
+  private DeleteObjectEvent deleteObject;
+
+  private NewObjectEvent newObject;
+
+  private EpochChangeEvent epochChange;
+
+  private CheckpointEvent checkpoint;
 
 }
