@@ -16,6 +16,9 @@
 
 package io.sui.jsonrpc;
 
+
+import java.lang.reflect.Type;
+
 /**
  * The interface Json handler.
  *
@@ -29,10 +32,10 @@ public interface JsonHandler {
    *
    * @param <T> the type parameter
    * @param response the response
-   * @param clazz the t class
+   * @param typeT the type t
    * @return the json rpc 20 response
    */
-  <T> JsonRpc20Response<T> fromJson(String response, Class<T> clazz);
+  <T> JsonRpc20Response<T> fromJson(String response, Type typeT);
 
   /**
    * To json string.

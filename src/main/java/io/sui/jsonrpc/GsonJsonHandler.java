@@ -154,8 +154,8 @@ public class GsonJsonHandler implements JsonHandler {
   }
 
   @Override
-  public <T> JsonRpc20Response<T> fromJson(String response, Class<T> clazz) {
-    Type type = TypeToken.getParameterized(JsonRpc20Response.class, clazz).getType();
+  public <T> JsonRpc20Response<T> fromJson(String response, Type typeOfT) {
+    Type type = TypeToken.getParameterized(JsonRpc20Response.class, typeOfT).getType();
     return this.gson.fromJson(response, type);
   }
 

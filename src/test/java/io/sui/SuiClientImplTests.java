@@ -17,6 +17,7 @@
 package io.sui;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.sui.jsonrpc.GsonJsonHandler;
 import io.sui.jsonrpc.JsonHandler;
@@ -29,9 +30,12 @@ import io.sui.models.ObjectStatus;
 import io.sui.models.SuiApiException;
 import io.sui.models.SuiData;
 import io.sui.models.SuiObject;
+import io.sui.models.SuiObjectInfo;
 import io.sui.models.SuiObjectOwner;
+import io.sui.models.SuiObjectOwner.AddressOwner;
 import io.sui.models.SuiObjectRef;
 import java.math.BigInteger;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.DisplayName;
@@ -61,7 +65,7 @@ class SuiClientImplTests {
         new OkHttpJsonRpcClientProvider(BASE_URL, jsonHandler);
     SuiClient client = new SuiClientImpl(jsonRpcClientProvider);
     CompletableFuture<GetObjectResponse> res =
-        client.getObject("0xa204b49f2a65eb3d418ccae864b331c524c2fa75");
+        client.getObject("0x342950ba2451c2f27ed128e591c2b4551e5177c2");
     GetObjectResponse response = res.get();
     System.out.println(response);
     assertEquals(ObjectStatus.Exists, response.getStatus());
@@ -72,7 +76,7 @@ class SuiClientImplTests {
     assertEquals("0xea79464d86786b7a7a63e3f13f798f29f5e65947", addressOwner.getAddressOwner());
     assertEquals(BigInteger.valueOf(100000000000000L), moveObject.getFields().get("balance"));
     SuiObjectRef suiObjectRef = suiObject.getReference();
-    assertEquals("CxYsqphRB24TVGDgV/973d5+cmgZZoXpGloXw1+rPIU=", suiObjectRef.getDigest());
+    assertEquals("bWkh6f80oGFCtsPtS3//66LvAvqGJTOVJtKmUJAd5l0=", suiObjectRef.getDigest());
   }
 
   /**
@@ -125,5 +129,30 @@ class SuiClientImplTests {
 
     assertEquals(
         ErrorCode.INVALID_PARAMS, ((SuiApiException) completableFuture.get()).getError().getCode());
+  }
+
+  /**
+   * Gets objects owned by address is not empty.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getObjectsOwnedByAddress returns not empty list.")
+  void getObjectsOwnedByAddressIsNotEmpty() throws ExecutionException, InterruptedException {
+    JsonHandler jsonHandler = new GsonJsonHandler();
+    JsonRpcClientProvider jsonRpcClientProvider =
+        new OkHttpJsonRpcClientProvider(BASE_URL, jsonHandler);
+    SuiClient client = new SuiClientImpl(jsonRpcClientProvider);
+    CompletableFuture<List<SuiObjectInfo>> res =
+        client.getObjectsOwnedByAddress("0xea79464d86786b7a7a63e3f13f798f29f5e65947");
+    List<SuiObjectInfo> response = res.get();
+    System.out.println(response);
+    assertTrue(response.size() > 0);
+    assertEquals(
+        "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+        ((AddressOwner) response.get(0).getOwner()).getAddressOwner());
+    assertEquals(
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=", response.get(0).getPreviousTransaction());
   }
 }

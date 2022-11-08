@@ -17,6 +17,7 @@
 package io.sui.jsonrpc;
 
 
+import java.lang.reflect.Type;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -46,9 +47,9 @@ public interface JsonRpcClientProvider {
    * @param <T> the type parameter
    * @param request the request
    * @param url the url
-   * @param clazz the t class
+   * @param typeOfT the type of t
    * @return the completable future
    */
   <T> CompletableFuture<JsonRpc20Response<T>> call(
-      JsonRpc20Request request, String url, Class<T> clazz);
+      JsonRpc20Request request, String url, Type typeOfT);
 }

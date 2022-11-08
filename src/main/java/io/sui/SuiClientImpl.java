@@ -18,10 +18,14 @@ package io.sui;
 
 
 import com.google.common.collect.Lists;
+import com.google.common.reflect.TypeToken;
 import io.sui.jsonrpc.JsonRpc20Request;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.models.GetObjectResponse;
 import io.sui.models.SuiApiException;
+import io.sui.models.SuiObjectInfo;
+import java.lang.reflect.Type;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -45,13 +49,34 @@ public class SuiClientImpl implements SuiClient {
 
   @Override
   public CompletableFuture<GetObjectResponse> getObject(String id) {
+    final JsonRpc20Request request =
+        createJsonRpc20Request("sui_getObject", Lists.newArrayList(id));
+    return call("/sui_getObject", request, new TypeToken<GetObjectResponse>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<List<SuiObjectInfo>> getObjectsOwnedByAddress(String address) {
+    final JsonRpc20Request request =
+        createJsonRpc20Request("sui_getObjectsOwnedByAddress", Lists.newArrayList(address));
+    return call(
+        "/sui_getObjectsOwnedByAddress",
+        request,
+        new TypeToken<List<SuiObjectInfo>>() {}.getType());
+  }
+
+  private JsonRpc20Request createJsonRpc20Request(String method, Iterable<?> params) {
     final JsonRpc20Request request = new JsonRpc20Request();
     request.setId(jsonRpcClientProvider.nextId());
-    request.setMethod("sui_getObject");
-    request.setParams(Lists.newArrayList(id));
-    final CompletableFuture<GetObjectResponse> future = new CompletableFuture<>();
+    request.setMethod(method);
+    request.setParams(Lists.newArrayList(params));
+    return request;
+  }
+
+  @SuppressWarnings({"checkstyle:WhitespaceAfter", "unchecked"})
+  private <T> CompletableFuture<T> call(String url, JsonRpc20Request request, Type typeOfT) {
+    final CompletableFuture<T> future = new CompletableFuture<>();
     jsonRpcClientProvider
-        .call(request, "/sui_getObject", GetObjectResponse.class)
+        .call(request, url, typeOfT)
         .thenAccept(
             suiObjectJsonRpc20Response -> {
               if (suiObjectJsonRpc20Response.getError() != null) {
@@ -61,7 +86,7 @@ public class SuiClientImpl implements SuiClient {
                 }
                 future.completeExceptionally(e);
               } else {
-                future.complete(suiObjectJsonRpc20Response.getResult());
+                future.complete((T) suiObjectJsonRpc20Response.getResult());
               }
             })
         .exceptionally(

@@ -18,6 +18,8 @@ package io.sui;
 
 
 import io.sui.models.GetObjectResponse;
+import io.sui.models.SuiObjectInfo;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -35,4 +37,12 @@ public interface SuiClient {
    * @return the object
    */
   CompletableFuture<GetObjectResponse> getObject(String id);
+
+  /**
+   * Gets objects owned by address.
+   *
+   * @param address the address
+   * @return the objects owned by address
+   */
+  CompletableFuture<List<SuiObjectInfo>> getObjectsOwnedByAddress(String address);
 }

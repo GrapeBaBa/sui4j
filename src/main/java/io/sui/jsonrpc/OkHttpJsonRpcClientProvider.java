@@ -18,6 +18,7 @@ package io.sui.jsonrpc;
 
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.concurrent.CompletableFuture;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -61,11 +62,11 @@ public class OkHttpJsonRpcClientProvider implements JsonRpcClientProvider {
    * @param <T> the type parameter
    * @param request the request
    * @param url the url
-   * @param clazz the t class
+   * @param typeOfT the type of t
    * @return the completable future
    */
   public <T> CompletableFuture<JsonRpc20Response<T>> call(
-      JsonRpc20Request request, String url, Class<T> clazz) {
+      JsonRpc20Request request, String url, Type typeOfT) {
     final CompletableFuture<JsonRpc20Response<T>> future = new CompletableFuture<>();
     final Request okhttpRequest;
     try {
@@ -103,7 +104,7 @@ public class OkHttpJsonRpcClientProvider implements JsonRpcClientProvider {
                   if (response.isSuccessful()) {
                     final ResponseBody responseBody = response.body();
                     if (responseBody != null) {
-                      jsonRpc20Response = jsonHandler.fromJson(responseBody.string(), clazz);
+                      jsonRpc20Response = jsonHandler.fromJson(responseBody.string(), typeOfT);
                     } else {
                       jsonRpc20Response = new JsonRpc20Response<>();
                     }
