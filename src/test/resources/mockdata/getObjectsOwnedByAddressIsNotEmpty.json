@@ -1,0 +1,76 @@
+{
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "objectId": "0x342950ba2451c2f27ed128e591c2b4551e5177c2",
+      "version": 2,
+      "digest": "QZMMmu37jER7FFU3+HhbdwIyZyOwwThNAa07vSsPBGw=",
+      "type": "0x2::coin::Coin<0x2::sui::SUI>",
+      "owner": {
+        "AddressOwner": "0xea79464d86786b7a7a63e3f13f798f29f5e65947"
+      },
+      "previousTransaction": "GN9sW4hBVNFIc83VIfyn/J1n4a9tU9sQVq3+UkfgEKU="
+    },
+    {
+      "objectId": "0x5d85d018e50ad882e1d839adc09f8b78bc40c6ab",
+      "version": 0,
+      "digest": "g2ndurZ64hFgrxLOq4gzzrq7+Yd4puNeuVkSbmDNy5M=",
+      "type": "0x2::coin::Coin<0x2::sui::SUI>",
+      "owner": {
+        "AddressOwner": "0xea79464d86786b7a7a63e3f13f798f29f5e65947"
+      },
+      "previousTransaction": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+    },
+    {
+      "objectId": "0x900f60d10b8f012d12ec818f5e5d491ad7fc2a13",
+      "version": 0,
+      "digest": "3/004EcTQ5L/NZkzqUVl5GJGKkTK6OwnbN8n26m3n0c=",
+      "type": "0x2::coin::Coin<0x2::sui::SUI>",
+      "owner": {
+        "AddressOwner": "0xea79464d86786b7a7a63e3f13f798f29f5e65947"
+      },
+      "previousTransaction": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+    },
+    {
+      "objectId": "0x979db7f733f5df1af8f00fd1ee81b9eb4cb7eef4",
+      "version": 1,
+      "digest": "d8QZbJl+cffJnTuhlSC53egsXe61ZS9fnqdYLZCnWFo=",
+      "type": "0x2::devnet_nft::DevNetNFT",
+      "owner": {
+        "AddressOwner": "0xea79464d86786b7a7a63e3f13f798f29f5e65947"
+      },
+      "previousTransaction": "GN9sW4hBVNFIc83VIfyn/J1n4a9tU9sQVq3+UkfgEKU="
+    },
+    {
+      "objectId": "0xb5e91320d3acc77b4d9e66a218031441b2be1bb3",
+      "version": 1,
+      "digest": "7DohDzHfm7X7N3r9fpxLLSR/hqSMkkyeUcOXBpjpa3I=",
+      "type": "0x2::devnet_nft::DevNetNFT",
+      "owner": {
+        "AddressOwner": "0xea79464d86786b7a7a63e3f13f798f29f5e65947"
+      },
+      "previousTransaction": "3Dda4/74LXf6GmOxMxp3qdbW/WdQ6/8EHobZ1LvSyYk="
+    },
+    {
+      "objectId": "0xd755e6f464dd7b1334e4d4fc74d69623c3c7c09a",
+      "version": 0,
+      "digest": "p44SCu03tsf1NFnH0qnZpQYjIYpRpWutJ1wTtkKO4hE=",
+      "type": "0x2::coin::Coin<0x2::sui::SUI>",
+      "owner": {
+        "AddressOwner": "0xea79464d86786b7a7a63e3f13f798f29f5e65947"
+      },
+      "previousTransaction": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+    },
+    {
+      "objectId": "0xde2952390ab3d0cfbb0a0602532480ed5ec99cf3",
+      "version": 0,
+      "digest": "pJYqb7PiwQSRRx5yiq45YMcwROtAPclXlz748xxA/Ic=",
+      "type": "0x2::coin::Coin<0x2::sui::SUI>",
+      "owner": {
+        "AddressOwner": "0xea79464d86786b7a7a63e3f13f798f29f5e65947"
+      },
+      "previousTransaction": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+    }
+  ],
+  "id": 1
+}

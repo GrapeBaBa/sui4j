@@ -1,0 +1,8 @@
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32602,
+    "message": "byte deserialization failed, cause by: AccountAddressParseError"
+  },
+  "id": 1
+}

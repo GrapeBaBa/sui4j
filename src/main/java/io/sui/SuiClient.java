@@ -53,4 +53,12 @@ public interface SuiClient {
    * @return the objects owned by object
    */
   CompletableFuture<List<SuiObjectInfo>> getObjectsOwnedByObject(String objectId);
+
+  /**
+   * Gets raw object.
+   *
+   * @param id the id
+   * @return the raw object
+   */
+  CompletableFuture<GetObjectResponse> getRawObject(String id);
 }

@@ -163,4 +163,13 @@ public class GsonJsonHandler implements JsonHandler {
   public String toJson(JsonRpc20Request request) {
     return this.gson.toJson(request);
   }
+
+  /**
+   * Gets gson.
+   *
+   * @return the gson
+   */
+  public Gson getGson() {
+    return gson;
+  }
 }

@@ -72,6 +72,13 @@ public class SuiClientImpl implements SuiClient {
         "/sui_getObjectsOwnedByObject", request, new TypeToken<List<SuiObjectInfo>>() {}.getType());
   }
 
+  @Override
+  public CompletableFuture<GetObjectResponse> getRawObject(String id) {
+    final JsonRpc20Request request =
+        createJsonRpc20Request("sui_getRawObject", Lists.newArrayList(id));
+    return call("/sui_getRawObject", request, new TypeToken<GetObjectResponse>() {}.getType());
+  }
+
   private JsonRpc20Request createJsonRpc20Request(String method, Iterable<?> params) {
     final JsonRpc20Request request = new JsonRpc20Request();
     request.setId(jsonRpcClientProvider.nextId());

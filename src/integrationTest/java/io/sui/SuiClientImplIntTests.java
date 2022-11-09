@@ -19,10 +19,8 @@ package io.sui;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.common.io.Resources;
 import io.sui.jsonrpc.GsonJsonHandler;
 import io.sui.jsonrpc.JsonHandler;
-import io.sui.jsonrpc.JsonRpc20Request;
 import io.sui.jsonrpc.JsonRpc20Response.Error.ErrorCode;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
@@ -36,19 +34,9 @@ import io.sui.models.SuiObjectInfo;
 import io.sui.models.SuiObjectOwner;
 import io.sui.models.SuiObjectOwner.AddressOwner;
 import io.sui.models.SuiObjectRef;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import okhttp3.mockwebserver.Dispatcher;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,105 +47,19 @@ import org.junit.jupiter.api.Test;
  * @author grapebaba
  * @since 2022.11
  */
-class SuiClientImplTests {
+class SuiClientImplIntTests {
 
-  private static final String BASE_URL = "http://localhost:9001";
+  private static final String BASE_URL = "http://localhost:9000";
 
   private static final JsonHandler jsonHandler = new GsonJsonHandler();
 
   private static SuiClient client;
-
-  private static MockWebServer mockWebServer;
-
-  static MockWebServer createAndStartMockServer(int port) {
-    MockWebServer server = new MockWebServer();
-    final Dispatcher dispatcher =
-        new Dispatcher() {
-
-          @Override
-          public MockResponse dispatch(RecordedRequest request) {
-            String body = request.getBody().readUtf8();
-            if ("/sui_getObject".equals(request.getPath())) {
-              JsonRpc20Request jsonRpc20Request =
-                  ((GsonJsonHandler) jsonHandler).getGson().fromJson(body, JsonRpc20Request.class);
-              if ("0x342950ba2451c2f27ed128e591c2b4551e5177c2"
-                  .equals(jsonRpc20Request.getParams().get(0))) {
-                return getMockResponse("mockdata/getObjectExistingMoveObject.json");
-              }
-
-              if ("0xa204b49f2a65eb3d418ccae864b331c524c2fa76"
-                  .equals(jsonRpc20Request.getParams().get(0))) {
-                return getMockResponse("mockdata/getObjectNoExist.json");
-              }
-
-              if ("".equals(jsonRpc20Request.getParams().get(0))) {
-                return getMockResponse("mockdata/getObjectInvalidParams.json");
-              }
-            }
-
-            if ("/sui_getObjectsOwnedByAddress".equals(request.getPath())) {
-              JsonRpc20Request jsonRpc20Request =
-                  ((GsonJsonHandler) jsonHandler).getGson().fromJson(body, JsonRpc20Request.class);
-              if ("0xea79464d86786b7a7a63e3f13f798f29f5e65947"
-                  .equals(jsonRpc20Request.getParams().get(0))) {
-                return getMockResponse("mockdata/getObjectsOwnedByAddressIsNotEmpty.json");
-              }
-            }
-
-            if ("/sui_getObjectsOwnedByObject".equals(request.getPath())) {
-              JsonRpc20Request jsonRpc20Request =
-                  ((GsonJsonHandler) jsonHandler).getGson().fromJson(body, JsonRpc20Request.class);
-              if ("0xde2952390ab3d0cfbb0a0602532480ed5ec99cf3"
-                  .equals(jsonRpc20Request.getParams().get(0))) {
-                return getMockResponse("mockdata/getObjectsOwnedByObjectIsEmpty.json");
-              }
-            }
-
-            if ("/sui_getRawObject".equals(request.getPath())) {
-              JsonRpc20Request jsonRpc20Request =
-                  ((GsonJsonHandler) jsonHandler).getGson().fromJson(body, JsonRpc20Request.class);
-              if ("0x342950ba2451c2f27ed128e591c2b4551e5177c2"
-                  .equals(jsonRpc20Request.getParams().get(0))) {
-                return getMockResponse("mockdata/getRawObjectExistingMoveObject.json");
-              }
-            }
-
-            return new MockResponse().setResponseCode(404);
-          }
-        };
-    server.setDispatcher(dispatcher);
-
-    try {
-      server.start(port);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    return server;
-  }
-
-  @NotNull private static MockResponse getMockResponse(String mockdata) {
-    URL url = Resources.getResource(mockdata);
-    String mockData = "";
-    try {
-      mockData = Resources.asCharSource(url, StandardCharsets.UTF_8).read();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return new MockResponse().setResponseCode(200).setBody(mockData);
-  }
 
   @BeforeAll
   static void beforeAll() {
     JsonRpcClientProvider jsonRpcClientProvider =
         new OkHttpJsonRpcClientProvider(BASE_URL, jsonHandler);
     client = new SuiClientImpl(jsonRpcClientProvider);
-    mockWebServer = createAndStartMockServer(9001);
-  }
-
-  @AfterAll
-  static void afterAll() throws IOException {
-    mockWebServer.shutdown();
   }
 
   /**
@@ -179,9 +81,9 @@ class SuiClientImplTests {
     assertEquals("0x2::coin::Coin<0x2::sui::SUI>", moveObject.getType());
     SuiObjectOwner.AddressOwner addressOwner = (SuiObjectOwner.AddressOwner) suiObject.getOwner();
     assertEquals("0xea79464d86786b7a7a63e3f13f798f29f5e65947", addressOwner.getAddressOwner());
-    assertEquals(BigInteger.valueOf(100000000000000L), moveObject.getFields().get("balance"));
+    //    assertEquals(BigInteger.valueOf(100000000000000L), moveObject.getFields().get("balance"));
     SuiObjectRef suiObjectRef = suiObject.getReference();
-    assertEquals("bWkh6f80oGFCtsPtS3//66LvAvqGJTOVJtKmUJAd5l0=", suiObjectRef.getDigest());
+    //    assertEquals("bWkh6f80oGFCtsPtS3//66LvAvqGJTOVJtKmUJAd5l0=", suiObjectRef.getDigest());
   }
 
   /**

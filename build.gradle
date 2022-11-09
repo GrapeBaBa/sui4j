@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id "checkstyle"
 	id "com.diffplug.spotless" version "6.11.0"
+	id 'org.unbroken-dome.test-sets' version '4.0.0'
 }
 
 
@@ -19,6 +20,9 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.10'
 	// https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
 	implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+
+	// https://mvnrepository.com/artifact/com.squareup.okhttp3/mockwebserver
+	testImplementation 'com.squareup.okhttp3:mockwebserver:4.10.0'
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
 }
@@ -73,3 +77,14 @@ spotless {
 task docs(type: Javadoc) {
 	source = sourceSets.main.allJava
 }
+
+testSets {
+	integrationTest
+}
+
+// Make all tests use JUnit 5
+tasks.withType(Test) {
+	useJUnitPlatform()
+}
+
+//check.dependsOn integrationTest
