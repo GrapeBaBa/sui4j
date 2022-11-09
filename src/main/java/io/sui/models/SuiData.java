@@ -112,6 +112,9 @@ public interface SuiData {
 
     private Map<String, ?> fields;
 
+    @SuppressWarnings("checkstyle:MemberName")
+    private String bcs_bytes;
+
     /**
      * Is has public transfer boolean.
      *
@@ -185,24 +188,34 @@ public interface SuiData {
       this.fields = fields;
     }
 
+    public String getBcs_bytes() {
+      return bcs_bytes;
+    }
+
+    @SuppressWarnings("checkstyle:ParameterName")
+    public void setBcs_bytes(String bcs_bytes) {
+      this.bcs_bytes = bcs_bytes;
+    }
+
     @Override
     public boolean equals(Object o) {
       if (this == o) {
         return true;
       }
-      if (o == null || getClass() != o.getClass()) {
+      if (!(o instanceof MoveObject)) {
         return false;
       }
       MoveObject that = (MoveObject) o;
       return has_public_transfer == that.has_public_transfer
           && dataType.equals(that.dataType)
           && type.equals(that.type)
-          && fields.equals(that.fields);
+          && fields.equals(that.fields)
+          && bcs_bytes.equals(that.bcs_bytes);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(dataType, has_public_transfer, type, fields);
+      return Objects.hash(dataType, has_public_transfer, type, fields, bcs_bytes);
     }
 
     @Override
@@ -218,6 +231,9 @@ public interface SuiData {
           + '\''
           + ", fields="
           + fields
+          + ", bcs_bytes='"
+          + bcs_bytes
+          + '\''
           + '}';
     }
   }

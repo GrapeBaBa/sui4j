@@ -45,4 +45,12 @@ public interface SuiClient {
    * @return the objects owned by address
    */
   CompletableFuture<List<SuiObjectInfo>> getObjectsOwnedByAddress(String address);
+
+  /**
+   * Gets objects owned by object.
+   *
+   * @param objectId the object id
+   * @return the objects owned by object
+   */
+  CompletableFuture<List<SuiObjectInfo>> getObjectsOwnedByObject(String objectId);
 }

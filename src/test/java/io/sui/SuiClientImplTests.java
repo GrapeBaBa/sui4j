@@ -155,4 +155,18 @@ class SuiClientImplTests {
     assertEquals(
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=", response.get(0).getPreviousTransaction());
   }
+
+  @Test
+  @DisplayName("Test getObjectsOwnedByObject returns empty list.")
+  void getObjectsOwnedByObjectIsEmpty() throws ExecutionException, InterruptedException {
+    JsonHandler jsonHandler = new GsonJsonHandler();
+    JsonRpcClientProvider jsonRpcClientProvider =
+        new OkHttpJsonRpcClientProvider(BASE_URL, jsonHandler);
+    SuiClient client = new SuiClientImpl(jsonRpcClientProvider);
+    CompletableFuture<List<SuiObjectInfo>> res =
+        client.getObjectsOwnedByObject("0xde2952390ab3d0cfbb0a0602532480ed5ec99cf3");
+    List<SuiObjectInfo> response = res.get();
+    System.out.println(response);
+    assertEquals(0, response.size());
+  }
 }
