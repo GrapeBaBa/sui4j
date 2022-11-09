@@ -69,3 +69,7 @@ spotless {
 
 	}
 }
+
+task docs(type: Javadoc) {
+	source = sourceSets.main.allJava
+}
