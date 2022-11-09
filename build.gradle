@@ -1,6 +1,7 @@
 plugins {
 	id 'java'
 	id "checkstyle"
+	id "jacoco"
 	id "com.diffplug.spotless" version "6.11.0"
 	id 'org.unbroken-dome.test-sets' version '4.0.0'
 }
@@ -29,6 +30,45 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+	finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+	dependsOn test
+
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+					"io/sui/models/**",
+					"io/sui/jsonrpc/JsonRpc20Request.class",
+					"io/sui/jsonrpc/JsonRpc20Response*.class"
+			])
+		}))
+	}
+
+	reports {
+		csv.required = true
+	}
+}
+
+jacocoTestCoverageVerification {
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+					"io/sui/models/**",
+					"io/sui/jsonrpc/JsonRpc20Request.class",
+					"io/sui/jsonrpc/JsonRpc20Response*.class"
+			])
+		}))
+	}
+
+	violationRules {
+		rule {
+			limit {
+				minimum = 0.5
+			}
+		}
+	}
 }
 
 checkstyle {
@@ -87,4 +127,7 @@ tasks.withType(Test) {
 	useJUnitPlatform()
 }
 
-//check.dependsOn integrationTest
+check {
+	dependsOn += jacocoTestCoverageVerification
+//	dependsOn += integrationTest
+}
