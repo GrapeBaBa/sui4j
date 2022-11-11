@@ -69,6 +69,12 @@ class SuiClientImplTests {
 
   private static MockWebServer mockWebServer;
 
+  /**
+   * Create and start mock server mock web server.
+   *
+   * @param port the port
+   * @return the mock web server
+   */
   static MockWebServer createAndStartMockServer(int port) {
     MockWebServer server = new MockWebServer();
     final Dispatcher dispatcher =
@@ -122,6 +128,10 @@ class SuiClientImplTests {
               }
             }
 
+            if ("/sui_getTotalTransactionNumber".equals(request.getPath())) {
+              return getMockResponse("mockdata/getTotalTransactionNumber.json");
+            }
+
             return new MockResponse().setResponseCode(404);
           }
         };
@@ -147,6 +157,7 @@ class SuiClientImplTests {
     return new MockResponse().setResponseCode(200).setBody(mockData);
   }
 
+  /** Before all. */
   @BeforeAll
   static void beforeAll() {
     JsonRpcClientProvider jsonRpcClientProvider =
@@ -155,6 +166,11 @@ class SuiClientImplTests {
     mockWebServer = createAndStartMockServer(9001);
   }
 
+  /**
+   * After all.
+   *
+   * @throws IOException the io exception
+   */
   @AfterAll
   static void afterAll() throws IOException {
     mockWebServer.shutdown();
@@ -287,5 +303,18 @@ class SuiClientImplTests {
     assertEquals("NClQuiRRwvJ+0SjlkcK0VR5Rd8LQN3oQ81oAAA==", moveObject.getBcs_bytes());
     SuiObjectRef suiObjectRef = suiObject.getReference();
     assertEquals("QZMMmu37jER7FFU3+HhbdwIyZyOwwThNAa07vSsPBGw=", suiObjectRef.getDigest());
+  }
+
+  /**
+   * Gets total transaction number.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getTotalTransactionNumber.")
+  void getTotalTransactionNumber() throws ExecutionException, InterruptedException {
+    CompletableFuture<BigInteger> res = client.getTotalTransactionNumber();
+    assertEquals(BigInteger.valueOf(2L), res.get());
   }
 }
