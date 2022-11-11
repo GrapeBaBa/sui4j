@@ -34,6 +34,7 @@ import io.sui.models.SuiObjectInfo;
 import io.sui.models.SuiObjectOwner;
 import io.sui.models.SuiObjectOwner.AddressOwner;
 import io.sui.models.SuiObjectRef;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -82,7 +83,7 @@ class SuiClientImplIntTests {
     SuiObjectOwner.AddressOwner addressOwner = (SuiObjectOwner.AddressOwner) suiObject.getOwner();
     assertEquals("0xea79464d86786b7a7a63e3f13f798f29f5e65947", addressOwner.getAddressOwner());
     //    assertEquals(BigInteger.valueOf(100000000000000L), moveObject.getFields().get("balance"));
-    SuiObjectRef suiObjectRef = suiObject.getReference();
+    //    SuiObjectRef suiObjectRef = suiObject.getReference();
     //    assertEquals("bWkh6f80oGFCtsPtS3//66LvAvqGJTOVJtKmUJAd5l0=", suiObjectRef.getDigest());
   }
 
@@ -189,5 +190,18 @@ class SuiClientImplIntTests {
     assertEquals("NClQuiRRwvJ+0SjlkcK0VR5Rd8LQN3oQ81oAAA==", moveObject.getBcs_bytes());
     SuiObjectRef suiObjectRef = suiObject.getReference();
     assertEquals("QZMMmu37jER7FFU3+HhbdwIyZyOwwThNAa07vSsPBGw=", suiObjectRef.getDigest());
+  }
+
+  /**
+   * Gets total transaction number.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getTotalTransactionNumber.")
+  void getTotalTransactionNumber() throws ExecutionException, InterruptedException {
+    CompletableFuture<BigInteger> res = client.getTotalTransactionNumber();
+    assertEquals(BigInteger.valueOf(2L), res.get());
   }
 }

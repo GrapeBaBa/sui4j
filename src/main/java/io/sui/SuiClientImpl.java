@@ -25,6 +25,7 @@ import io.sui.models.GetObjectResponse;
 import io.sui.models.SuiApiException;
 import io.sui.models.SuiObjectInfo;
 import java.lang.reflect.Type;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -79,11 +80,19 @@ public class SuiClientImpl implements SuiClient {
     return call("/sui_getRawObject", request, new TypeToken<GetObjectResponse>() {}.getType());
   }
 
-  private JsonRpc20Request createJsonRpc20Request(String method, Iterable<?> params) {
+  @Override
+  public CompletableFuture<BigInteger> getTotalTransactionNumber() {
+    final JsonRpc20Request request =
+        createJsonRpc20Request("sui_getTotalTransactionNumber", Lists.newArrayList());
+    return call(
+        "/sui_getTotalTransactionNumber", request, new TypeToken<BigInteger>() {}.getType());
+  }
+
+  private JsonRpc20Request createJsonRpc20Request(String method, List<?> params) {
     final JsonRpc20Request request = new JsonRpc20Request();
     request.setId(jsonRpcClientProvider.nextId());
     request.setMethod(method);
-    request.setParams(Lists.newArrayList(params));
+    request.setParams(params);
     return request;
   }
 
