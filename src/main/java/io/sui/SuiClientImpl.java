@@ -21,11 +21,11 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import io.sui.jsonrpc.JsonRpc20Request;
 import io.sui.jsonrpc.JsonRpcClientProvider;
-import io.sui.models.GetObjectResponse;
 import io.sui.models.SuiApiException;
-import io.sui.models.SuiObjectInfo;
+import io.sui.models.objects.GetObjectResponse;
+import io.sui.models.objects.SuiObjectInfo;
+import io.sui.models.transactions.TransactionResponse;
 import java.lang.reflect.Type;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -81,11 +81,17 @@ public class SuiClientImpl implements SuiClient {
   }
 
   @Override
-  public CompletableFuture<BigInteger> getTotalTransactionNumber() {
+  public CompletableFuture<Long> getTotalTransactionNumber() {
     final JsonRpc20Request request =
         createJsonRpc20Request("sui_getTotalTransactionNumber", Lists.newArrayList());
-    return call(
-        "/sui_getTotalTransactionNumber", request, new TypeToken<BigInteger>() {}.getType());
+    return call("/sui_getTotalTransactionNumber", request, new TypeToken<Long>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<TransactionResponse> getTransaction(String digest) {
+    final JsonRpc20Request request =
+        createJsonRpc20Request("sui_getTransaction", Lists.newArrayList(digest));
+    return call("/sui_getTransaction", request, new TypeToken<TransactionResponse>() {}.getType());
   }
 
   private JsonRpc20Request createJsonRpc20Request(String method, List<?> params) {

@@ -14,65 +14,57 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models;
+package io.sui.models.objects;
 
 
 import java.util.Objects;
 
 /**
- * The type Execution status.
+ * The type Sui owner object ref.
  *
  * @author grapebaba
  * @since 2022.11
  */
-public class ExecutionStatus {
+public class SuiOwnerObjectRef {
 
-  /** The enum Execution status type. */
-  public enum ExecutionStatusType {
-    /** Success execution status type. */
-    success,
-    /** Failure execution status type. */
-    failure
-  }
+  private SuiObjectOwner owner;
 
-  private ExecutionStatusType status;
-
-  private String error;
+  private SuiObjectRef reference;
 
   /**
-   * Gets status.
+   * Gets owner.
    *
-   * @return the status
+   * @return the owner
    */
-  ExecutionStatusType getStatus() {
-    return status;
+  public SuiObjectOwner getOwner() {
+    return owner;
   }
 
   /**
-   * Sets status.
+   * Sets owner.
    *
-   * @param status the status
+   * @param owner the owner
    */
-  void setStatus(ExecutionStatusType status) {
-    this.status = status;
+  public void setOwner(SuiObjectOwner owner) {
+    this.owner = owner;
   }
 
   /**
-   * Gets error.
+   * Gets reference.
    *
-   * @return the error
+   * @return the reference
    */
-  String getError() {
-    return error;
+  public SuiObjectRef getReference() {
+    return reference;
   }
 
   /**
-   * Sets error.
+   * Sets reference.
    *
-   * @param error the error
+   * @param reference the reference
    */
-  void setError(String error) {
-    this.error = error;
+  public void setReference(SuiObjectRef reference) {
+    this.reference = reference;
   }
 
   @Override
@@ -83,17 +75,17 @@ public class ExecutionStatus {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ExecutionStatus that = (ExecutionStatus) o;
-    return status == that.status && error.equals(that.error);
+    SuiOwnerObjectRef that = (SuiOwnerObjectRef) o;
+    return owner.equals(that.owner) && reference.equals(that.reference);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(status, error);
+    return Objects.hash(owner, reference);
   }
 
   @Override
   public String toString() {
-    return "ExecutionStatus{" + "status=" + status + ", error='" + error + '\'' + '}';
+    return "SuiOwnerObjectRef{" + "owner=" + owner + ", reference=" + reference + '}';
   }
 }

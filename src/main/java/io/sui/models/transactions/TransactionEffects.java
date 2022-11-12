@@ -14,9 +14,12 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models;
+package io.sui.models.transactions;
 
 
+import io.sui.models.events.EventKind;
+import io.sui.models.objects.SuiObjectRef;
+import io.sui.models.objects.SuiOwnerObjectRef;
 import java.util.List;
 import java.util.Objects;
 
@@ -48,102 +51,222 @@ public class TransactionEffects {
 
   private SuiOwnerObjectRef gasObject;
 
-  private List<SuiEvent> events;
+  private List<EventKind> events;
 
   private List<String> dependencies;
 
+  /**
+   * Gets status.
+   *
+   * @return the status
+   */
   public ExecutionStatus getStatus() {
     return status;
   }
 
+  /**
+   * Sets status.
+   *
+   * @param status the status
+   */
   public void setStatus(ExecutionStatus status) {
     this.status = status;
   }
 
+  /**
+   * Gets gas used.
+   *
+   * @return the gas used
+   */
   public GasCostSummary getGasUsed() {
     return gasUsed;
   }
 
+  /**
+   * Sets gas used.
+   *
+   * @param gasUsed the gas used
+   */
   public void setGasUsed(GasCostSummary gasUsed) {
     this.gasUsed = gasUsed;
   }
 
+  /**
+   * Gets shared objects.
+   *
+   * @return the shared objects
+   */
   public List<SuiObjectRef> getSharedObjects() {
     return sharedObjects;
   }
 
+  /**
+   * Sets shared objects.
+   *
+   * @param sharedObjects the shared objects
+   */
   public void setSharedObjects(List<SuiObjectRef> sharedObjects) {
     this.sharedObjects = sharedObjects;
   }
 
+  /**
+   * Gets transaction digest.
+   *
+   * @return the transaction digest
+   */
   public String getTransactionDigest() {
     return transactionDigest;
   }
 
+  /**
+   * Sets transaction digest.
+   *
+   * @param transactionDigest the transaction digest
+   */
   public void setTransactionDigest(String transactionDigest) {
     this.transactionDigest = transactionDigest;
   }
 
+  /**
+   * Gets created.
+   *
+   * @return the created
+   */
   public List<SuiOwnerObjectRef> getCreated() {
     return created;
   }
 
+  /**
+   * Sets created.
+   *
+   * @param created the created
+   */
   public void setCreated(List<SuiOwnerObjectRef> created) {
     this.created = created;
   }
 
+  /**
+   * Gets mutated.
+   *
+   * @return the mutated
+   */
   public List<SuiOwnerObjectRef> getMutated() {
     return mutated;
   }
 
+  /**
+   * Sets mutated.
+   *
+   * @param mutated the mutated
+   */
   public void setMutated(List<SuiOwnerObjectRef> mutated) {
     this.mutated = mutated;
   }
 
+  /**
+   * Gets unwrapped.
+   *
+   * @return the unwrapped
+   */
   public List<SuiOwnerObjectRef> getUnwrapped() {
     return unwrapped;
   }
 
+  /**
+   * Sets unwrapped.
+   *
+   * @param unwrapped the unwrapped
+   */
   public void setUnwrapped(List<SuiOwnerObjectRef> unwrapped) {
     this.unwrapped = unwrapped;
   }
 
+  /**
+   * Gets deleted.
+   *
+   * @return the deleted
+   */
   public List<SuiObjectRef> getDeleted() {
     return deleted;
   }
 
+  /**
+   * Sets deleted.
+   *
+   * @param deleted the deleted
+   */
   public void setDeleted(List<SuiObjectRef> deleted) {
     this.deleted = deleted;
   }
 
+  /**
+   * Gets wrapped.
+   *
+   * @return the wrapped
+   */
   public List<SuiObjectRef> getWrapped() {
     return wrapped;
   }
 
+  /**
+   * Sets wrapped.
+   *
+   * @param wrapped the wrapped
+   */
   public void setWrapped(List<SuiObjectRef> wrapped) {
     this.wrapped = wrapped;
   }
 
+  /**
+   * Gets gas object.
+   *
+   * @return the gas object
+   */
   public SuiOwnerObjectRef getGasObject() {
     return gasObject;
   }
 
+  /**
+   * Sets gas object.
+   *
+   * @param gasObject the gas object
+   */
   public void setGasObject(SuiOwnerObjectRef gasObject) {
     this.gasObject = gasObject;
   }
 
-  public List<SuiEvent> getEvents() {
+  /**
+   * Gets events.
+   *
+   * @return the events
+   */
+  public List<EventKind> getEvents() {
     return events;
   }
 
-  public void setEvents(List<SuiEvent> events) {
+  /**
+   * Sets events.
+   *
+   * @param events the events
+   */
+  public void setEvents(List<EventKind> events) {
     this.events = events;
   }
 
+  /**
+   * Gets dependencies.
+   *
+   * @return the dependencies
+   */
   public List<String> getDependencies() {
     return dependencies;
   }
 
+  /**
+   * Sets dependencies.
+   *
+   * @param dependencies the dependencies
+   */
   public void setDependencies(List<String> dependencies) {
     this.dependencies = dependencies;
   }

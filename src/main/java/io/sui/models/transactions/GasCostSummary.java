@@ -14,10 +14,9 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models;
+package io.sui.models.transactions;
 
 
-import java.math.BigInteger;
 import java.util.Objects;
 
 /**
@@ -28,18 +27,18 @@ import java.util.Objects;
  */
 public class GasCostSummary {
 
-  private BigInteger computationCost;
+  private Long computationCost;
 
-  private BigInteger storageCost;
+  private Long storageCost;
 
-  private BigInteger storageRebate;
+  private Long storageRebate;
 
   /**
    * Gets computation cost.
    *
    * @return the computation cost
    */
-  BigInteger getComputationCost() {
+  public Long getComputationCost() {
     return computationCost;
   }
 
@@ -48,7 +47,7 @@ public class GasCostSummary {
    *
    * @param computationCost the computation cost
    */
-  void setComputationCost(BigInteger computationCost) {
+  public void setComputationCost(Long computationCost) {
     this.computationCost = computationCost;
   }
 
@@ -57,7 +56,7 @@ public class GasCostSummary {
    *
    * @return the storage cost
    */
-  BigInteger getStorageCost() {
+  public Long getStorageCost() {
     return storageCost;
   }
 
@@ -66,7 +65,7 @@ public class GasCostSummary {
    *
    * @param storageCost the storage cost
    */
-  void setStorageCost(BigInteger storageCost) {
+  public void setStorageCost(Long storageCost) {
     this.storageCost = storageCost;
   }
 
@@ -75,7 +74,7 @@ public class GasCostSummary {
    *
    * @return the storage rebate
    */
-  BigInteger getStorageRebate() {
+  public Long getStorageRebate() {
     return storageRebate;
   }
 
@@ -84,7 +83,7 @@ public class GasCostSummary {
    *
    * @param storageRebate the storage rebate
    */
-  void setStorageRebate(BigInteger storageRebate) {
+  public void setStorageRebate(Long storageRebate) {
     this.storageRebate = storageRebate;
   }
 

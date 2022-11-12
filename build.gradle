@@ -26,10 +26,19 @@ dependencies {
 	testImplementation 'com.squareup.okhttp3:mockwebserver:4.10.0'
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
+	// https://mvnrepository.com/artifact/org.junit.platform/junit-platform-suite-api
+	testImplementation 'org.junit.platform:junit-platform-suite-api:1.9.1'
+	// https://mvnrepository.com/artifact/org.junit.platform/junit-platform-suite-engine
+	testRuntimeOnly 'org.junit.platform:junit-platform-suite-engine:1.9.1'
+
+	testRuntimeOnly 'org.junit.platform:junit-platform-reporting:1.9.1'
 }
 
 test {
 	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
 	finalizedBy jacocoTestReport
 }
 
@@ -130,4 +139,14 @@ tasks.withType(Test) {
 check {
 	dependsOn += jacocoTestCoverageVerification
 //	dependsOn += integrationTest
+}
+
+tasks.withType(Test).configureEach {
+	def outputDir = reports.junitXml.outputLocation
+	jvmArgumentProviders << ({
+		[
+				"-Djunit.platform.reporting.open.xml.enabled=true",
+				"-Djunit.platform.reporting.output.dir=${outputDir.get().asFile.absolutePath}"
+		]
+	} as CommandLineArgumentProvider)
 }

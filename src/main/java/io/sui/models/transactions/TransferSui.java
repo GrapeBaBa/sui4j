@@ -14,57 +14,57 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models;
+package io.sui.models.transactions;
 
 
 import java.util.Objects;
 
 /**
- * The type Sui owner object ref.
+ * The type Transfer sui.
  *
  * @author grapebaba
  * @since 2022.11
  */
-public class SuiOwnerObjectRef {
+public class TransferSui {
 
-  private SuiObjectOwner owner;
+  private String recipient;
 
-  private SuiObjectRef reference;
+  private Long amount;
 
   /**
-   * Gets owner.
+   * Gets recipient.
    *
-   * @return the owner
+   * @return the recipient
    */
-  SuiObjectOwner getOwner() {
-    return owner;
+  public String getRecipient() {
+    return recipient;
   }
 
   /**
-   * Sets owner.
+   * Sets recipient.
    *
-   * @param owner the owner
+   * @param recipient the recipient
    */
-  void setOwner(SuiObjectOwner owner) {
-    this.owner = owner;
+  public void setRecipient(String recipient) {
+    this.recipient = recipient;
   }
 
   /**
-   * Gets reference.
+   * Gets amount.
    *
-   * @return the reference
+   * @return the amount
    */
-  SuiObjectRef getReference() {
-    return reference;
+  public Long getAmount() {
+    return amount;
   }
 
   /**
-   * Sets reference.
+   * Sets amount.
    *
-   * @param reference the reference
+   * @param amount the amount
    */
-  void setReference(SuiObjectRef reference) {
-    this.reference = reference;
+  public void setAmount(Long amount) {
+    this.amount = amount;
   }
 
   @Override
@@ -72,20 +72,20 @@ public class SuiOwnerObjectRef {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (!(o instanceof TransferSui)) {
       return false;
     }
-    SuiOwnerObjectRef that = (SuiOwnerObjectRef) o;
-    return owner.equals(that.owner) && reference.equals(that.reference);
+    TransferSui that = (TransferSui) o;
+    return recipient.equals(that.recipient) && amount.equals(that.amount);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(owner, reference);
+    return Objects.hash(recipient, amount);
   }
 
   @Override
   public String toString() {
-    return "SuiOwnerObjectRef{" + "owner=" + owner + ", reference=" + reference + '}';
+    return "TransferSui{" + "recipient='" + recipient + '\'' + ", amount=" + amount + '}';
   }
 }

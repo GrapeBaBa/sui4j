@@ -14,29 +14,19 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models;
+package io.sui.models.objects;
 
 /**
- * The enum Transaction kind.
+ * The enum Object status.
  *
  * @author grapebaba
  * @since 2022.11
  */
-public enum TransactionKind {
-  /** Transfer object transaction kind. */
-  TransferObject,
-  /** Publish transaction kind. */
-  Publish,
-  /** Call transaction kind. */
-  Call,
-  /** Transfer sui transaction kind. */
-  TransferSui,
-  /** Pay transaction kind. */
-  Pay,
-  /** Pay sui transaction kind. */
-  PaySui,
-  /** Pay all sui transaction kind. */
-  PayAllSui,
-  /** Change epoch transaction kind. */
-  ChangeEpoch
+public enum ObjectStatus {
+  /** Exists object status. */
+  Exists,
+  /** Not exists object status. */
+  NotExists,
+  /** Deleted object status. */
+  Deleted
 }
