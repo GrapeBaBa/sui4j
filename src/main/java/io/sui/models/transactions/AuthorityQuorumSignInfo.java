@@ -14,11 +14,11 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models;
+package io.sui.models.transactions;
 
 
-import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -29,9 +29,9 @@ import java.util.Objects;
  */
 public class AuthorityQuorumSignInfo {
 
-  private BigInteger epoch;
+  private Long epoch;
 
-  private String signature;
+  private List<String> signature;
 
   private byte[] signersMap;
 
@@ -40,7 +40,7 @@ public class AuthorityQuorumSignInfo {
    *
    * @return the epoch
    */
-  public BigInteger getEpoch() {
+  public Long getEpoch() {
     return epoch;
   }
 
@@ -49,7 +49,7 @@ public class AuthorityQuorumSignInfo {
    *
    * @param epoch the epoch
    */
-  public void setEpoch(BigInteger epoch) {
+  public void setEpoch(Long epoch) {
     this.epoch = epoch;
   }
 
@@ -58,7 +58,7 @@ public class AuthorityQuorumSignInfo {
    *
    * @return the signature
    */
-  public String getSignature() {
+  public List<String> getSignature() {
     return signature;
   }
 
@@ -67,7 +67,7 @@ public class AuthorityQuorumSignInfo {
    *
    * @param signature the signature
    */
-  public void setSignature(String signature) {
+  public void setSignature(List<String> signature) {
     this.signature = signature;
   }
 
@@ -94,7 +94,7 @@ public class AuthorityQuorumSignInfo {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (!(o instanceof AuthorityQuorumSignInfo)) {
       return false;
     }
     AuthorityQuorumSignInfo that = (AuthorityQuorumSignInfo) o;
@@ -105,7 +105,9 @@ public class AuthorityQuorumSignInfo {
 
   @Override
   public int hashCode() {
-    return Objects.hash(epoch, signature, Arrays.hashCode(signersMap));
+    int result = Objects.hash(epoch, signature);
+    result = 31 * result + Arrays.hashCode(signersMap);
+    return result;
   }
 
   @Override
@@ -113,12 +115,10 @@ public class AuthorityQuorumSignInfo {
     return "AuthorityQuorumSignInfo{"
         + "epoch="
         + epoch
-        + ", signature='"
+        + ", signature="
         + signature
-        + '\''
-        + ", signersMap='"
+        + ", signersMap="
         + Arrays.toString(signersMap)
-        + '\''
         + '}';
   }
 }

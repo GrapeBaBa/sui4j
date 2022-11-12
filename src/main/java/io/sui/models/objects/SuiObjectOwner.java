@@ -14,10 +14,9 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models;
+package io.sui.models.objects;
 
 
-import java.math.BigInteger;
 import java.util.Objects;
 
 /**
@@ -135,14 +134,14 @@ public interface SuiObjectOwner {
     public static class Shared {
 
       @SuppressWarnings("checkstyle:MemberName")
-      private BigInteger initial_shared_version;
+      private Long initial_shared_version;
 
       /**
        * Gets initial shared version.
        *
        * @return the initial shared version
        */
-      public BigInteger getInitial_shared_version() {
+      public Long getInitial_shared_version() {
         return initial_shared_version;
       }
 
@@ -152,7 +151,7 @@ public interface SuiObjectOwner {
        * @param initial_shared_version the initial shared version
        */
       @SuppressWarnings("checkstyle:ParameterName")
-      public void setInitial_shared_version(BigInteger initial_shared_version) {
+      public void setInitial_shared_version(Long initial_shared_version) {
         this.initial_shared_version = initial_shared_version;
       }
 

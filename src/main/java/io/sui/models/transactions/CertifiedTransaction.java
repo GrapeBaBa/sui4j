@@ -14,7 +14,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models;
+package io.sui.models.transactions;
 
 
 import java.util.Objects;
@@ -40,7 +40,7 @@ public class CertifiedTransaction {
    *
    * @return the auth sign info
    */
-  AuthorityQuorumSignInfo getAuthSignInfo() {
+  public AuthorityQuorumSignInfo getAuthSignInfo() {
     return authSignInfo;
   }
 
@@ -49,7 +49,7 @@ public class CertifiedTransaction {
    *
    * @param authSignInfo the auth sign info
    */
-  void setAuthSignInfo(AuthorityQuorumSignInfo authSignInfo) {
+  public void setAuthSignInfo(AuthorityQuorumSignInfo authSignInfo) {
     this.authSignInfo = authSignInfo;
   }
 
@@ -58,7 +58,7 @@ public class CertifiedTransaction {
    *
    * @return the transaction digest
    */
-  String getTransactionDigest() {
+  public String getTransactionDigest() {
     return transactionDigest;
   }
 
@@ -67,7 +67,7 @@ public class CertifiedTransaction {
    *
    * @param transactionDigest the transaction digest
    */
-  void setTransactionDigest(String transactionDigest) {
+  public void setTransactionDigest(String transactionDigest) {
     this.transactionDigest = transactionDigest;
   }
 
@@ -76,7 +76,7 @@ public class CertifiedTransaction {
    *
    * @return the tx signature
    */
-  String getTxSignature() {
+  public String getTxSignature() {
     return txSignature;
   }
 
@@ -85,7 +85,7 @@ public class CertifiedTransaction {
    *
    * @param txSignature the tx signature
    */
-  void setTxSignature(String txSignature) {
+  public void setTxSignature(String txSignature) {
     this.txSignature = txSignature;
   }
 
@@ -94,7 +94,7 @@ public class CertifiedTransaction {
    *
    * @return the data
    */
-  TransactionData getData() {
+  public TransactionData getData() {
     return data;
   }
 
@@ -103,7 +103,7 @@ public class CertifiedTransaction {
    *
    * @param data the data
    */
-  void setData(TransactionData data) {
+  public void setData(TransactionData data) {
     this.data = data;
   }
 

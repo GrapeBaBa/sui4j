@@ -14,41 +14,45 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models;
+package io.sui.models.objects;
 
 
 import java.util.Objects;
 
 /**
- * The type Sui object info.
+ * The type Sui object.
  *
  * @author grapebaba
  * @since 2022.11
  */
-public class SuiObjectInfo extends SuiObjectRef {
+public class SuiObject implements GetObjectResponse.GetObjectResponseDetails {
 
-  private String type;
+  private SuiData data;
 
   private SuiObjectOwner owner;
 
   private String previousTransaction;
 
+  private Long storageRebate;
+
+  private SuiObjectRef reference;
+
   /**
-   * Gets type.
+   * Gets data.
    *
-   * @return the type
+   * @return the data
    */
-  public String getType() {
-    return type;
+  public SuiData getData() {
+    return data;
   }
 
   /**
-   * Sets type.
+   * Sets data.
    *
-   * @param type the type
+   * @param data the data
    */
-  public void setType(String type) {
-    this.type = type;
+  public void setData(SuiData data) {
+    this.data = data;
   }
 
   /**
@@ -87,40 +91,77 @@ public class SuiObjectInfo extends SuiObjectRef {
     this.previousTransaction = previousTransaction;
   }
 
+  /**
+   * Gets storage rebate.
+   *
+   * @return the storage rebate
+   */
+  public Long getStorageRebate() {
+    return storageRebate;
+  }
+
+  /**
+   * Sets storage rebate.
+   *
+   * @param storageRebate the storage rebate
+   */
+  public void setStorageRebate(Long storageRebate) {
+    this.storageRebate = storageRebate;
+  }
+
+  /**
+   * Gets reference.
+   *
+   * @return the reference
+   */
+  public SuiObjectRef getReference() {
+    return reference;
+  }
+
+  /**
+   * Sets reference.
+   *
+   * @param reference the reference
+   */
+  public void setReference(SuiObjectRef reference) {
+    this.reference = reference;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof SuiObjectInfo)) {
+    if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
-    SuiObjectInfo that = (SuiObjectInfo) o;
-    return type.equals(that.type)
-        && owner.equals(that.owner)
-        && previousTransaction.equals(that.previousTransaction);
+    SuiObject suiObject = (SuiObject) o;
+    return data.equals(suiObject.data)
+        && owner.equals(suiObject.owner)
+        && previousTransaction.equals(suiObject.previousTransaction)
+        && storageRebate.equals(suiObject.storageRebate)
+        && reference.equals(suiObject.reference);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), type, owner, previousTransaction);
+    return Objects.hash(data, owner, previousTransaction, storageRebate, reference);
   }
 
   @Override
   public String toString() {
-    return "SuiObjectInfo{"
-        + "type='"
-        + type
-        + '\''
+    return "SuiObject{"
+        + "data="
+        + data
         + ", owner="
         + owner
         + ", previousTransaction='"
         + previousTransaction
         + '\''
-        + "} "
-        + super.toString();
+        + ", storageRebate="
+        + storageRebate
+        + ", reference="
+        + reference
+        + '}';
   }
 }

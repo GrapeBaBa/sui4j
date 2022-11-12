@@ -14,10 +14,10 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models;
+package io.sui.models.transactions;
 
 
-import java.math.BigInteger;
+import io.sui.models.objects.SuiObjectRef;
 import java.util.List;
 
 /**
@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class TransactionData {
 
-  private BigInteger gasBudget;
+  private Long gasBudget;
 
   private SuiObjectRef gasPayment;
 
@@ -41,7 +41,7 @@ public class TransactionData {
    *
    * @return the gas budget
    */
-  BigInteger getGasBudget() {
+  public Long getGasBudget() {
     return gasBudget;
   }
 
@@ -50,7 +50,7 @@ public class TransactionData {
    *
    * @param gasBudget the gas budget
    */
-  void setGasBudget(BigInteger gasBudget) {
+  public void setGasBudget(Long gasBudget) {
     this.gasBudget = gasBudget;
   }
 
@@ -59,7 +59,7 @@ public class TransactionData {
    *
    * @return the gas payment
    */
-  SuiObjectRef getGasPayment() {
+  public SuiObjectRef getGasPayment() {
     return gasPayment;
   }
 
@@ -68,7 +68,7 @@ public class TransactionData {
    *
    * @param gasPayment the gas payment
    */
-  void setGasPayment(SuiObjectRef gasPayment) {
+  public void setGasPayment(SuiObjectRef gasPayment) {
     this.gasPayment = gasPayment;
   }
 
@@ -77,7 +77,7 @@ public class TransactionData {
    *
    * @return the sender
    */
-  String getSender() {
+  public String getSender() {
     return sender;
   }
 
@@ -86,7 +86,7 @@ public class TransactionData {
    *
    * @param sender the sender
    */
-  void setSender(String sender) {
+  public void setSender(String sender) {
     this.sender = sender;
   }
 
@@ -95,7 +95,7 @@ public class TransactionData {
    *
    * @return the transactions
    */
-  List<TransactionKind> getTransactions() {
+  public List<TransactionKind> getTransactions() {
     return transactions;
   }
 
@@ -104,7 +104,7 @@ public class TransactionData {
    *
    * @param transactions the transactions
    */
-  void setTransactions(List<TransactionKind> transactions) {
+  public void setTransactions(List<TransactionKind> transactions) {
     this.transactions = transactions;
   }
 

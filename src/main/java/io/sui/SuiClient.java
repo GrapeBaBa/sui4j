@@ -17,9 +17,9 @@
 package io.sui;
 
 
-import io.sui.models.GetObjectResponse;
-import io.sui.models.SuiObjectInfo;
-import java.math.BigInteger;
+import io.sui.models.objects.GetObjectResponse;
+import io.sui.models.objects.SuiObjectInfo;
+import io.sui.models.transactions.TransactionResponse;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -68,5 +68,13 @@ public interface SuiClient {
    *
    * @return the total transaction number
    */
-  CompletableFuture<BigInteger> getTotalTransactionNumber();
+  CompletableFuture<Long> getTotalTransactionNumber();
+
+  /**
+   * Gets transaction.
+   *
+   * @param digest the digest
+   * @return the transaction
+   */
+  CompletableFuture<TransactionResponse> getTransaction(String digest);
 }

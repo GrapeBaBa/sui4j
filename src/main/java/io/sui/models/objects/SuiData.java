@@ -14,7 +14,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models;
+package io.sui.models.objects;
 
 
 import java.util.Map;
@@ -26,10 +26,10 @@ import java.util.Objects;
  * @author grapebaba
  * @since 2022.11
  */
-public interface SuiData {
+public abstract class SuiData {
 
   /** The type Package object. */
-  class PackageObject implements SuiData {
+  public static class PackageObject extends SuiData {
 
     private String dataType;
 
@@ -101,7 +101,7 @@ public interface SuiData {
   }
 
   /** The type Move object. */
-  class MoveObject implements SuiData {
+  public static class MoveObject extends SuiData {
 
     private String dataType;
 

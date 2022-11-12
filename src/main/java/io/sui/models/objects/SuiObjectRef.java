@@ -14,10 +14,9 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models;
+package io.sui.models.objects;
 
 
-import java.math.BigInteger;
 import java.util.Objects;
 
 /**
@@ -32,7 +31,7 @@ public class SuiObjectRef implements GetObjectResponse.GetObjectResponseDetails 
 
   private String objectId;
 
-  private BigInteger version;
+  private Long version;
 
   /**
    * Gets digest.
@@ -75,7 +74,7 @@ public class SuiObjectRef implements GetObjectResponse.GetObjectResponseDetails 
    *
    * @return the version
    */
-  public BigInteger getVersion() {
+  public Long getVersion() {
     return version;
   }
 
@@ -84,7 +83,7 @@ public class SuiObjectRef implements GetObjectResponse.GetObjectResponseDetails 
    *
    * @param version the version
    */
-  public void setVersion(BigInteger version) {
+  public void setVersion(Long version) {
     this.version = version;
   }
 

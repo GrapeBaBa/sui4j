@@ -24,17 +24,24 @@ import io.sui.jsonrpc.JsonHandler;
 import io.sui.jsonrpc.JsonRpc20Response.Error.ErrorCode;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
-import io.sui.models.GetObjectResponse;
-import io.sui.models.GetObjectResponse.ObjectIdResponseDetails;
-import io.sui.models.ObjectStatus;
 import io.sui.models.SuiApiException;
-import io.sui.models.SuiData;
-import io.sui.models.SuiObject;
-import io.sui.models.SuiObjectInfo;
-import io.sui.models.SuiObjectOwner;
-import io.sui.models.SuiObjectOwner.AddressOwner;
-import io.sui.models.SuiObjectRef;
-import java.math.BigInteger;
+import io.sui.models.events.CoinBalanceChangeEvent;
+import io.sui.models.events.CoinBalanceChangeEvent.BalanceChangeType;
+import io.sui.models.events.EventKind;
+import io.sui.models.events.MoveEvent;
+import io.sui.models.objects.GetObjectResponse;
+import io.sui.models.objects.GetObjectResponse.ObjectIdResponseDetails;
+import io.sui.models.objects.ObjectStatus;
+import io.sui.models.objects.SuiData;
+import io.sui.models.objects.SuiObject;
+import io.sui.models.objects.SuiObjectInfo;
+import io.sui.models.objects.SuiObjectOwner;
+import io.sui.models.objects.SuiObjectOwner.AddressOwner;
+import io.sui.models.objects.SuiObjectRef;
+import io.sui.models.transactions.ExecutionStatus.ExecutionStatusType;
+import io.sui.models.transactions.MoveCall;
+import io.sui.models.transactions.TransactionKind;
+import io.sui.models.transactions.TransactionResponse;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -201,7 +208,73 @@ class SuiClientImplIntTests {
   @Test
   @DisplayName("Test getTotalTransactionNumber.")
   void getTotalTransactionNumber() throws ExecutionException, InterruptedException {
-    CompletableFuture<BigInteger> res = client.getTotalTransactionNumber();
-    assertEquals(BigInteger.valueOf(2L), res.get());
+    CompletableFuture<Long> res = client.getTotalTransactionNumber();
+    assertEquals(2L, res.get());
+  }
+
+  /**
+   * Gets transaction.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getTransaction.")
+  void getTransaction() throws ExecutionException, InterruptedException {
+    CompletableFuture<TransactionResponse> res =
+        client.getTransaction("3Dda4/74LXf6GmOxMxp3qdbW/WdQ6/8EHobZ1LvSyYk=");
+    TransactionResponse transactionResponse = res.get();
+    System.out.println(transactionResponse);
+    assertEquals(1, transactionResponse.getCertificate().getAuthSignInfo().getSignature().size());
+    assertEquals(
+        "g+aeuIw6zZ08o3PP+qX1G7h+KLfGSbM7Rk3ZLHu2QjbYhZViqRchJOhKVbZw0pQI",
+        transactionResponse.getCertificate().getAuthSignInfo().getSignature().get(0));
+    assertEquals(
+        "AIinOofScNIfh4XjXlN1fhtT4hFyQXDZsr72PBG731kC9Xl++yhAQSxZJqkvSPf3LOCQsLYxovYAXSut"
+            + "4wb9uAefzp9vXA0ydchzCCVdlo/OyzDxzcQ/iCDrGuPfEkHJiA==",
+        transactionResponse.getCertificate().getTxSignature());
+    assertEquals(
+        "3Dda4/74LXf6GmOxMxp3qdbW/WdQ6/8EHobZ1LvSyYk=",
+        transactionResponse.getCertificate().getTransactionDigest());
+
+    assertEquals(1, transactionResponse.getCertificate().getData().getTransactions().size());
+    MoveCall call =
+        ((TransactionKind.CallTransactionKind)
+                transactionResponse.getCertificate().getData().getTransactions().get(0))
+            .getCall();
+    assertEquals("devnet_nft", call.getModule());
+    assertEquals("mint", call.getFunction());
+    assertEquals(3, call.getArguments().size());
+    assertEquals(
+        "0x342950ba2451c2f27ed128e591c2b4551e5177c2",
+        transactionResponse.getCertificate().getData().getGasPayment().getObjectId());
+    assertEquals(
+        ExecutionStatusType.success, transactionResponse.getEffects().getStatus().getStatus());
+    assertEquals(
+        "3Dda4/74LXf6GmOxMxp3qdbW/WdQ6/8EHobZ1LvSyYk=",
+        transactionResponse.getEffects().getTransactionDigest());
+    assertEquals(
+        "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+        ((AddressOwner) transactionResponse.getEffects().getMutated().get(0).getOwner())
+            .getAddressOwner());
+    assertEquals(
+        "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+        ((AddressOwner) transactionResponse.getEffects().getCreated().get(0).getOwner())
+            .getAddressOwner());
+    assertEquals(
+        "0xb5e91320d3acc77b4d9e66a218031441b2be1bb3",
+        transactionResponse.getEffects().getCreated().get(0).getReference().getObjectId());
+    assertEquals(3, transactionResponse.getEffects().getEvents().size());
+    CoinBalanceChangeEvent coinBalanceChangeEvent =
+        ((EventKind.CoinBalanceChangeEventKind) transactionResponse.getEffects().getEvents().get(0))
+            .getCoinBalanceChange();
+    assertEquals(BalanceChangeType.Gas, coinBalanceChangeEvent.getChangeType());
+    assertEquals(
+        "0x342950ba2451c2f27ed128e591c2b4551e5177c2", coinBalanceChangeEvent.getCoinObjectId());
+    MoveEvent moveEvent =
+        ((EventKind.MoveEventKind) transactionResponse.getEffects().getEvents().get(2))
+            .getMoveEvent();
+    assertEquals(
+        "0xb5e91320d3acc77b4d9e66a218031441b2be1bb3", moveEvent.getFields().get("object_id"));
   }
 }
