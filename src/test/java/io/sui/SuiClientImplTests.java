@@ -148,6 +148,14 @@ class SuiClientImplTests {
               }
             }
 
+            if ("/sui_getTransactionsInRange".equals(request.getPath())) {
+              JsonRpc20Request jsonRpc20Request =
+                  ((GsonJsonHandler) jsonHandler).getGson().fromJson(body, JsonRpc20Request.class);
+              if ((Long) jsonRpc20Request.getParams().get(1) == 100L) {
+                return getMockResponse("mockdata/getTransactionsInRange.json");
+              }
+            }
+
             return new MockResponse().setResponseCode(404);
           }
         };
@@ -398,5 +406,19 @@ class SuiClientImplTests {
             .getMoveEvent();
     assertEquals(
         "0xb5e91320d3acc77b4d9e66a218031441b2be1bb3", moveEvent.getFields().get("object_id"));
+  }
+
+  /**
+   * Gets transactions in range.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getTransactionsInRange.")
+  void getTransactionsInRange() throws ExecutionException, InterruptedException {
+    CompletableFuture<List<String>> res = client.getTransactionsInRange(0L, 100L);
+    assertEquals(2, res.get().size());
+    assertEquals("GN9sW4hBVNFIc83VIfyn/J1n4a9tU9sQVq3+UkfgEKU=", res.get().get(1));
   }
 }

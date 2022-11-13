@@ -94,6 +94,13 @@ public class SuiClientImpl implements SuiClient {
     return call("/sui_getTransaction", request, new TypeToken<TransactionResponse>() {}.getType());
   }
 
+  @Override
+  public CompletableFuture<List<String>> getTransactionsInRange(Long start, Long end) {
+    final JsonRpc20Request request =
+        createJsonRpc20Request("sui_getTransactionsInRange", Lists.newArrayList(start, end));
+    return call("/sui_getTransactionsInRange", request, new TypeToken<List<String>>() {}.getType());
+  }
+
   private JsonRpc20Request createJsonRpc20Request(String method, List<?> params) {
     final JsonRpc20Request request = new JsonRpc20Request();
     request.setId(jsonRpcClientProvider.nextId());

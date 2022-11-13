@@ -77,4 +77,13 @@ public interface SuiClient {
    * @return the transaction
    */
   CompletableFuture<TransactionResponse> getTransaction(String digest);
+
+  /**
+   * Gets transactions in range.
+   *
+   * @param start the start
+   * @param end the end
+   * @return the transactions in range
+   */
+  CompletableFuture<List<String>> getTransactionsInRange(Long start, Long end);
 }
