@@ -22,6 +22,9 @@ import com.google.common.reflect.TypeToken;
 import io.sui.jsonrpc.JsonRpc20Request;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.models.SuiApiException;
+import io.sui.models.events.EventId;
+import io.sui.models.events.EventQuery;
+import io.sui.models.events.PaginatedEvents;
 import io.sui.models.objects.GetObjectResponse;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.TransactionResponse;
@@ -95,10 +98,19 @@ public class SuiClientImpl implements SuiClient {
   }
 
   @Override
-  public CompletableFuture<List<String>> getTransactionsInRange(Long start, Long end) {
+  public CompletableFuture<List<String>> getTransactionsInRange(long start, long end) {
     final JsonRpc20Request request =
         createJsonRpc20Request("sui_getTransactionsInRange", Lists.newArrayList(start, end));
     return call("/sui_getTransactionsInRange", request, new TypeToken<List<String>>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<PaginatedEvents> getEvents(
+      EventQuery query, EventId cursor, int limit, boolean isDescOrder) {
+    final JsonRpc20Request request =
+        createJsonRpc20Request(
+            "sui_getEvents", Lists.newArrayList(query, cursor, limit, isDescOrder));
+    return call("/sui_getEvents", request, new TypeToken<PaginatedEvents>() {}.getType());
   }
 
   private JsonRpc20Request createJsonRpc20Request(String method, List<?> params) {
