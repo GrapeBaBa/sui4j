@@ -30,7 +30,9 @@ import io.sui.models.SuiApiException;
 import io.sui.models.events.CoinBalanceChangeEvent;
 import io.sui.models.events.CoinBalanceChangeEvent.BalanceChangeType;
 import io.sui.models.events.EventKind;
+import io.sui.models.events.EventQuery.TransactionEventQuery;
 import io.sui.models.events.MoveEvent;
+import io.sui.models.events.PaginatedEvents;
 import io.sui.models.objects.GetObjectResponse;
 import io.sui.models.objects.GetObjectResponse.ObjectIdResponseDetails;
 import io.sui.models.objects.ObjectStatus;
@@ -154,6 +156,15 @@ class SuiClientImplTests {
               if ((Long) jsonRpc20Request.getParams().get(1) == 100L) {
                 return getMockResponse("mockdata/getTransactionsInRange.json");
               }
+            }
+
+            if ("/sui_getEvents".equals(request.getPath())) {
+              JsonRpc20Request jsonRpc20Request =
+                  ((GsonJsonHandler) jsonHandler).getGson().fromJson(body, JsonRpc20Request.class);
+              System.out.println(jsonRpc20Request.getParams().get(0));
+              System.out.println(jsonRpc20Request.getParams().get(1));
+              System.out.println(jsonRpc20Request.getParams().get(2));
+              return getMockResponse("mockdata/getEvents.json");
             }
 
             return new MockResponse().setResponseCode(404);
@@ -420,5 +431,20 @@ class SuiClientImplTests {
     CompletableFuture<List<String>> res = client.getTransactionsInRange(0L, 100L);
     assertEquals(2, res.get().size());
     assertEquals("GN9sW4hBVNFIc83VIfyn/J1n4a9tU9sQVq3+UkfgEKU=", res.get().get(1));
+  }
+
+  /**
+   * Gets events.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getEvents.")
+  void getEvents() throws ExecutionException, InterruptedException {
+    TransactionEventQuery query = new TransactionEventQuery();
+    query.setTransaction("ov1tDrhdOqRW2uFweTbSSTaQbBbnjHWmrsh675lwb0Q=");
+    CompletableFuture<PaginatedEvents> res = client.getEvents(query, null, 1, false);
+    System.out.println(res.get());
   }
 }

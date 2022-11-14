@@ -23,10 +23,17 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.google.gson.ToNumberPolicy;
 import com.google.gson.reflect.TypeToken;
 import io.sui.models.events.EventKind;
+import io.sui.models.events.EventQuery;
+import io.sui.models.events.EventQuery.AllQuery;
+import io.sui.models.events.MoveModule;
 import io.sui.models.objects.GetObjectResponse;
 import io.sui.models.objects.SuiData;
 import io.sui.models.objects.SuiObject;
@@ -327,6 +334,31 @@ public class GsonJsonHandler implements JsonHandler {
     }
   }
 
+  /** The type Move module serializer. */
+  public static class MoveModuleSerializer implements JsonSerializer<MoveModule> {
+
+    @Override
+    public JsonElement serialize(MoveModule src, Type typeOfSrc, JsonSerializationContext context) {
+      JsonObject jsonObject = new JsonObject();
+      jsonObject.addProperty("package", src.getSuiPackage());
+      jsonObject.addProperty("module", src.getModule());
+      return jsonObject;
+    }
+  }
+
+  /** The type Event query serializer. */
+  public class EventQuerySerializer implements JsonSerializer<EventQuery> {
+
+    @Override
+    public JsonElement serialize(EventQuery src, Type typeOfSrc, JsonSerializationContext context) {
+      if (src instanceof EventQuery.AllQuery) {
+        return new JsonPrimitive(AllQuery.All.name());
+      }
+
+      return gson.toJsonTree(src, typeOfSrc);
+    }
+  }
+
   private final Gson gson;
 
   /** Instantiates a new Gson json handler. */
@@ -352,6 +384,8 @@ public class GsonJsonHandler implements JsonHandler {
             .registerTypeAdapter(TransactionKind.class, new TransactionKindDeserializer())
             .registerTypeAdapter(
                 AuthorityQuorumSignInfo.class, new AuthorityQuorumSignInfoDeserializer())
+            .registerTypeAdapter(MoveModule.class, new MoveModuleSerializer())
+            .registerTypeAdapter(EventQuery.class, new EventQuerySerializer())
             .create();
   }
 

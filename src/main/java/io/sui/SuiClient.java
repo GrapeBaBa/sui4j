@@ -17,6 +17,9 @@
 package io.sui;
 
 
+import io.sui.models.events.EventId;
+import io.sui.models.events.EventQuery;
+import io.sui.models.events.PaginatedEvents;
 import io.sui.models.objects.GetObjectResponse;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.TransactionResponse;
@@ -85,5 +88,8 @@ public interface SuiClient {
    * @param end the end
    * @return the transactions in range
    */
-  CompletableFuture<List<String>> getTransactionsInRange(Long start, Long end);
+  CompletableFuture<List<String>> getTransactionsInRange(long start, long end);
+
+  CompletableFuture<PaginatedEvents> getEvents(
+      EventQuery query, EventId cursor, int limit, boolean isDescOrder);
 }
