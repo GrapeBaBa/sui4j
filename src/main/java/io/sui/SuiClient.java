@@ -17,6 +17,7 @@
 package io.sui;
 
 
+import io.sui.models.CommitteeInfoResponse;
 import io.sui.models.events.EventId;
 import io.sui.models.events.EventQuery;
 import io.sui.models.events.PaginatedEvents;
@@ -88,8 +89,25 @@ public interface SuiClient {
    * @param end the end
    * @return the transactions in range
    */
-  CompletableFuture<List<String>> getTransactionsInRange(long start, long end);
+  CompletableFuture<List<String>> getTransactionsInRange(Long start, Long end);
 
+  /**
+   * Gets events.
+   *
+   * @param query the query
+   * @param cursor the cursor
+   * @param limit the limit
+   * @param isDescOrder the is desc order
+   * @return the events
+   */
   CompletableFuture<PaginatedEvents> getEvents(
       EventQuery query, EventId cursor, int limit, boolean isDescOrder);
+
+  /**
+   * Gets committee info.
+   *
+   * @param epoch the epoch
+   * @return the committee info
+   */
+  CompletableFuture<CommitteeInfoResponse> getCommitteeInfo(Long epoch);
 }

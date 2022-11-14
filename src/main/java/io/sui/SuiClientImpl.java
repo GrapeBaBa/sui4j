@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import io.sui.jsonrpc.JsonRpc20Request;
 import io.sui.jsonrpc.JsonRpcClientProvider;
+import io.sui.models.CommitteeInfoResponse;
 import io.sui.models.SuiApiException;
 import io.sui.models.events.EventId;
 import io.sui.models.events.EventQuery;
@@ -98,7 +99,7 @@ public class SuiClientImpl implements SuiClient {
   }
 
   @Override
-  public CompletableFuture<List<String>> getTransactionsInRange(long start, long end) {
+  public CompletableFuture<List<String>> getTransactionsInRange(Long start, Long end) {
     final JsonRpc20Request request =
         createJsonRpc20Request("sui_getTransactionsInRange", Lists.newArrayList(start, end));
     return call("/sui_getTransactionsInRange", request, new TypeToken<List<String>>() {}.getType());
@@ -111,6 +112,14 @@ public class SuiClientImpl implements SuiClient {
         createJsonRpc20Request(
             "sui_getEvents", Lists.newArrayList(query, cursor, limit, isDescOrder));
     return call("/sui_getEvents", request, new TypeToken<PaginatedEvents>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<CommitteeInfoResponse> getCommitteeInfo(Long epoch) {
+    final JsonRpc20Request request =
+        createJsonRpc20Request("sui_getCommitteeInfo", Lists.newArrayList(epoch));
+    return call(
+        "/sui_getCommitteeInfo", request, new TypeToken<CommitteeInfoResponse>() {}.getType());
   }
 
   private JsonRpc20Request createJsonRpc20Request(String method, List<?> params) {

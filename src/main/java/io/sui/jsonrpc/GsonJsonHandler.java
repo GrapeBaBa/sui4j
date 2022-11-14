@@ -30,6 +30,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.ToNumberPolicy;
 import com.google.gson.reflect.TypeToken;
+import io.sui.models.CommitteeInfo;
 import io.sui.models.events.EventKind;
 import io.sui.models.events.EventQuery;
 import io.sui.models.events.EventQuery.AllQuery;
@@ -359,6 +360,21 @@ public class GsonJsonHandler implements JsonHandler {
     }
   }
 
+  /** The type Committee info deserializer. */
+  public class CommitteeInfoDeserializer implements JsonDeserializer<CommitteeInfo> {
+
+    @Override
+    public CommitteeInfo deserialize(
+        JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        throws JsonParseException {
+      List<JsonElement> committeeInfoStr = json.getAsJsonArray().asList();
+      CommitteeInfo committeeInfo = new CommitteeInfo();
+      committeeInfo.setAuthorityName(committeeInfoStr.get(0).getAsString());
+      committeeInfo.setStakeUnit(committeeInfoStr.get(1).getAsLong());
+      return committeeInfo;
+    }
+  }
+
   private final Gson gson;
 
   /** Instantiates a new Gson json handler. */
@@ -386,6 +402,7 @@ public class GsonJsonHandler implements JsonHandler {
                 AuthorityQuorumSignInfo.class, new AuthorityQuorumSignInfoDeserializer())
             .registerTypeAdapter(MoveModule.class, new MoveModuleSerializer())
             .registerTypeAdapter(EventQuery.class, new EventQuerySerializer())
+            .registerTypeAdapter(CommitteeInfo.class, new CommitteeInfoDeserializer())
             .create();
   }
 

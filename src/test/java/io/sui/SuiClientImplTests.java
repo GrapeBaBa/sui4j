@@ -26,6 +26,7 @@ import io.sui.jsonrpc.JsonRpc20Request;
 import io.sui.jsonrpc.JsonRpc20Response.Error.ErrorCode;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
+import io.sui.models.CommitteeInfoResponse;
 import io.sui.models.SuiApiException;
 import io.sui.models.events.CoinBalanceChangeEvent;
 import io.sui.models.events.CoinBalanceChangeEvent.BalanceChangeType;
@@ -165,6 +166,10 @@ class SuiClientImplTests {
               System.out.println(jsonRpc20Request.getParams().get(1));
               System.out.println(jsonRpc20Request.getParams().get(2));
               return getMockResponse("mockdata/getEvents.json");
+            }
+
+            if ("/sui_getCommitteeInfo".equals(request.getPath())) {
+              return getMockResponse("mockdata/getCommitteeInfo.json");
             }
 
             return new MockResponse().setResponseCode(404);
@@ -446,5 +451,21 @@ class SuiClientImplTests {
     query.setTransaction("ov1tDrhdOqRW2uFweTbSSTaQbBbnjHWmrsh675lwb0Q=");
     CompletableFuture<PaginatedEvents> res = client.getEvents(query, null, 1, false);
     System.out.println(res.get());
+  }
+
+  /**
+   * Gets committee info.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getCommitteeInfo.")
+  void getCommitteeInfo() throws ExecutionException, InterruptedException {
+    CompletableFuture<CommitteeInfoResponse> res = client.getCommitteeInfo(1L);
+    System.out.println(res.get());
+    assertEquals(4, res.get().getCommittee_info().size());
+    CompletableFuture<CommitteeInfoResponse> res1 = client.getCommitteeInfo(null);
+    assertEquals(4, res1.get().getCommittee_info().size());
   }
 }
