@@ -27,10 +27,12 @@ import io.sui.models.events.EventId;
 import io.sui.models.events.EventQuery;
 import io.sui.models.events.PaginatedEvents;
 import io.sui.models.objects.GetObjectResponse;
+import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.TransactionResponse;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -112,6 +114,18 @@ public class SuiClientImpl implements SuiClient {
         createJsonRpc20Request(
             "sui_getEvents", Lists.newArrayList(query, cursor, limit, isDescOrder));
     return call("/sui_getEvents", request, new TypeToken<PaginatedEvents>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<Map<String, MoveNormalizedModule>> getNormalizedMoveModulesByPackage(
+      String packageId) {
+    final JsonRpc20Request request =
+        createJsonRpc20Request(
+            "sui_getNormalizedMoveModulesByPackage", Lists.newArrayList(packageId));
+    return call(
+        "/sui_getNormalizedMoveModulesByPackage",
+        request,
+        new TypeToken<Map<String, MoveNormalizedModule>>() {}.getType());
   }
 
   @Override

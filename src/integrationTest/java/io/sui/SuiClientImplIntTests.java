@@ -28,9 +28,11 @@ import io.sui.models.SuiApiException;
 import io.sui.models.events.EventQuery.TransactionEventQuery;
 import io.sui.models.events.PaginatedEvents;
 import io.sui.models.objects.GetObjectResponse;
+import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.TransactionResponse;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.BeforeAll;
@@ -51,6 +53,7 @@ class SuiClientImplIntTests {
 
   private static SuiClient client;
 
+  /** Before all. */
   @BeforeAll
   static void beforeAll() {
     JsonRpcClientProvider jsonRpcClientProvider =
@@ -313,6 +316,20 @@ class SuiClientImplIntTests {
     TransactionEventQuery query = new TransactionEventQuery();
     query.setTransaction("ov1tDrhdOqRW2uFweTbSSTaQbBbnjHWmrsh675lwb0Q=");
     CompletableFuture<PaginatedEvents> res = client.getEvents(query, null, 1, false);
+    System.out.println(res.get());
+  }
+
+  /**
+   * Gets normalized move modules by package.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getNormalizedMoveModulesByPackage.")
+  void getNormalizedMoveModulesByPackage() throws ExecutionException, InterruptedException {
+    CompletableFuture<Map<String, MoveNormalizedModule>> res =
+        client.getNormalizedMoveModulesByPackage("0x0000000000000000000000000000000000000002");
     System.out.println(res.get());
   }
 
