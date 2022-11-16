@@ -22,6 +22,7 @@ import io.sui.models.events.EventId;
 import io.sui.models.events.EventQuery;
 import io.sui.models.events.PaginatedEvents;
 import io.sui.models.objects.GetObjectResponse;
+import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.TransactionResponse;
@@ -121,4 +122,15 @@ public interface SuiClient {
    * @return the committee info
    */
   CompletableFuture<CommitteeInfoResponse> getCommitteeInfo(Long epoch);
+
+  /**
+   * Gets move function arg types.
+   *
+   * @param suiPackage the sui package
+   * @param module the module
+   * @param function the function
+   * @return the move function arg types
+   */
+  CompletableFuture<List<MoveFunctionArgType>> getMoveFunctionArgTypes(
+      String suiPackage, String module, String function);
 }

@@ -16,6 +16,7 @@
 
 package io.sui;
 
+import static io.sui.models.objects.MoveFunctionArgType.ObjectValueKindMoveFunctionArgType.ObjectValueKind.ByMutableReference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,6 +39,9 @@ import io.sui.models.events.MoveEvent;
 import io.sui.models.events.PaginatedEvents;
 import io.sui.models.objects.GetObjectResponse;
 import io.sui.models.objects.GetObjectResponse.ObjectIdResponseDetails;
+import io.sui.models.objects.MoveFunctionArgType;
+import io.sui.models.objects.MoveFunctionArgType.ObjectValueKindMoveFunctionArgType;
+import io.sui.models.objects.MoveFunctionArgType.PureFunctionMoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveVisibility;
 import io.sui.models.objects.ObjectStatus;
@@ -180,6 +184,10 @@ class SuiClientImplTests {
 
             if ("/sui_getCommitteeInfo".equals(request.getPath())) {
               return getMockResponse("mockdata/getCommitteeInfo.json");
+            }
+
+            if ("/sui_getMoveFunctionArgTypes".equals(request.getPath())) {
+              return getMockResponse("mockdata/getMoveFunctionArgTypes.json");
             }
 
             return new MockResponse().setResponseCode(404);
@@ -509,5 +517,22 @@ class SuiClientImplTests {
     assertEquals(4, res.get().getCommittee_info().size());
     CompletableFuture<CommitteeInfoResponse> res1 = client.getCommitteeInfo(null);
     assertEquals(4, res1.get().getCommittee_info().size());
+  }
+
+  /**
+   * Gets move function arg types.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getMoveFunctionArgTypes.")
+  void getMoveFunctionArgTypes() throws ExecutionException, InterruptedException {
+    CompletableFuture<List<MoveFunctionArgType>> res =
+        client.getMoveFunctionArgTypes("0x0000000000000000000000000000000000000002", "bag", "add");
+    System.out.println(res.get());
+    assertEquals(
+        ByMutableReference, ((ObjectValueKindMoveFunctionArgType) res.get().get(0)).getObject());
+    assertEquals(PureFunctionMoveFunctionArgType.Pure, res.get().get(1));
   }
 }

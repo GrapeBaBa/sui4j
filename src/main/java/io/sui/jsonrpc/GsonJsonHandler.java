@@ -36,6 +36,9 @@ import io.sui.models.events.EventQuery;
 import io.sui.models.events.EventQuery.AllQuery;
 import io.sui.models.events.MoveModule;
 import io.sui.models.objects.GetObjectResponse;
+import io.sui.models.objects.MoveFunctionArgType;
+import io.sui.models.objects.MoveFunctionArgType.ObjectValueKindMoveFunctionArgType;
+import io.sui.models.objects.MoveFunctionArgType.PureFunctionMoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedType;
 import io.sui.models.objects.MoveNormalizedType.MoveNormalizedStructType;
 import io.sui.models.objects.MoveNormalizedType.MoveNormalizedTypeParameterType;
@@ -418,6 +421,25 @@ public class GsonJsonHandler implements JsonHandler {
     }
   }
 
+  /** The type Move function arg type deserializer. */
+  public class MoveFunctionArgTypeDeserializer implements JsonDeserializer<MoveFunctionArgType> {
+
+    @Override
+    public MoveFunctionArgType deserialize(
+        JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        throws JsonParseException {
+      if (json.isJsonPrimitive()) {
+        return PureFunctionMoveFunctionArgType.Pure;
+      }
+
+      if (json.isJsonObject()) {
+        return gson.fromJson(json, ObjectValueKindMoveFunctionArgType.class);
+      }
+
+      return null;
+    }
+  }
+
   private final Gson gson;
 
   /** Instantiates a new Gson json handler. */
@@ -447,6 +469,7 @@ public class GsonJsonHandler implements JsonHandler {
             .registerTypeAdapter(EventQuery.class, new EventQuerySerializer())
             .registerTypeAdapter(MoveNormalizedType.class, new MoveNormalizedTypeDeserializer())
             .registerTypeAdapter(CommitteeInfo.class, new CommitteeInfoDeserializer())
+            .registerTypeAdapter(MoveFunctionArgType.class, new MoveFunctionArgTypeDeserializer())
             .create();
   }
 
