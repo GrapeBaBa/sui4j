@@ -22,9 +22,11 @@ import io.sui.models.events.EventId;
 import io.sui.models.events.EventQuery;
 import io.sui.models.events.PaginatedEvents;
 import io.sui.models.objects.GetObjectResponse;
+import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.TransactionResponse;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -102,6 +104,15 @@ public interface SuiClient {
    */
   CompletableFuture<PaginatedEvents> getEvents(
       EventQuery query, EventId cursor, int limit, boolean isDescOrder);
+
+  /**
+   * Gets normalized move modules by package.
+   *
+   * @param packageId the package id
+   * @return the normalized move modules by package
+   */
+  CompletableFuture<Map<String, MoveNormalizedModule>> getNormalizedMoveModulesByPackage(
+      String packageId);
 
   /**
    * Gets committee info.

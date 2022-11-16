@@ -36,6 +36,13 @@ import io.sui.models.events.EventQuery;
 import io.sui.models.events.EventQuery.AllQuery;
 import io.sui.models.events.MoveModule;
 import io.sui.models.objects.GetObjectResponse;
+import io.sui.models.objects.MoveNormalizedType;
+import io.sui.models.objects.MoveNormalizedType.MoveNormalizedStructType;
+import io.sui.models.objects.MoveNormalizedType.MoveNormalizedTypeParameterType;
+import io.sui.models.objects.MoveNormalizedType.MutableReferenceMoveNormalizedType;
+import io.sui.models.objects.MoveNormalizedType.ReferenceMoveNormalizedType;
+import io.sui.models.objects.MoveNormalizedType.TypeMoveNormalizedType;
+import io.sui.models.objects.MoveNormalizedType.VectorReferenceMoveNormalizedType;
 import io.sui.models.objects.SuiData;
 import io.sui.models.objects.SuiObject;
 import io.sui.models.objects.SuiObjectOwner;
@@ -375,6 +382,42 @@ public class GsonJsonHandler implements JsonHandler {
     }
   }
 
+  /** The type Move normalized type deserializer. */
+  public class MoveNormalizedTypeDeserializer implements JsonDeserializer<MoveNormalizedType> {
+
+    @Override
+    public MoveNormalizedType deserialize(
+        JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        throws JsonParseException {
+      if (json.isJsonPrimitive()) {
+        return TypeMoveNormalizedType.valueOf(json.getAsString());
+      }
+      if (json.isJsonObject()) {
+        if (json.getAsJsonObject().get("TypeParameter") != null
+            && !json.getAsJsonObject().get("TypeParameter").isJsonNull()) {
+          return gson.fromJson(json, MoveNormalizedTypeParameterType.class);
+        }
+        if (json.getAsJsonObject().get("Reference") != null
+            && !json.getAsJsonObject().get("Reference").isJsonNull()) {
+          return gson.fromJson(json, ReferenceMoveNormalizedType.class);
+        }
+        if (json.getAsJsonObject().get("MutableReference") != null
+            && !json.getAsJsonObject().get("MutableReference").isJsonNull()) {
+          return gson.fromJson(json, MutableReferenceMoveNormalizedType.class);
+        }
+        if (json.getAsJsonObject().get("Vector") != null
+            && !json.getAsJsonObject().get("Vector").isJsonNull()) {
+          return gson.fromJson(json, VectorReferenceMoveNormalizedType.class);
+        }
+        if (json.getAsJsonObject().get("Struct") != null
+            && !json.getAsJsonObject().get("Struct").isJsonNull()) {
+          return gson.fromJson(json, MoveNormalizedStructType.class);
+        }
+      }
+      return null;
+    }
+  }
+
   private final Gson gson;
 
   /** Instantiates a new Gson json handler. */
@@ -402,6 +445,7 @@ public class GsonJsonHandler implements JsonHandler {
                 AuthorityQuorumSignInfo.class, new AuthorityQuorumSignInfoDeserializer())
             .registerTypeAdapter(MoveModule.class, new MoveModuleSerializer())
             .registerTypeAdapter(EventQuery.class, new EventQuerySerializer())
+            .registerTypeAdapter(MoveNormalizedType.class, new MoveNormalizedTypeDeserializer())
             .registerTypeAdapter(CommitteeInfo.class, new CommitteeInfoDeserializer())
             .create();
   }

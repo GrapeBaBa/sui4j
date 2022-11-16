@@ -17,6 +17,7 @@
 package io.sui;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.io.Resources;
@@ -31,11 +32,14 @@ import io.sui.models.SuiApiException;
 import io.sui.models.events.CoinBalanceChangeEvent;
 import io.sui.models.events.CoinBalanceChangeEvent.BalanceChangeType;
 import io.sui.models.events.EventKind;
+import io.sui.models.events.EventKind.CoinBalanceChangeEventKind;
 import io.sui.models.events.EventQuery.TransactionEventQuery;
 import io.sui.models.events.MoveEvent;
 import io.sui.models.events.PaginatedEvents;
 import io.sui.models.objects.GetObjectResponse;
 import io.sui.models.objects.GetObjectResponse.ObjectIdResponseDetails;
+import io.sui.models.objects.MoveNormalizedModule;
+import io.sui.models.objects.MoveVisibility;
 import io.sui.models.objects.ObjectStatus;
 import io.sui.models.objects.SuiData;
 import io.sui.models.objects.SuiObject;
@@ -48,9 +52,11 @@ import io.sui.models.transactions.MoveCall;
 import io.sui.models.transactions.TransactionKind;
 import io.sui.models.transactions.TransactionResponse;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import okhttp3.mockwebserver.Dispatcher;
@@ -166,6 +172,10 @@ class SuiClientImplTests {
               System.out.println(jsonRpc20Request.getParams().get(1));
               System.out.println(jsonRpc20Request.getParams().get(2));
               return getMockResponse("mockdata/getEvents.json");
+            }
+
+            if ("/sui_getNormalizedMoveModulesByPackage".equals(request.getPath())) {
+              return getMockResponse("mockdata/getNormalizedMoveModulesByPackage.json");
             }
 
             if ("/sui_getCommitteeInfo".equals(request.getPath())) {
@@ -451,6 +461,38 @@ class SuiClientImplTests {
     query.setTransaction("ov1tDrhdOqRW2uFweTbSSTaQbBbnjHWmrsh675lwb0Q=");
     CompletableFuture<PaginatedEvents> res = client.getEvents(query, null, 1, false);
     System.out.println(res.get());
+    assertEquals(1, res.get().getData().size());
+    assertEquals(0, res.get().getNextCursor().getTxSeq());
+    assertEquals(1, res.get().getNextCursor().getEventSeq());
+    assertEquals(
+        BigInteger.valueOf(-1062L),
+        ((CoinBalanceChangeEventKind) res.get().getData().get(0).getEvent())
+            .getCoinBalanceChange()
+            .getAmount());
+  }
+
+  /**
+   * Gets normalized move modules by package.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getNormalizedMoveModulesByPackage.")
+  void getNormalizedMoveModulesByPackage() throws ExecutionException, InterruptedException {
+    CompletableFuture<Map<String, MoveNormalizedModule>> res =
+        client.getNormalizedMoveModulesByPackage("0x0000000000000000000000000000000000000002");
+    System.out.println(res.get());
+    assertEquals(6, res.get().get("bag").getFile_format_version());
+    assertEquals(
+        "Store", res.get().get("bag").getStructs().get("Bag").getAbilities().getAbilities().get(0));
+
+    assertEquals("0x2", res.get().get("validator_set").getFriends().get(0).getAddress());
+    assertEquals(
+        MoveVisibility.Friend,
+        res.get().get("validator_set").getExposed_functions().get("advance_epoch").getVisibility());
+    assertFalse(
+        res.get().get("validator_set").getExposed_functions().get("advance_epoch").isIs_entry());
   }
 
   /**
