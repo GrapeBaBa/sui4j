@@ -28,6 +28,7 @@ import io.sui.models.SuiApiException;
 import io.sui.models.events.EventQuery.TransactionEventQuery;
 import io.sui.models.events.PaginatedEvents;
 import io.sui.models.objects.GetObjectResponse;
+import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.TransactionResponse;
@@ -347,5 +348,22 @@ class SuiClientImplIntTests {
     assertEquals(4, res.get().getCommittee_info().size());
     CompletableFuture<CommitteeInfoResponse> res1 = client.getCommitteeInfo(null);
     assertEquals(4, res1.get().getCommittee_info().size());
+  }
+
+  /**
+   * Gets move function arg types.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getMoveFunctionArgTypes.")
+  void getMoveFunctionArgTypes() throws ExecutionException, InterruptedException {
+    CompletableFuture<List<MoveFunctionArgType>> res =
+        client.getMoveFunctionArgTypes("0x0000000000000000000000000000000000000002", "bag", "add");
+    System.out.println(res.get());
+    //    assertEquals(ByMutableReference,
+    //        ((ObjectValueKindMoveFunctionArgType) res.get().get(0)).getObject());
+    //    assertEquals(PureFunctionMoveFunctionArgType.Pure, res.get().get(1));
   }
 }
