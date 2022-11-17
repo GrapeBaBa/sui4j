@@ -28,6 +28,7 @@ import io.sui.models.events.EventQuery;
 import io.sui.models.events.PaginatedEvents;
 import io.sui.models.objects.GetObjectResponse;
 import io.sui.models.objects.MoveFunctionArgType;
+import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.TransactionResponse;
@@ -147,6 +148,18 @@ public class SuiClientImpl implements SuiClient {
         "/sui_getMoveFunctionArgTypes",
         request,
         new TypeToken<List<MoveFunctionArgType>>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<MoveNormalizedFunction> getNormalizedMoveFunction(
+      String suiPackage, String module, String function) {
+    final JsonRpc20Request request =
+        createJsonRpc20Request(
+            "sui_getNormalizedMoveFunction", Lists.newArrayList(suiPackage, module, function));
+    return call(
+        "/sui_getNormalizedMoveFunction",
+        request,
+        new TypeToken<MoveNormalizedFunction>() {}.getType());
   }
 
   private JsonRpc20Request createJsonRpc20Request(String method, List<?> params) {
