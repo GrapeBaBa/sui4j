@@ -25,6 +25,7 @@ import io.sui.models.objects.GetObjectResponse;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
+import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.TransactionResponse;
 import java.util.List;
@@ -154,4 +155,7 @@ public interface SuiClient {
    * @return the normalized move module
    */
   CompletableFuture<MoveNormalizedModule> getNormalizedMoveModule(String suiPackage, String module);
+
+  CompletableFuture<MoveNormalizedStruct> getNormalizedMoveStruct(
+      String suiPackage, String module, String struct);
 }

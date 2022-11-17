@@ -44,8 +44,10 @@ import io.sui.models.objects.MoveFunctionArgType.ObjectValueKindMoveFunctionArgT
 import io.sui.models.objects.MoveFunctionArgType.PureFunctionMoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
+import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.MoveNormalizedType.MoveNormalizedStructType;
 import io.sui.models.objects.MoveNormalizedType.MutableReferenceMoveNormalizedType;
+import io.sui.models.objects.MoveNormalizedType.TypeMoveNormalizedType;
 import io.sui.models.objects.MoveVisibility;
 import io.sui.models.objects.ObjectStatus;
 import io.sui.models.objects.SuiData;
@@ -199,6 +201,10 @@ class SuiClientImplTests {
 
             if ("/sui_getNormalizedMoveModule".equals(request.getPath())) {
               return getMockResponse("mockdata/getNormalizedMoveModule.json");
+            }
+
+            if ("/sui_getNormalizedMoveStruct".equals(request.getPath())) {
+              return getMockResponse("mockdata/getNormalizedMoveStruct.json");
             }
             return new MockResponse().setResponseCode(404);
           }
@@ -588,5 +594,22 @@ class SuiClientImplTests {
     assertEquals(
         MoveVisibility.Public, res.get().getExposed_functions().get("borrow").getVisibility());
     assertEquals("Store", res.get().getStructs().get("Bag").getAbilities().getAbilities().get(0));
+  }
+
+  /**
+   * Gets normalized move struct.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getNormalizedMoveStruct.")
+  void getNormalizedMoveStruct() throws ExecutionException, InterruptedException {
+    CompletableFuture<MoveNormalizedStruct> res =
+        client.getNormalizedMoveStruct("0x0000000000000000000000000000000000000002", "bag", "Bag");
+    System.out.println(res.get());
+    assertEquals("Store", res.get().getAbilities().getAbilities().get(0));
+    assertEquals("size", res.get().getFields().get(1).getName());
+    assertEquals(TypeMoveNormalizedType.U64, res.get().getFields().get(1).getType_());
   }
 }

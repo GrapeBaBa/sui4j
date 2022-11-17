@@ -1,0 +1,30 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "abilities": {
+      "abilities": [
+        "Store",
+        "Key"
+      ]
+    },
+    "type_parameters": [],
+    "fields": [
+      {
+        "name": "id",
+        "type_": {
+          "Struct": {
+            "address": "0x2",
+            "module": "object",
+            "name": "UID",
+            "type_arguments": []
+          }
+        }
+      },
+      {
+        "name": "size",
+        "type_": "U64"
+      }
+    ]
+  },
+  "id": 1
+}
