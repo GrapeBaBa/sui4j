@@ -42,7 +42,10 @@ import io.sui.models.objects.GetObjectResponse.ObjectIdResponseDetails;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveFunctionArgType.ObjectValueKindMoveFunctionArgType;
 import io.sui.models.objects.MoveFunctionArgType.PureFunctionMoveFunctionArgType;
+import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
+import io.sui.models.objects.MoveNormalizedType.MoveNormalizedStructType;
+import io.sui.models.objects.MoveNormalizedType.MutableReferenceMoveNormalizedType;
 import io.sui.models.objects.MoveVisibility;
 import io.sui.models.objects.ObjectStatus;
 import io.sui.models.objects.SuiData;
@@ -188,6 +191,10 @@ class SuiClientImplTests {
 
             if ("/sui_getMoveFunctionArgTypes".equals(request.getPath())) {
               return getMockResponse("mockdata/getMoveFunctionArgTypes.json");
+            }
+
+            if ("/sui_getNormalizedMoveFunction".equals(request.getPath())) {
+              return getMockResponse("mockdata/getNormalizedMoveFunction.json");
             }
 
             return new MockResponse().setResponseCode(404);
@@ -534,5 +541,30 @@ class SuiClientImplTests {
     assertEquals(
         ByMutableReference, ((ObjectValueKindMoveFunctionArgType) res.get().get(0)).getObject());
     assertEquals(PureFunctionMoveFunctionArgType.Pure, res.get().get(1));
+  }
+
+  /**
+   * Gets normalized move function.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getNormalizedMoveFunction.")
+  void getNormalizedMoveFunction() throws ExecutionException, InterruptedException {
+    CompletableFuture<MoveNormalizedFunction> res =
+        client.getNormalizedMoveFunction(
+            "0x0000000000000000000000000000000000000002", "bag", "add");
+    System.out.println(res.get());
+    assertEquals(MoveVisibility.Public, res.get().getVisibility());
+    assertFalse(res.get().isIs_entry());
+    assertEquals("Copy", res.get().getType_parameters().get(0).getAbilities().get(0));
+    assertEquals(
+        "0x2",
+        ((MoveNormalizedStructType)
+                ((MutableReferenceMoveNormalizedType) res.get().getParameters().get(0))
+                    .getMutableReference())
+            .getStruct()
+            .getAddress());
   }
 }

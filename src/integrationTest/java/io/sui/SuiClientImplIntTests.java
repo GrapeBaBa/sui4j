@@ -29,6 +29,7 @@ import io.sui.models.events.EventQuery.TransactionEventQuery;
 import io.sui.models.events.PaginatedEvents;
 import io.sui.models.objects.GetObjectResponse;
 import io.sui.models.objects.MoveFunctionArgType;
+import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.TransactionResponse;
@@ -365,5 +366,20 @@ class SuiClientImplIntTests {
     //    assertEquals(ByMutableReference,
     //        ((ObjectValueKindMoveFunctionArgType) res.get().get(0)).getObject());
     //    assertEquals(PureFunctionMoveFunctionArgType.Pure, res.get().get(1));
+  }
+
+  /**
+   * Gets normalized move function.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getNormalizedMoveFunction.")
+  void getNormalizedMoveFunction() throws ExecutionException, InterruptedException {
+    CompletableFuture<MoveNormalizedFunction> res =
+        client.getNormalizedMoveFunction(
+            "0x0000000000000000000000000000000000000002", "bag", "add");
+    System.out.println(res.get());
   }
 }

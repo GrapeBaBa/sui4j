@@ -1,0 +1,41 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "visibility": "Public",
+    "is_entry": false,
+    "type_parameters": [
+      {
+        "abilities": [
+          "Copy",
+          "Drop",
+          "Store"
+        ]
+      },
+      {
+        "abilities": [
+          "Store"
+        ]
+      }
+    ],
+    "parameters": [
+      {
+        "MutableReference": {
+          "Struct": {
+            "address": "0x2",
+            "module": "bag",
+            "name": "Bag",
+            "type_arguments": []
+          }
+        }
+      },
+      {
+        "TypeParameter": 0
+      },
+      {
+        "TypeParameter": 1
+      }
+    ],
+    "return_": []
+  },
+  "id": 1
+}
