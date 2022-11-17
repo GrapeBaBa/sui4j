@@ -30,6 +30,7 @@ import io.sui.models.objects.GetObjectResponse;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
+import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.TransactionResponse;
 import java.lang.reflect.Type;
@@ -172,6 +173,18 @@ public class SuiClientImpl implements SuiClient {
         "/sui_getNormalizedMoveModule",
         request,
         new TypeToken<MoveNormalizedModule>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<MoveNormalizedStruct> getNormalizedMoveStruct(
+      String suiPackage, String module, String struct) {
+    final JsonRpc20Request request =
+        createJsonRpc20Request(
+            "sui_getNormalizedMoveStruct", Lists.newArrayList(suiPackage, module, struct));
+    return call(
+        "/sui_getNormalizedMoveStruct",
+        request,
+        new TypeToken<MoveNormalizedStruct>() {}.getType());
   }
 
   private JsonRpc20Request createJsonRpc20Request(String method, List<?> params) {

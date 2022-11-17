@@ -31,6 +31,7 @@ import io.sui.models.objects.GetObjectResponse;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
+import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.TransactionResponse;
 import java.util.List;
@@ -401,5 +402,22 @@ class SuiClientImplIntTests {
     //        res.get().getExposed_functions().get("borrow").getVisibility());
     //    assertEquals("Store",
     // res.get().getStructs().get("Bag").getAbilities().getAbilities().get(0));
+  }
+
+  /**
+   * Gets normalized move struct.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getNormalizedMoveStruct.")
+  void getNormalizedMoveStruct() throws ExecutionException, InterruptedException {
+    CompletableFuture<MoveNormalizedStruct> res =
+        client.getNormalizedMoveStruct("0x0000000000000000000000000000000000000002", "bag", "Bag");
+    System.out.println(res.get());
+    //    assertEquals("Store", res.get().getAbilities().getAbilities().get(0));
+    //    assertEquals("size", res.get().getFields().get(1).getName());
+    //    assertEquals(TypeMoveNormalizedType.U64, res.get().getFields().get(1).getType_());
   }
 }
