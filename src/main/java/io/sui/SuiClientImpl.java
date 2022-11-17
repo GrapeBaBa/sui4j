@@ -162,6 +162,18 @@ public class SuiClientImpl implements SuiClient {
         new TypeToken<MoveNormalizedFunction>() {}.getType());
   }
 
+  @Override
+  public CompletableFuture<MoveNormalizedModule> getNormalizedMoveModule(
+      String suiPackage, String module) {
+    final JsonRpc20Request request =
+        createJsonRpc20Request(
+            "sui_getNormalizedMoveModule", Lists.newArrayList(suiPackage, module));
+    return call(
+        "/sui_getNormalizedMoveModule",
+        request,
+        new TypeToken<MoveNormalizedModule>() {}.getType());
+  }
+
   private JsonRpc20Request createJsonRpc20Request(String method, List<?> params) {
     final JsonRpc20Request request = new JsonRpc20Request();
     request.setId(jsonRpcClientProvider.nextId());

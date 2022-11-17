@@ -1,0 +1,314 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "file_format_version": 6,
+    "address": "0x2",
+    "name": "bag",
+    "friends": [],
+    "structs": {
+      "Bag": {
+        "abilities": {
+          "abilities": [
+            "Store",
+            "Key"
+          ]
+        },
+        "type_parameters": [],
+        "fields": [
+          {
+            "name": "id",
+            "type_": {
+              "Struct": {
+                "address": "0x2",
+                "module": "object",
+                "name": "UID",
+                "type_arguments": []
+              }
+            }
+          },
+          {
+            "name": "size",
+            "type_": "U64"
+          }
+        ]
+      }
+    },
+    "exposed_functions": {
+      "add": {
+        "visibility": "Public",
+        "is_entry": false,
+        "type_parameters": [
+          {
+            "abilities": [
+              "Copy",
+              "Drop",
+              "Store"
+            ]
+          },
+          {
+            "abilities": [
+              "Store"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "MutableReference": {
+              "Struct": {
+                "address": "0x2",
+                "module": "bag",
+                "name": "Bag",
+                "type_arguments": []
+              }
+            }
+          },
+          {
+            "TypeParameter": 0
+          },
+          {
+            "TypeParameter": 1
+          }
+        ],
+        "return_": []
+      },
+      "borrow": {
+        "visibility": "Public",
+        "is_entry": false,
+        "type_parameters": [
+          {
+            "abilities": [
+              "Copy",
+              "Drop",
+              "Store"
+            ]
+          },
+          {
+            "abilities": [
+              "Store"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "Reference": {
+              "Struct": {
+                "address": "0x2",
+                "module": "bag",
+                "name": "Bag",
+                "type_arguments": []
+              }
+            }
+          },
+          {
+            "TypeParameter": 0
+          }
+        ],
+        "return_": [
+          {
+            "Reference": {
+              "TypeParameter": 1
+            }
+          }
+        ]
+      },
+      "borrow_mut": {
+        "visibility": "Public",
+        "is_entry": false,
+        "type_parameters": [
+          {
+            "abilities": [
+              "Copy",
+              "Drop",
+              "Store"
+            ]
+          },
+          {
+            "abilities": [
+              "Store"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "MutableReference": {
+              "Struct": {
+                "address": "0x2",
+                "module": "bag",
+                "name": "Bag",
+                "type_arguments": []
+              }
+            }
+          },
+          {
+            "TypeParameter": 0
+          }
+        ],
+        "return_": [
+          {
+            "MutableReference": {
+              "TypeParameter": 1
+            }
+          }
+        ]
+      },
+      "contains_with_type": {
+        "visibility": "Public",
+        "is_entry": false,
+        "type_parameters": [
+          {
+            "abilities": [
+              "Copy",
+              "Drop",
+              "Store"
+            ]
+          },
+          {
+            "abilities": [
+              "Store"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "Reference": {
+              "Struct": {
+                "address": "0x2",
+                "module": "bag",
+                "name": "Bag",
+                "type_arguments": []
+              }
+            }
+          },
+          {
+            "TypeParameter": 0
+          }
+        ],
+        "return_": [
+          "Bool"
+        ]
+      },
+      "destroy_empty": {
+        "visibility": "Public",
+        "is_entry": false,
+        "type_parameters": [],
+        "parameters": [
+          {
+            "Struct": {
+              "address": "0x2",
+              "module": "bag",
+              "name": "Bag",
+              "type_arguments": []
+            }
+          }
+        ],
+        "return_": []
+      },
+      "is_empty": {
+        "visibility": "Public",
+        "is_entry": false,
+        "type_parameters": [],
+        "parameters": [
+          {
+            "Reference": {
+              "Struct": {
+                "address": "0x2",
+                "module": "bag",
+                "name": "Bag",
+                "type_arguments": []
+              }
+            }
+          }
+        ],
+        "return_": [
+          "Bool"
+        ]
+      },
+      "length": {
+        "visibility": "Public",
+        "is_entry": false,
+        "type_parameters": [],
+        "parameters": [
+          {
+            "Reference": {
+              "Struct": {
+                "address": "0x2",
+                "module": "bag",
+                "name": "Bag",
+                "type_arguments": []
+              }
+            }
+          }
+        ],
+        "return_": [
+          "U64"
+        ]
+      },
+      "new": {
+        "visibility": "Public",
+        "is_entry": false,
+        "type_parameters": [],
+        "parameters": [
+          {
+            "MutableReference": {
+              "Struct": {
+                "address": "0x2",
+                "module": "tx_context",
+                "name": "TxContext",
+                "type_arguments": []
+              }
+            }
+          }
+        ],
+        "return_": [
+          {
+            "Struct": {
+              "address": "0x2",
+              "module": "bag",
+              "name": "Bag",
+              "type_arguments": []
+            }
+          }
+        ]
+      },
+      "remove": {
+        "visibility": "Public",
+        "is_entry": false,
+        "type_parameters": [
+          {
+            "abilities": [
+              "Copy",
+              "Drop",
+              "Store"
+            ]
+          },
+          {
+            "abilities": [
+              "Store"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "MutableReference": {
+              "Struct": {
+                "address": "0x2",
+                "module": "bag",
+                "name": "Bag",
+                "type_arguments": []
+              }
+            }
+          },
+          {
+            "TypeParameter": 0
+          }
+        ],
+        "return_": [
+          {
+            "TypeParameter": 1
+          }
+        ]
+      }
+    }
+  },
+  "id": 1
+}

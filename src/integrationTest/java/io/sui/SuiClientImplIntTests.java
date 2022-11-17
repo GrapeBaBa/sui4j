@@ -382,4 +382,24 @@ class SuiClientImplIntTests {
             "0x0000000000000000000000000000000000000002", "bag", "add");
     System.out.println(res.get());
   }
+
+  /**
+   * Gets normalized move module.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getNormalizedMoveModule.")
+  void getNormalizedMoveModule() throws ExecutionException, InterruptedException {
+    CompletableFuture<MoveNormalizedModule> res =
+        client.getNormalizedMoveModule("0x0000000000000000000000000000000000000002", "bag");
+    System.out.println(res.get());
+    //    assertEquals(6, res.get().getFile_format_version());
+    //    assertEquals("0x2", res.get().getAddress());
+    //    assertEquals(MoveVisibility.Public,
+    //        res.get().getExposed_functions().get("borrow").getVisibility());
+    //    assertEquals("Store",
+    // res.get().getStructs().get("Bag").getAbilities().getAbilities().get(0));
+  }
 }
