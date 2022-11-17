@@ -145,4 +145,13 @@ public interface SuiClient {
    */
   CompletableFuture<MoveNormalizedFunction> getNormalizedMoveFunction(
       String suiPackage, String module, String function);
+
+  /**
+   * Gets normalized move module.
+   *
+   * @param suiPackage the sui package
+   * @param module the module
+   * @return the normalized move module
+   */
+  CompletableFuture<MoveNormalizedModule> getNormalizedMoveModule(String suiPackage, String module);
 }
