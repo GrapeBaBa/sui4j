@@ -22,42 +22,152 @@ To get started you need to install JDK8+, then run the following command:
 $ ./gradlew build
 ```
 
-## Working with DevNet
-
-Todo
-
-## Working with local network
-
-Refer to the [JSON RPC](https://github.com/MystenLabs/sui/blob/main/doc/src/build/json-rpc.md) topic
-for instructions about how to start a local network and local RPC server.
-
 ## Javadoc
 
 For the latest javadocs for the `main` branch, run `./gradlew docs` and open
-the [build/docs/javadoc/index.html](build/docs/javadoc/index.html) in your browser.
+the [javadoc](build/docs/javadoc/index.html) in your browser.
 
 ## Testing
 
-To run unit tests
+### To run unit tests
 
 ```
 ./gradlew test
 ```
 
-To run E2E tests against local network
+### To run E2E tests against local network
+
+You can start sui local network refer
+to [sui-local-network](https://github.com/MystenLabs/sui/blob/main/doc/src/build/sui-local-network.md)
+doc.
+
+#### Start local network
+
+```
+git clone git@github.com:MystenLabs/sui.git
+cd sui
+cargo build --release
+cd sui/target/release
+./sui genesis
+./sui start
+```
+
+#### To run Integration tests
 
 ```
 ./gradlew integrationTest
 ```
 
-To run E2E tests against DevNet
-
-TODO
-
-## Connecting to Sui Network
+### To run E2E tests against DevNet
 
 TODO
 
 ## Examples
 
-TODO
+### create client
+
+```java
+final String BASE_URL="http://localhost:9000";
+final JsonHandler jsonHandler=new GsonJsonHandler();
+
+final JsonRpcClientProvider jsonRpcClientProvider=
+    new OkHttpJsonRpcClientProvider(BASE_URL,jsonHandler);
+final SuiClient client=new SuiClientImpl(jsonRpcClientProvider);
+```
+
+### sui_getCommitteeInfo
+
+```java
+    CompletableFuture<CommitteeInfoResponse> res=client.getCommitteeInfo(1L);
+```
+
+### sui_getEvents
+
+```java
+    TransactionEventQuery query=new TransactionEventQuery();
+    query.setTransaction("ov1tDrhdOqRW2uFweTbSSTaQbBbnjHWmrsh675lwb0Q=");
+    CompletableFuture<PaginatedEvents> res=client.getEvents(query,null,1,false);
+```
+
+### sui_getMoveFunctionArgTypes
+
+```java
+    CompletableFuture<List<MoveFunctionArgType>>res=
+    client.getMoveFunctionArgTypes("0x0000000000000000000000000000000000000002","bag","add");
+```
+
+### sui_getNormalizedMoveFunction
+
+```java
+    CompletableFuture<MoveNormalizedFunction> res=
+    client.getNormalizedMoveFunction(
+    "0x0000000000000000000000000000000000000002","bag","add");
+```
+
+### sui_getNormalizedMoveModule
+
+```java
+    CompletableFuture<MoveNormalizedModule> res=
+    client.getNormalizedMoveModule("0x0000000000000000000000000000000000000002","bag");
+```
+
+### sui_getNormalizedMoveModulesByPackage
+
+```java
+    CompletableFuture<Map<String, MoveNormalizedModule>>res=
+    client.getNormalizedMoveModulesByPackage("0x0000000000000000000000000000000000000002");
+```
+
+### sui_getNormalizedMoveStruct
+
+```java
+    CompletableFuture<MoveNormalizedStruct> res=
+    client.getNormalizedMoveStruct("0x0000000000000000000000000000000000000002","bag","Bag");
+```
+
+### sui_getObject
+
+```java
+    CompletableFuture<GetObjectResponse> res=
+    client.getObject("0x342950ba2451c2f27ed128e591c2b4551e5177c2");
+```
+
+### sui_getObjectsOwnedByAddress
+
+```java
+    CompletableFuture<List<SuiObjectInfo>>res=
+    client.getObjectsOwnedByAddress("0xea79464d86786b7a7a63e3f13f798f29f5e65947");
+```
+
+### sui_getObjectsOwnedByObject
+
+```java
+    CompletableFuture<List<SuiObjectInfo>>res=
+    client.getObjectsOwnedByObject("0xde2952390ab3d0cfbb0a0602532480ed5ec99cf3");
+```
+
+### sui_getRawObject
+
+```java
+    CompletableFuture<GetObjectResponse> res=
+    client.getRawObject("0x342950ba2451c2f27ed128e591c2b4551e5177c2");
+```
+
+### sui_getTotalTransactionNumber
+
+```java
+    CompletableFuture<Long> res=client.getTotalTransactionNumber();
+```
+
+### sui_getTransaction
+
+```java
+    CompletableFuture<TransactionResponse> res=
+    client.getTransaction("3Dda4/74LXf6GmOxMxp3qdbW/WdQ6/8EHobZ1LvSyYk=");
+```
+
+### sui_getTransactionsInRange
+
+```java
+    CompletableFuture<List<String>>res=client.getTransactionsInRange(0L,100L);
+```
