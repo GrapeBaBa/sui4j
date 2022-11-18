@@ -5,12 +5,12 @@ plugins {
 	id "com.diffplug.spotless" version "6.11.0"
 	id 'org.unbroken-dome.test-sets' version '4.0.0'
 	id 'maven-publish'
-	id 'signing'
+//	id 'signing'
 }
 
 
 group 'io.sui'
-version '0.1.0-SNAPSHOT'
+version '0.1.0'
 
 repositories {
 	mavenCentral()
@@ -225,9 +225,9 @@ publishing {
 	}
 }
 
-signing {
-	sign publishing.publications.mavenJava
-}
+//signing {
+//	sign publishing.publications.mavenJava
+//}
 
 
 javadoc {
