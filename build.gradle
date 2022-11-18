@@ -1,9 +1,11 @@
 plugins {
-	id 'java'
+	id 'java-library'
 	id "checkstyle"
 	id "jacoco"
 	id "com.diffplug.spotless" version "6.11.0"
 	id 'org.unbroken-dome.test-sets' version '4.0.0'
+	id 'maven-publish'
+	id 'signing'
 }
 
 
@@ -125,9 +127,9 @@ spotless {
 	}
 }
 
-task docs(type: Javadoc) {
-	source = sourceSets.main.allJava
-}
+//task docs(type: Javadoc) {
+//    source = sourceSets.main.allJava
+//}
 
 testSets {
 	integrationTest
@@ -151,4 +153,85 @@ tasks.withType(Test).configureEach {
 				"-Djunit.platform.reporting.output.dir=${outputDir.get().asFile.absolutePath}"
 		]
 	} as CommandLineArgumentProvider)
+}
+
+java {
+	withJavadocJar()
+	withSourcesJar()
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+//			artifactId = rootProject.name
+			from components.java
+//			versionMapping {
+//				usage('java-api') {
+//					fromResolutionOf('runtimeClasspath')
+//				}
+//				usage('java-runtime') {
+//					fromResolutionResult()
+//				}
+//			}
+			pom {
+				name = rootProject.name
+				description = 'A java SDK for @MystenLabs/sui blockchain.'
+				url = 'https://github.com/GrapeBaBa/sui4j'
+//				properties = [
+//						myProp: "value",
+//						"prop.with.dots": "anotherValue"
+//				]
+				licenses {
+					license {
+						name = 'The Apache License, Version 2.0'
+						url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+					}
+				}
+				developers {
+					developer {
+						id = 'grapebaba'
+						name = 'Kai Chen'
+						email = '281165273grape@gmail.com'
+					}
+				}
+				scm {
+					connection = 'scm:git:git://github.com/GrapeBaBa/' + rootProject.name + '.git'
+					developerConnection = 'scm:git:ssh://github.com/GrapeBaBa/' + rootProject.name + '.git'
+					url = 'https://github.com/GrapeBaBa/' + rootProject.name
+				}
+			}
+		}
+	}
+	repositories {
+		maven {
+			name = "OSSRH"
+			// change URLs to point to your repos, e.g. http://my.org/repo
+			def releasesRepoUrl = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+			def snapshotsRepoUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+			url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+			credentials {
+				username = System.getenv("MAVEN_USERNAME")
+				password = System.getenv("MAVEN_PASSWORD")
+			}
+		}
+		maven {
+			name = "GitHubPackages"
+			url = "https://maven.pkg.github.com/GrapeBaBa/" + rootProject.name
+			credentials {
+				username = System.getenv("GITHUB_ACTOR")
+				password = System.getenv("GITHUB_TOKEN")
+			}
+		}
+	}
+}
+
+signing {
+	sign publishing.publications.mavenJava
+}
+
+
+javadoc {
+	if (JavaVersion.current().isJava9Compatible()) {
+		options.addBooleanOption('html5', true)
+	}
 }
