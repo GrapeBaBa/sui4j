@@ -120,9 +120,9 @@ public class TransactionResponse {
       return false;
     }
     TransactionResponse that = (TransactionResponse) o;
-    return timestamp_ms == that.timestamp_ms
-        && certificate.equals(that.certificate)
+    return certificate.equals(that.certificate)
         && effects.equals(that.effects)
+        && timestamp_ms.equals(that.timestamp_ms)
         && parsed_data.equals(that.parsed_data);
   }
 

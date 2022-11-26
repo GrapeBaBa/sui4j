@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
  * @author grapebaba
  * @since 2022.11
  */
-public class OkHttpJsonRpcClientProvider implements JsonRpcClientProvider {
+public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
 
   private final String baseUrl;
 
