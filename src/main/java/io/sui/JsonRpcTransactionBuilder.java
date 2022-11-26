@@ -54,4 +54,15 @@ public class JsonRpcTransactionBuilder implements TransactionBuilder {
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_splitCoin", request, new TypeToken<TransactionBytes>() {}.getType());
   }
+
+  @Override
+  public CompletableFuture<TransactionBytes> splitCoinEqual(
+      String signer, String coinObjectId, long splitCount, String gas, long gasBudget) {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "sui_splitCoinEqual",
+            Lists.newArrayList(signer, coinObjectId, splitCount, gas, gasBudget));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_splitCoinEqual", request, new TypeToken<TransactionBytes>() {}.getType());
+  }
 }

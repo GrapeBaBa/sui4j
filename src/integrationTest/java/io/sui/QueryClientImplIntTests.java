@@ -48,20 +48,20 @@ import org.junit.jupiter.api.Test;
  * @author grapebaba
  * @since 2022.11
  */
-class SuiClientImplIntTests {
+class QueryClientImplIntTests {
 
   private static final String BASE_URL = "http://localhost:9000";
 
   private static final JsonHandler jsonHandler = new GsonJsonHandler();
 
-  private static SuiClient client;
+  private static QueryClient client;
 
   /** Before all. */
   @BeforeAll
   static void beforeAll() {
     JsonRpcClientProvider jsonRpcClientProvider =
         new OkHttpJsonRpcClientProvider(BASE_URL, jsonHandler);
-    client = new SuiClientImpl(jsonRpcClientProvider);
+    client = new QueryClientImpl(jsonRpcClientProvider);
   }
 
   /**

@@ -41,4 +41,17 @@ public interface TransactionBuilder {
    */
   CompletableFuture<TransactionBytes> splitCoin(
       String signer, String coinObjectId, List<Long> splitAmounts, String gas, Long gasBudget);
+
+  /**
+   * Split coin equal completable future.
+   *
+   * @param signer the signer
+   * @param coinObjectId the coin object id
+   * @param splitCount the split count
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @return the completable future
+   */
+  CompletableFuture<TransactionBytes> splitCoinEqual(
+      String signer, String coinObjectId, long splitCount, String gas, long gasBudget);
 }

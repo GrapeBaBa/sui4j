@@ -27,5 +27,5 @@ import org.junit.platform.suite.api.Suite;
  * @since 2022.11
  */
 @Suite
-@SelectClasses({SuiClientImplTests.class, JsonRpcTransactionBuilderTests.class})
+@SelectClasses({QueryClientImplTests.class, JsonRpcTransactionBuilderTests.class})
 public class SuiTestSuite {}

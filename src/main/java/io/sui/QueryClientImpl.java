@@ -42,7 +42,7 @@ import java.util.concurrent.CompletableFuture;
  * @author grapebaba
  * @since 2022.11
  */
-public class SuiClientImpl implements SuiClient {
+public class QueryClientImpl implements QueryClient {
 
   private final JsonRpcClientProvider jsonRpcClientProvider;
 
@@ -51,7 +51,7 @@ public class SuiClientImpl implements SuiClient {
    *
    * @param jsonRpcClientProvider the json rpc client provider
    */
-  public SuiClientImpl(JsonRpcClientProvider jsonRpcClientProvider) {
+  public QueryClientImpl(JsonRpcClientProvider jsonRpcClientProvider) {
     this.jsonRpcClientProvider = jsonRpcClientProvider;
   }
 

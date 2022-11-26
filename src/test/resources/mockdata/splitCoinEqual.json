@@ -1,0 +1,31 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "txBytes": "VHJhbnNhY3Rpb25EYXRhOjoAAgAAAAAAAAAAAAAAAAAAAAAAAAACAQAAAAAAAAAgrUd+yyNncmiOE+31Fz+w5YwHA+1hpiSfUqRnZJKhLN4DcGF5D2RpdmlkZV9hbmRfa2VlcAEHAAAAAAAAAAAAAAAAAAAAAAAAAAIDc3VpA1NVSQACAQB/vLgC0R2DakA050kbtUTd70YAlAAAAAAAAAAAIJfFaD7l53LPrBONn7W6V/cZK3jDOvYFQW2OPD3Rv4meAAgFAAAAAAAAAOp5Rk2GeGt6emPj8T95jyn15llHJOakWhZ0YhPMOqFS4qYieFelgPoAAAAAAAAAACBa0Zx/ukxCwIE7a4BAR4R3L2q2kICD45cvWWdBd26GhgEAAAAAAAAA6AMAAAAAAAA=",
+    "gas": {
+      "objectId": "0x24e6a45a16746213cc3aa152e2a6227857a580fa",
+      "version": 0,
+      "digest": "WtGcf7pMQsCBO2uAQEeEdy9qtpCAg+OXL1lnQXduhoY="
+    },
+    "inputObjects": [
+      {
+        "ImmOrOwnedMoveObject": {
+          "objectId": "0x7fbcb802d11d836a4034e7491bb544ddef460094",
+          "version": 0,
+          "digest": "l8VoPuXncs+sE42ftbpX9xkreMM69gVBbY48PdG/iZ4="
+        }
+      },
+      {
+        "MovePackage": "0x0000000000000000000000000000000000000002"
+      },
+      {
+        "ImmOrOwnedMoveObject": {
+          "objectId": "0x24e6a45a16746213cc3aa152e2a6227857a580fa",
+          "version": 0,
+          "digest": "WtGcf7pMQsCBO2uAQEeEdy9qtpCAg+OXL1lnQXduhoY="
+        }
+      }
+    ]
+  },
+  "id": 1
+}
