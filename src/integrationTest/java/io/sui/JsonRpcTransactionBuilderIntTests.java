@@ -58,13 +58,32 @@ class JsonRpcTransactionBuilderIntTests {
    * @throws InterruptedException the interrupted exception
    */
   @Test
-  @DisplayName("Test getSplitCoin.")
-  void getSplitCoin() throws ExecutionException, InterruptedException {
+  @DisplayName("Test splitCoin.")
+  void splitCoin() throws ExecutionException, InterruptedException {
     CompletableFuture<TransactionBytes> res =
         transactionBuilder.splitCoin(
             "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
             "0x7fbcb802d11d836a4034e7491bb544ddef460094",
             Lists.newArrayList(90000000000000L, 10000000000000L),
+            null,
+            1000L);
+    System.out.println(res.get());
+  }
+
+  /**
+   * Split coin equal.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test splitCoinEqual.")
+  void splitCoinEqual() throws ExecutionException, InterruptedException {
+    CompletableFuture<TransactionBytes> res =
+        transactionBuilder.splitCoinEqual(
+            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            "0x7fbcb802d11d836a4034e7491bb544ddef460094",
+            5L,
             null,
             1000L);
     System.out.println(res.get());

@@ -38,7 +38,7 @@ import java.util.concurrent.CompletableFuture;
  * @author grapebaba
  * @since 2022.11
  */
-public interface SuiClient {
+public interface QueryClient {
 
   /**
    * Gets object.

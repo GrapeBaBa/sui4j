@@ -25,6 +25,7 @@ import io.sui.jsonrpc.JsonHandler;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
 import io.sui.models.objects.InputObjectKind.ImmOrOwnedMoveObjectKind;
+import io.sui.models.objects.InputObjectKind.MovePackageKind;
 import io.sui.models.transactions.TransactionBytes;
 import java.io.IOException;
 import java.net.URL;
@@ -71,7 +72,11 @@ class JsonRpcTransactionBuilderTests {
           @Override
           public MockResponse dispatch(RecordedRequest request) {
             if ("/sui_splitCoin".equals(request.getPath())) {
-              return getMockResponse("mockdata/suiSplitCoin.json");
+              return getMockResponse("mockdata/splitCoin.json");
+            }
+
+            if ("/sui_splitCoinEqual".equals(request.getPath())) {
+              return getMockResponse("mockdata/splitCoinEqual.json");
             }
 
             return new MockResponse().setResponseCode(404);
@@ -149,5 +154,28 @@ class JsonRpcTransactionBuilderTests {
         ((ImmOrOwnedMoveObjectKind) res.get().getInputObjects().get(0))
             .getImmOrOwnedMoveObject()
             .getDigest());
+  }
+
+  /**
+   * Split coin equal.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test splitCoinEqual.")
+  void splitCoinEqual() throws ExecutionException, InterruptedException {
+    CompletableFuture<TransactionBytes> res =
+        transactionBuilder.splitCoinEqual(
+            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            "0x7fbcb802d11d836a4034e7491bb544ddef460094",
+            5L,
+            null,
+            1000L);
+    System.out.println(res.get());
+    assertEquals("0x24e6a45a16746213cc3aa152e2a6227857a580fa", res.get().getGas().getObjectId());
+    assertEquals(
+        "0x0000000000000000000000000000000000000002",
+        ((MovePackageKind) res.get().getInputObjects().get(1)).getMovePackage());
   }
 }
