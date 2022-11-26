@@ -156,6 +156,14 @@ public interface SuiClient {
    */
   CompletableFuture<MoveNormalizedModule> getNormalizedMoveModule(String suiPackage, String module);
 
+  /**
+   * Gets normalized move struct.
+   *
+   * @param suiPackage the sui package
+   * @param module the module
+   * @param struct the struct
+   * @return the normalized move struct
+   */
   CompletableFuture<MoveNormalizedStruct> getNormalizedMoveStruct(
       String suiPackage, String module, String struct);
 }

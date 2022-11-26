@@ -17,7 +17,9 @@
 package io.sui.jsonrpc;
 
 
+import io.sui.models.SuiApiException;
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -27,17 +29,17 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author grapebaba
  * @since 2022.11
  */
-public interface JsonRpcClientProvider {
+public abstract class JsonRpcClientProvider {
 
   /** The constant nextId. */
-  AtomicLong nextId = new AtomicLong();
+  private final AtomicLong nextId = new AtomicLong();
 
   /**
    * Next id long.
    *
    * @return the long
    */
-  default long nextId() {
+  private long nextId() {
     return nextId.incrementAndGet();
   }
 
@@ -50,6 +52,56 @@ public interface JsonRpcClientProvider {
    * @param typeOfT the type of t
    * @return the completable future
    */
-  <T> CompletableFuture<JsonRpc20Response<T>> call(
+  public abstract <T> CompletableFuture<JsonRpc20Response<T>> call(
       JsonRpc20Request request, String url, Type typeOfT);
+
+  /**
+   * Call and unwrap response completable future.
+   *
+   * @param <T> the type parameter
+   * @param url the url
+   * @param request the request
+   * @param typeOfT the type of t
+   * @return the completable future
+   */
+  @SuppressWarnings({"checkstyle:WhitespaceAfter", "unchecked"})
+  public <T> CompletableFuture<T> callAndUnwrapResponse(
+      String url, JsonRpc20Request request, Type typeOfT) {
+    final CompletableFuture<T> future = new CompletableFuture<>();
+    this.call(request, url, typeOfT)
+        .thenAccept(
+            jsonRpc20Response -> {
+              if (jsonRpc20Response.getError() != null) {
+                SuiApiException e = new SuiApiException(jsonRpc20Response.getError());
+                if (jsonRpc20Response.getThrowable() != null) {
+                  e.setCause(jsonRpc20Response.getThrowable());
+                }
+                future.completeExceptionally(e);
+              } else {
+                future.complete((T) jsonRpc20Response.getResult());
+              }
+            })
+        .exceptionally(
+            throwable -> {
+              SuiApiException e = new SuiApiException(throwable);
+              future.completeExceptionally(e);
+              return null;
+            });
+    return future;
+  }
+
+  /**
+   * Create json rpc 20 request json rpc 20 request.
+   *
+   * @param method the method
+   * @param params the params
+   * @return the json rpc 20 request
+   */
+  public JsonRpc20Request createJsonRpc20Request(String method, List<?> params) {
+    final JsonRpc20Request request = new JsonRpc20Request();
+    request.setId(nextId());
+    request.setMethod(method);
+    request.setParams(params);
+    return request;
+  }
 }

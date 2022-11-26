@@ -36,6 +36,10 @@ import io.sui.models.events.EventQuery;
 import io.sui.models.events.EventQuery.AllQuery;
 import io.sui.models.events.MoveModule;
 import io.sui.models.objects.GetObjectResponse;
+import io.sui.models.objects.InputObjectKind;
+import io.sui.models.objects.InputObjectKind.ImmOrOwnedMoveObjectKind;
+import io.sui.models.objects.InputObjectKind.MovePackageKind;
+import io.sui.models.objects.InputObjectKind.SharedMoveObjectKind;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveFunctionArgType.ObjectValueKindMoveFunctionArgType;
 import io.sui.models.objects.MoveFunctionArgType.PureFunctionMoveFunctionArgType;
@@ -371,7 +375,7 @@ public class GsonJsonHandler implements JsonHandler {
   }
 
   /** The type Committee info deserializer. */
-  public class CommitteeInfoDeserializer implements JsonDeserializer<CommitteeInfo> {
+  public static class CommitteeInfoDeserializer implements JsonDeserializer<CommitteeInfo> {
 
     @Override
     public CommitteeInfo deserialize(
@@ -440,6 +444,29 @@ public class GsonJsonHandler implements JsonHandler {
     }
   }
 
+  /** The type Input object kind deserializer. */
+  public class InputObjectKindDeserializer implements JsonDeserializer<InputObjectKind> {
+
+    @Override
+    public InputObjectKind deserialize(
+        JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        throws JsonParseException {
+      if (json.getAsJsonObject().get("ImmOrOwnedMoveObject") != null
+          && !json.getAsJsonObject().get("ImmOrOwnedMoveObject").isJsonNull()) {
+        return gson.fromJson(json, ImmOrOwnedMoveObjectKind.class);
+      }
+      if (json.getAsJsonObject().get("SharedMoveObject") != null
+          && !json.getAsJsonObject().get("SharedMoveObject").isJsonNull()) {
+        return gson.fromJson(json, SharedMoveObjectKind.class);
+      }
+      if (json.getAsJsonObject().get("MovePackage") != null
+          && !json.getAsJsonObject().get("MovePackage").isJsonNull()) {
+        return gson.fromJson(json, MovePackageKind.class);
+      }
+      return null;
+    }
+  }
+
   private final Gson gson;
 
   /** Instantiates a new Gson json handler. */
@@ -470,6 +497,7 @@ public class GsonJsonHandler implements JsonHandler {
             .registerTypeAdapter(MoveNormalizedType.class, new MoveNormalizedTypeDeserializer())
             .registerTypeAdapter(CommitteeInfo.class, new CommitteeInfoDeserializer())
             .registerTypeAdapter(MoveFunctionArgType.class, new MoveFunctionArgTypeDeserializer())
+            .registerTypeAdapter(InputObjectKind.class, new InputObjectKindDeserializer())
             .create();
   }
 
