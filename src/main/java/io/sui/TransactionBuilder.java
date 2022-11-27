@@ -33,25 +33,38 @@ public interface TransactionBuilder {
    * Split coin completable future.
    *
    * @param signer the signer
-   * @param coinObjectId the coin object id
+   * @param coin the coin object id
    * @param splitAmounts the split amounts
    * @param gas the gas
    * @param gasBudget the gas budget
    * @return the completable future
    */
   CompletableFuture<TransactionBytes> splitCoin(
-      String signer, String coinObjectId, List<Long> splitAmounts, String gas, Long gasBudget);
+      String signer, String coin, List<Long> splitAmounts, String gas, long gasBudget);
 
   /**
    * Split coin equal completable future.
    *
    * @param signer the signer
-   * @param coinObjectId the coin object id
+   * @param coin the coin object id
    * @param splitCount the split count
    * @param gas the gas
    * @param gasBudget the gas budget
    * @return the completable future
    */
   CompletableFuture<TransactionBytes> splitCoinEqual(
-      String signer, String coinObjectId, long splitCount, String gas, long gasBudget);
+      String signer, String coin, long splitCount, String gas, long gasBudget);
+
+  /**
+   * Merge coins completable future.
+   *
+   * @param signer the signer
+   * @param primaryCoin the primary coin
+   * @param toMergeCoin the to merge coin
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @return the completable future
+   */
+  CompletableFuture<TransactionBytes> mergeCoins(
+      String signer, String primaryCoin, String toMergeCoin, String gas, long gasBudget);
 }

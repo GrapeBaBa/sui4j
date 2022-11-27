@@ -79,6 +79,10 @@ class JsonRpcTransactionBuilderTests {
               return getMockResponse("mockdata/splitCoinEqual.json");
             }
 
+            if ("/sui_mergeCoins".equals(request.getPath())) {
+              return getMockResponse("mockdata/mergeCoins.json");
+            }
+
             return new MockResponse().setResponseCode(404);
           }
         };
@@ -177,5 +181,30 @@ class JsonRpcTransactionBuilderTests {
     assertEquals(
         "0x0000000000000000000000000000000000000002",
         ((MovePackageKind) res.get().getInputObjects().get(1)).getMovePackage());
+  }
+
+  /**
+   * Merge coins.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test mergeCoins.")
+  void mergeCoins() throws ExecutionException, InterruptedException {
+    CompletableFuture<TransactionBytes> res =
+        transactionBuilder.mergeCoins(
+            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            "0x24e6a45a16746213cc3aa152e2a6227857a580fa",
+            "0x7fbcb802d11d836a4034e7491bb544ddef460094",
+            "0x24e6a45a16746213cc3aa152e2a6227857a580fa",
+            1000L);
+    System.out.println(res.get());
+    assertEquals(4, res.get().getInputObjects().size());
+    assertEquals(
+        "WtGcf7pMQsCBO2uAQEeEdy9qtpCAg+OXL1lnQXduhoY=",
+        ((ImmOrOwnedMoveObjectKind) res.get().getInputObjects().get(3))
+            .getImmOrOwnedMoveObject()
+            .getDigest());
   }
 }
