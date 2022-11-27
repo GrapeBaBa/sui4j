@@ -39,9 +39,6 @@ dependencies {
 }
 
 test {
-	filter{
-		includeTestsMatching "*Suite"
-	}
 	useJUnitPlatform()
 	testLogging {
 		events "passed", "skipped", "failed"

@@ -46,23 +46,31 @@ public class JsonRpcTransactionBuilder implements TransactionBuilder {
 
   @Override
   public CompletableFuture<TransactionBytes> splitCoin(
-      String signer, String coinObjectId, List<Long> splitAmounts, String gas, Long gasBudget) {
+      String signer, String coin, List<Long> splitAmounts, String gas, long gasBudget) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_splitCoin",
-            Lists.newArrayList(signer, coinObjectId, splitAmounts, gas, gasBudget));
+            "sui_splitCoin", Lists.newArrayList(signer, coin, splitAmounts, gas, gasBudget));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_splitCoin", request, new TypeToken<TransactionBytes>() {}.getType());
   }
 
   @Override
   public CompletableFuture<TransactionBytes> splitCoinEqual(
-      String signer, String coinObjectId, long splitCount, String gas, long gasBudget) {
+      String signer, String coin, long splitCount, String gas, long gasBudget) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_splitCoinEqual",
-            Lists.newArrayList(signer, coinObjectId, splitCount, gas, gasBudget));
+            "sui_splitCoinEqual", Lists.newArrayList(signer, coin, splitCount, gas, gasBudget));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_splitCoinEqual", request, new TypeToken<TransactionBytes>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<TransactionBytes> mergeCoins(
+      String signer, String primaryCoin, String toMergeCoin, String gas, long gasBudget) {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "sui_mergeCoins", Lists.newArrayList(signer, primaryCoin, toMergeCoin, gas, gasBudget));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_mergeCoins", request, new TypeToken<TransactionBytes>() {}.getType());
   }
 }
