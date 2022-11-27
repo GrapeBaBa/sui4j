@@ -73,4 +73,19 @@ public class JsonRpcTransactionBuilder implements TransactionBuilder {
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_mergeCoins", request, new TypeToken<TransactionBytes>() {}.getType());
   }
+
+  @Override
+  public CompletableFuture<TransactionBytes> pay(
+      String signer,
+      List<String> inputCoins,
+      List<String> recipients,
+      List<Long> amounts,
+      String gas,
+      long gasBudget) {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "sui_pay", Lists.newArrayList(signer, inputCoins, recipients, amounts, gas, gasBudget));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_pay", request, new TypeToken<TransactionBytes>() {}.getType());
+  }
 }

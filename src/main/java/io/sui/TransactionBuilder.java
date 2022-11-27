@@ -67,4 +67,23 @@ public interface TransactionBuilder {
    */
   CompletableFuture<TransactionBytes> mergeCoins(
       String signer, String primaryCoin, String toMergeCoin, String gas, long gasBudget);
+
+  /**
+   * Pay completable future.
+   *
+   * @param signer the signer
+   * @param inputCoins the input coins
+   * @param recipients the recipients
+   * @param amounts the amounts
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @return the completable future
+   */
+  CompletableFuture<TransactionBytes> pay(
+      String signer,
+      List<String> inputCoins,
+      List<String> recipients,
+      List<Long> amounts,
+      String gas,
+      long gasBudget);
 }
