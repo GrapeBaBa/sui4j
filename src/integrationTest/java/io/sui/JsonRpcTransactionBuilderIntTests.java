@@ -107,4 +107,24 @@ class JsonRpcTransactionBuilderIntTests {
             1000L);
     System.out.println(res.get());
   }
+
+  /**
+   * Pay.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test pay.")
+  void pay() throws ExecutionException, InterruptedException {
+    CompletableFuture<TransactionBytes> res =
+        transactionBuilder.pay(
+            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            Lists.newArrayList("0x24e6a45a16746213cc3aa152e2a6227857a580fa"),
+            Lists.newArrayList("0x49ef9b602b76a37e0f9177783755c1a190866e72"),
+            Lists.newArrayList(100L),
+            null,
+            1L);
+    System.out.println(res.get());
+  }
 }
