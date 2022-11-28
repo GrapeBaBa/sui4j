@@ -67,7 +67,16 @@ class JsonRpcTransactionBuilderIntTests {
             Lists.newArrayList(90000000000000L, 10000000000000L),
             null,
             1000L);
-    System.out.println(res.get());
+    CompletableFuture<Object> future = new CompletableFuture<>();
+    res.whenComplete(
+        (transactionResponse, throwable) -> {
+          if (throwable != null) {
+            future.complete(throwable);
+          } else {
+            future.complete(transactionResponse);
+          }
+        });
+    System.out.println(future.get());
   }
 
   /**
@@ -86,7 +95,16 @@ class JsonRpcTransactionBuilderIntTests {
             5L,
             null,
             1000L);
-    System.out.println(res.get());
+    CompletableFuture<Object> future = new CompletableFuture<>();
+    res.whenComplete(
+        (transactionResponse, throwable) -> {
+          if (throwable != null) {
+            future.complete(throwable);
+          } else {
+            future.complete(transactionResponse);
+          }
+        });
+    System.out.println(future.get());
   }
 
   /**
@@ -101,11 +119,20 @@ class JsonRpcTransactionBuilderIntTests {
     CompletableFuture<TransactionBytes> res =
         transactionBuilder.mergeCoins(
             "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
-            "0x24e6a45a16746213cc3aa152e2a6227857a580fa",
+            "0x26cab55541e4b0f362211f9394200b7e41fd45eb",
             "0x7fbcb802d11d836a4034e7491bb544ddef460094",
             "0x24e6a45a16746213cc3aa152e2a6227857a580fa",
             1000L);
-    System.out.println(res.get());
+    CompletableFuture<Object> future = new CompletableFuture<>();
+    res.whenComplete(
+        (transactionResponse, throwable) -> {
+          if (throwable != null) {
+            future.complete(throwable);
+          } else {
+            future.complete(transactionResponse);
+          }
+        });
+    System.out.println(future.get());
   }
 
   /**
@@ -120,12 +147,21 @@ class JsonRpcTransactionBuilderIntTests {
     CompletableFuture<TransactionBytes> res =
         transactionBuilder.pay(
             "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
-            Lists.newArrayList("0x24e6a45a16746213cc3aa152e2a6227857a580fa"),
+            Lists.newArrayList("0x26cab55541e4b0f362211f9394200b7e41fd45eb"),
             Lists.newArrayList("0x49ef9b602b76a37e0f9177783755c1a190866e72"),
             Lists.newArrayList(100L),
             null,
             1L);
-    System.out.println(res.get());
+    CompletableFuture<Object> future = new CompletableFuture<>();
+    res.whenComplete(
+        (transactionResponse, throwable) -> {
+          if (throwable != null) {
+            future.complete(throwable);
+          } else {
+            future.complete(transactionResponse);
+          }
+        });
+    System.out.println(future.get());
   }
 
   /**
@@ -140,11 +176,20 @@ class JsonRpcTransactionBuilderIntTests {
     CompletableFuture<TransactionBytes> res =
         transactionBuilder.paySui(
             "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
-            Lists.newArrayList("0x24e6a45a16746213cc3aa152e2a6227857a580fa"),
+            Lists.newArrayList("0x26cab55541e4b0f362211f9394200b7e41fd45eb"),
             Lists.newArrayList("0x49ef9b602b76a37e0f9177783755c1a190866e72"),
             Lists.newArrayList(100L),
             1L);
-    System.out.println(res.get());
+    CompletableFuture<Object> future = new CompletableFuture<>();
+    res.whenComplete(
+        (transactionResponse, throwable) -> {
+          if (throwable != null) {
+            future.complete(throwable);
+          } else {
+            future.complete(transactionResponse);
+          }
+        });
+    System.out.println(future.get());
   }
 
   /**
@@ -159,9 +204,46 @@ class JsonRpcTransactionBuilderIntTests {
     CompletableFuture<TransactionBytes> res =
         transactionBuilder.payAllSui(
             "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
-            Lists.newArrayList("0x24e6a45a16746213cc3aa152e2a6227857a580fa"),
+            Lists.newArrayList("0x26cab55541e4b0f362211f9394200b7e41fd45eb"),
             "0x49ef9b602b76a37e0f9177783755c1a190866e72",
             1L);
-    System.out.println(res.get());
+    CompletableFuture<Object> future = new CompletableFuture<>();
+    res.whenComplete(
+        (transactionResponse, throwable) -> {
+          if (throwable != null) {
+            future.complete(throwable);
+          } else {
+            future.complete(transactionResponse);
+          }
+        });
+    System.out.println(future.get());
+  }
+
+  /**
+   * Transfer sui.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test transferSui.")
+  void transferSui() throws ExecutionException, InterruptedException {
+    CompletableFuture<TransactionBytes> res =
+        transactionBuilder.transferSui(
+            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            "0x26cab55541e4b0f362211f9394200b7e41fd45eb",
+            1L,
+            "0x51de405091c9f971fc6085d384f9ba764f268fca",
+            20000L);
+    CompletableFuture<Object> future = new CompletableFuture<>();
+    res.whenComplete(
+        (transactionResponse, throwable) -> {
+          if (throwable != null) {
+            future.complete(throwable);
+          } else {
+            future.complete(transactionResponse);
+          }
+        });
+    System.out.println(future.get());
   }
 }

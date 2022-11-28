@@ -95,6 +95,10 @@ class JsonRpcTransactionBuilderTests {
               return getMockResponse("mockdata/payAllSui.json");
             }
 
+            if ("/sui_transferSui".equals(request.getPath())) {
+              return getMockResponse("mockdata/transferSui.json");
+            }
+
             return new MockResponse().setResponseCode(404);
           }
         };
@@ -281,5 +285,29 @@ class JsonRpcTransactionBuilderTests {
     System.out.println(res.get());
     assertEquals("0x24e6a45a16746213cc3aa152e2a6227857a580fa", res.get().getGas().getObjectId());
     assertEquals(1, res.get().getInputObjects().size());
+  }
+
+  /**
+   * Transfer sui.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test transferSui.")
+  void transferSui() throws ExecutionException, InterruptedException {
+    CompletableFuture<TransactionBytes> res =
+        transactionBuilder.transferSui(
+            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            "0x26cab55541e4b0f362211f9394200b7e41fd45eb",
+            1L,
+            "0x51de405091c9f971fc6085d384f9ba764f268fca",
+            20000L);
+    System.out.println(res.get());
+    assertEquals(
+        "Q0eaI2C4oK8sgnTDm+qb+EknfB/Oo+NyWq02lX+Xhn0=",
+        ((ImmOrOwnedMoveObjectKind) res.get().getInputObjects().get(0))
+            .getImmOrOwnedMoveObject()
+            .getDigest());
   }
 }
