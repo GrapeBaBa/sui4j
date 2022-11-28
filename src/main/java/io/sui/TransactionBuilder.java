@@ -128,4 +128,17 @@ public interface TransactionBuilder {
    */
   CompletableFuture<TransactionBytes> transferSui(
       String signer, String coin, long gasBudget, String recipient, long amount);
+
+  /**
+   * Transfer object completable future.
+   *
+   * @param signer the signer
+   * @param suiObject the sui object
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @param recipient the recipient
+   * @return the completable future
+   */
+  CompletableFuture<TransactionBytes> transferObject(
+      String signer, String suiObject, String gas, long gasBudget, String recipient);
 }
