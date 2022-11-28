@@ -87,6 +87,10 @@ class JsonRpcTransactionBuilderTests {
               return getMockResponse("mockdata/pay.json");
             }
 
+            if ("/sui_paySui".equals(request.getPath())) {
+              return getMockResponse("mockdata/paySui.json");
+            }
+
             return new MockResponse().setResponseCode(404);
           }
         };
@@ -232,5 +236,26 @@ class JsonRpcTransactionBuilderTests {
     System.out.println(res.get());
     assertEquals("0x2f88cdfa0d6b60d80f3b9cae0c2decfb13cb33cb", res.get().getGas().getObjectId());
     assertEquals(2, res.get().getInputObjects().size());
+  }
+
+  /**
+   * Pay sui.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test paySui.")
+  void paySui() throws ExecutionException, InterruptedException {
+    CompletableFuture<TransactionBytes> res =
+        transactionBuilder.paySui(
+            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            Lists.newArrayList("0x24e6a45a16746213cc3aa152e2a6227857a580fa"),
+            Lists.newArrayList("0x49ef9b602b76a37e0f9177783755c1a190866e72"),
+            Lists.newArrayList(100L),
+            1L);
+    System.out.println(res.get());
+    assertEquals("0x24e6a45a16746213cc3aa152e2a6227857a580fa", res.get().getGas().getObjectId());
+    assertEquals(1, res.get().getInputObjects().size());
   }
 }
