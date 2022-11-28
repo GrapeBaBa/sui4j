@@ -91,6 +91,10 @@ class JsonRpcTransactionBuilderTests {
               return getMockResponse("mockdata/paySui.json");
             }
 
+            if ("/sui_payAllSui".equals(request.getPath())) {
+              return getMockResponse("mockdata/payAllSui.json");
+            }
+
             return new MockResponse().setResponseCode(404);
           }
         };
@@ -253,6 +257,26 @@ class JsonRpcTransactionBuilderTests {
             Lists.newArrayList("0x24e6a45a16746213cc3aa152e2a6227857a580fa"),
             Lists.newArrayList("0x49ef9b602b76a37e0f9177783755c1a190866e72"),
             Lists.newArrayList(100L),
+            1L);
+    System.out.println(res.get());
+    assertEquals("0x24e6a45a16746213cc3aa152e2a6227857a580fa", res.get().getGas().getObjectId());
+    assertEquals(1, res.get().getInputObjects().size());
+  }
+
+  /**
+   * Pay all sui.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test payAllSui.")
+  void payAllSui() throws ExecutionException, InterruptedException {
+    CompletableFuture<TransactionBytes> res =
+        transactionBuilder.payAllSui(
+            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            Lists.newArrayList("0x24e6a45a16746213cc3aa152e2a6227857a580fa"),
+            "0x49ef9b602b76a37e0f9177783755c1a190866e72",
             1L);
     System.out.println(res.get());
     assertEquals("0x24e6a45a16746213cc3aa152e2a6227857a580fa", res.get().getGas().getObjectId());
