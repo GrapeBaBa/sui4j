@@ -62,6 +62,39 @@ cd sui/target/release
 
 TODO
 
+## Supported APIs
+- [ ] sui_batchTransaction
+- [x] sui_dryRunTransaction
+- [ ] sui_executeTransaction
+- [ ] sui_getCoinMetadata
+- [x] sui_getCommitteeInfo
+- [x] sui_getEvents
+- [x] sui_getMoveFunctionArgTypes
+- [x] sui_getNormalizedMoveFunction
+- [x] sui_getNormalizedMoveModule
+- [x] sui_getNormalizedMoveModulesByPackage
+- [x] sui_getNormalizedMoveStruct
+- [x] sui_getObject
+- [x] sui_getObjectsOwnedByAddress
+- [x] sui_getObjectsOwnedByObject
+- [x] sui_getRawObject
+- [x] sui_getTotalTransactionNumber
+- [x] sui_getTransaction
+- [ ] sui_getTransactions
+- [x] sui_getTransactionsInRange
+- [x] sui_mergeCoins
+- [x] sui_moveCall
+- [x] sui_pay
+- [x] sui_payAllSui
+- [x] sui_paySui
+- [x] sui_publish
+- [x] sui_splitCoin
+- [x] sui_splitCoinEqual
+- [ ] sui_subscribeEvent
+- [x] sui_transferObject
+- [x] sui_transferSui
+- [ ] sui_tryGetPastObject
+
 ## Examples
 
 ### create client

@@ -14,45 +14,18 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models;
-
-
-import io.sui.jsonrpc.JsonRpc20Response;
+package io.sui.crypto;
 
 /**
- * The type Sui api exception.
+ * The type Signature scheme not supported exception.
  *
  * @author grapebaba
  * @since 2022.11
  */
-public class SuiApiException extends Exception {
+public class SignatureSchemeNotSupportedException extends Exception {
 
-  private JsonRpc20Response.Error error;
-
-  /**
-   * Instantiates a new Sui api exception.
-   *
-   * @param error the error
-   */
-  public SuiApiException(JsonRpc20Response.Error error) {
-    super();
-    this.error = error;
-  }
-
-  public SuiApiException(Throwable cause) {
-    super(cause);
-  }
-
-  /**
-   * Gets error.
-   *
-   * @return the error
-   */
-  public JsonRpc20Response.Error getError() {
-    return error;
-  }
-
-  public void setError(JsonRpc20Response.Error error) {
-    this.error = error;
+  /** Instantiates a new Signature scheme not supported exception. */
+  public SignatureSchemeNotSupportedException() {
+    super("only ed25519 and secp256k1 signature scheme supported.");
   }
 }

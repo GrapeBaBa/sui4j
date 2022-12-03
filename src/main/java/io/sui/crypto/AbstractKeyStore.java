@@ -14,45 +14,19 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models;
+package io.sui.crypto;
 
 
-import io.sui.jsonrpc.JsonRpc20Response;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
- * The type Sui api exception.
+ * The type Abstract key store.
  *
  * @author grapebaba
  * @since 2022.11
  */
-public class SuiApiException extends Exception {
+public abstract class AbstractKeyStore implements KeyStore {
 
-  private JsonRpc20Response.Error error;
-
-  /**
-   * Instantiates a new Sui api exception.
-   *
-   * @param error the error
-   */
-  public SuiApiException(JsonRpc20Response.Error error) {
-    super();
-    this.error = error;
-  }
-
-  public SuiApiException(Throwable cause) {
-    super(cause);
-  }
-
-  /**
-   * Gets error.
-   *
-   * @return the error
-   */
-  public JsonRpc20Response.Error getError() {
-    return error;
-  }
-
-  public void setError(JsonRpc20Response.Error error) {
-    this.error = error;
-  }
+  /** The Keys. */
+  protected final ConcurrentSkipListMap<String, SuiKeyPair<?>> keys = new ConcurrentSkipListMap<>();
 }

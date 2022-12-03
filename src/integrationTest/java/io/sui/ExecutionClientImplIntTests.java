@@ -17,6 +17,8 @@
 package io.sui;
 
 
+import io.sui.clients.ExecutionClient;
+import io.sui.clients.ExecutionClientImpl;
 import io.sui.jsonrpc.GsonJsonHandler;
 import io.sui.jsonrpc.JsonHandler;
 import io.sui.jsonrpc.JsonRpcClientProvider;
