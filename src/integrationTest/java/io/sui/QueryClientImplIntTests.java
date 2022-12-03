@@ -29,11 +29,11 @@ import io.sui.models.CommitteeInfoResponse;
 import io.sui.models.SuiApiException;
 import io.sui.models.events.EventQuery.TransactionEventQuery;
 import io.sui.models.events.PaginatedEvents;
-import io.sui.models.objects.GetObjectResponse;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveNormalizedStruct;
+import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.TransactionResponse;
 import java.util.List;
@@ -75,9 +75,9 @@ class QueryClientImplIntTests {
   @Test
   @DisplayName("Test getObject returns existing move object.")
   void getObjectExistingMoveObject() throws ExecutionException, InterruptedException {
-    CompletableFuture<GetObjectResponse> res =
+    CompletableFuture<ObjectResponse> res =
         client.getObject("0x342950ba2451c2f27ed128e591c2b4551e5177c2");
-    GetObjectResponse response = res.get();
+    ObjectResponse response = res.get();
     System.out.println(response);
     //    assertEquals(ObjectStatus.Exists, response.getStatus());
     //    SuiObject suiObject = (SuiObject) response.getDetails();
@@ -101,10 +101,10 @@ class QueryClientImplIntTests {
   @Test
   @DisplayName("Test getObject returns non existing object.")
   void getObjectNoExist() throws ExecutionException, InterruptedException {
-    CompletableFuture<GetObjectResponse> res =
+    CompletableFuture<ObjectResponse> res =
         client.getObject("0xa204b49f2a65eb3d418ccae864b331c524c2fa76");
 
-    GetObjectResponse response = res.get();
+    ObjectResponse response = res.get();
     System.out.println(response);
     //    assertEquals(ObjectStatus.NotExists, response.getStatus());
     //    ObjectIdResponseDetails objectIdResponseDetails =
@@ -122,7 +122,7 @@ class QueryClientImplIntTests {
   @Test
   @DisplayName("Test getObject with invalid params.")
   void getObjectInvalidParams() throws ExecutionException, InterruptedException {
-    CompletableFuture<GetObjectResponse> res = client.getObject("");
+    CompletableFuture<ObjectResponse> res = client.getObject("");
 
     CompletableFuture<Throwable> completableFuture = new CompletableFuture<>();
     res.whenComplete(
@@ -183,9 +183,9 @@ class QueryClientImplIntTests {
   @Test
   @DisplayName("Test getRawObject returns existing move object.")
   void getRawObjectExistingMoveObject() throws ExecutionException, InterruptedException {
-    CompletableFuture<GetObjectResponse> res =
+    CompletableFuture<ObjectResponse> res =
         client.getRawObject("0x342950ba2451c2f27ed128e591c2b4551e5177c2");
-    GetObjectResponse response = res.get();
+    ObjectResponse response = res.get();
     System.out.println(response);
     //    assertEquals(ObjectStatus.Exists, response.getStatus());
     //    SuiObject suiObject = (SuiObject) response.getDetails();
@@ -421,5 +421,23 @@ class QueryClientImplIntTests {
     //    assertEquals("Store", res.get().getAbilities().getAbilities().get(0));
     //    assertEquals("size", res.get().getFields().get(1).getName());
     //    assertEquals(TypeMoveNormalizedType.U64, res.get().getFields().get(1).getType_());
+  }
+
+  /**
+   * Try get past object.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test tryGetPastObject.")
+  void tryGetPastObject() throws ExecutionException, InterruptedException {
+    CompletableFuture<ObjectResponse> res =
+        client.tryGetPastObject("0x163e344adfb74793481c77661f463811b990fe2a", 0);
+    System.out.println(res.get());
+
+    CompletableFuture<ObjectResponse> res1 =
+        client.tryGetPastObject("0x163e344adfb74793481c77661f463811b990fe2a", 1);
+    System.out.println(res1.get());
   }
 }

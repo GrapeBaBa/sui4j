@@ -25,11 +25,11 @@ import io.sui.models.CommitteeInfoResponse;
 import io.sui.models.events.EventId;
 import io.sui.models.events.EventQuery;
 import io.sui.models.events.PaginatedEvents;
-import io.sui.models.objects.GetObjectResponse;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveNormalizedStruct;
+import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.TransactionResponse;
 import java.util.List;
@@ -56,11 +56,11 @@ public class QueryClientImpl implements QueryClient {
   }
 
   @Override
-  public CompletableFuture<GetObjectResponse> getObject(String id) {
+  public CompletableFuture<ObjectResponse> getObject(String id) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request("sui_getObject", Lists.newArrayList(id));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getObject", request, new TypeToken<GetObjectResponse>() {}.getType());
+        "/sui_getObject", request, new TypeToken<ObjectResponse>() {}.getType());
   }
 
   @Override
@@ -84,12 +84,12 @@ public class QueryClientImpl implements QueryClient {
   }
 
   @Override
-  public CompletableFuture<GetObjectResponse> getRawObject(String id) {
+  public CompletableFuture<ObjectResponse> getRawObject(String id) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
             "sui_getRawObject", Lists.newArrayList(id));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getRawObject", request, new TypeToken<GetObjectResponse>() {}.getType());
+        "/sui_getRawObject", request, new TypeToken<ObjectResponse>() {}.getType());
   }
 
   @Override
@@ -196,5 +196,14 @@ public class QueryClientImpl implements QueryClient {
         "/sui_getNormalizedMoveStruct",
         request,
         new TypeToken<MoveNormalizedStruct>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<ObjectResponse> tryGetPastObject(String objectId, long version) {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "sui_tryGetPastObject", Lists.newArrayList(objectId, version));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_tryGetPastObject", request, new TypeToken<ObjectResponse>() {}.getType());
   }
 }

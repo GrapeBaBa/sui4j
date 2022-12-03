@@ -35,7 +35,6 @@ import io.sui.models.events.EventKind;
 import io.sui.models.events.EventQuery;
 import io.sui.models.events.EventQuery.AllQuery;
 import io.sui.models.events.MoveModule;
-import io.sui.models.objects.GetObjectResponse;
 import io.sui.models.objects.InputObjectKind;
 import io.sui.models.objects.InputObjectKind.ImmOrOwnedMoveObjectKind;
 import io.sui.models.objects.InputObjectKind.MovePackageKind;
@@ -50,6 +49,9 @@ import io.sui.models.objects.MoveNormalizedType.MutableReferenceMoveNormalizedTy
 import io.sui.models.objects.MoveNormalizedType.ReferenceMoveNormalizedType;
 import io.sui.models.objects.MoveNormalizedType.TypeMoveNormalizedType;
 import io.sui.models.objects.MoveNormalizedType.VectorReferenceMoveNormalizedType;
+import io.sui.models.objects.ObjectResponse;
+import io.sui.models.objects.ObjectResponse.ObjectIdAndVersionResponseDetails;
+import io.sui.models.objects.ObjectResponse.ObjectResponseDetails;
 import io.sui.models.objects.SuiData;
 import io.sui.models.objects.SuiObject;
 import io.sui.models.objects.SuiObjectOwner;
@@ -133,22 +135,32 @@ public class GsonJsonHandler implements JsonHandler {
 
   /** The type Get object response details deserializer. */
   public class GetObjectResponseDetailsDeserializer
-      implements JsonDeserializer<GetObjectResponse.GetObjectResponseDetails> {
+      implements JsonDeserializer<ObjectResponseDetails> {
 
     @Override
-    public GetObjectResponse.GetObjectResponseDetails deserialize(
+    public ObjectResponseDetails deserialize(
         JsonElement json, Type typeOfT, JsonDeserializationContext context)
         throws JsonParseException {
       if (json.isJsonObject()) {
         if (json.getAsJsonObject().get("data") != null
             && !json.getAsJsonObject().get("data").isJsonNull()) {
           return gson.fromJson(json, SuiObject.class);
+        } else if (json.getAsJsonObject().get("asked_version") != null
+            && !json.getAsJsonObject().get("asked_version").isJsonNull()) {
+          return gson.fromJson(json, ObjectResponse.ObjectIdHigherVersionResponseDetails.class);
         } else {
           return gson.fromJson(json, SuiObjectRef.class);
         }
+      } else if (json.isJsonArray()) {
+        final ObjectResponse.ObjectIdAndVersionResponseDetails objectIdAndVersionResponseDetails =
+            new ObjectIdAndVersionResponseDetails();
+        objectIdAndVersionResponseDetails.setObjectId(json.getAsJsonArray().get(0).getAsString());
+        objectIdAndVersionResponseDetails.setVersion(
+            json.getAsJsonArray().get(1) != null ? json.getAsJsonArray().get(1).getAsLong() : null);
+        return objectIdAndVersionResponseDetails;
       } else {
-        final GetObjectResponse.ObjectIdResponseDetails objectIdResponseDetails =
-            new GetObjectResponse.ObjectIdResponseDetails();
+        final ObjectResponse.ObjectIdResponseDetails objectIdResponseDetails =
+            new ObjectResponse.ObjectIdResponseDetails();
         objectIdResponseDetails.setObjectId(json.getAsString());
         return objectIdResponseDetails;
       }
@@ -480,8 +492,7 @@ public class GsonJsonHandler implements JsonHandler {
             .registerTypeAdapter(SuiObjectOwner.class, new SuiObjectOwnerDeserializer())
             .registerTypeAdapter(SuiData.class, new SuiDataDeserializer())
             .registerTypeAdapter(
-                GetObjectResponse.GetObjectResponseDetails.class,
-                new GetObjectResponseDetailsDeserializer())
+                ObjectResponseDetails.class, new GetObjectResponseDetailsDeserializer())
             .registerTypeAdapter(EventKind.class, new EventKindDeserializer())
             .registerTypeAdapter(MoveCall.class, new MoveCallDeserializer())
             .registerTypeAdapter(
