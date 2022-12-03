@@ -14,45 +14,22 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models;
-
-
-import io.sui.jsonrpc.JsonRpc20Response;
+package io.sui.crypto;
 
 /**
- * The type Sui api exception.
+ * The type FileBasedKeyStoreInitException.
  *
  * @author grapebaba
  * @since 2022.11
  */
-public class SuiApiException extends Exception {
-
-  private JsonRpc20Response.Error error;
+public class FileBasedKeyStoreInitException extends RuntimeException {
 
   /**
-   * Instantiates a new Sui api exception.
+   * Instantiates a new File based key store init exception.
    *
-   * @param error the error
+   * @param cause the cause
    */
-  public SuiApiException(JsonRpc20Response.Error error) {
-    super();
-    this.error = error;
-  }
-
-  public SuiApiException(Throwable cause) {
+  public FileBasedKeyStoreInitException(Throwable cause) {
     super(cause);
-  }
-
-  /**
-   * Gets error.
-   *
-   * @return the error
-   */
-  public JsonRpc20Response.Error getError() {
-    return error;
-  }
-
-  public void setError(JsonRpc20Response.Error error) {
-    this.error = error;
   }
 }

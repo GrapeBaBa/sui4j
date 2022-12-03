@@ -18,6 +18,8 @@ package io.sui;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.sui.clients.QueryClient;
+import io.sui.clients.QueryClientImpl;
 import io.sui.jsonrpc.GsonJsonHandler;
 import io.sui.jsonrpc.JsonHandler;
 import io.sui.jsonrpc.JsonRpc20Response.Error.ErrorCode;
@@ -317,7 +319,7 @@ class QueryClientImplIntTests {
   @DisplayName("Test getEvents.")
   void getEvents() throws ExecutionException, InterruptedException {
     TransactionEventQuery query = new TransactionEventQuery();
-    query.setTransaction("ov1tDrhdOqRW2uFweTbSSTaQbBbnjHWmrsh675lwb0Q=");
+    query.setTransaction("9HF7ZAfdStA8d9eUuxfKBn4V2vWcvzT8tccs4CAVrFtj");
     CompletableFuture<PaginatedEvents> res = client.getEvents(query, null, 1, false);
     System.out.println(res.get());
   }

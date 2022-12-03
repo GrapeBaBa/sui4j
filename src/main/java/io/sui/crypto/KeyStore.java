@@ -14,45 +14,12 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models;
-
-
-import io.sui.jsonrpc.JsonRpc20Response;
+package io.sui.crypto;
 
 /**
- * The type Sui api exception.
+ * The interface Key store.
  *
  * @author grapebaba
  * @since 2022.11
  */
-public class SuiApiException extends Exception {
-
-  private JsonRpc20Response.Error error;
-
-  /**
-   * Instantiates a new Sui api exception.
-   *
-   * @param error the error
-   */
-  public SuiApiException(JsonRpc20Response.Error error) {
-    super();
-    this.error = error;
-  }
-
-  public SuiApiException(Throwable cause) {
-    super(cause);
-  }
-
-  /**
-   * Gets error.
-   *
-   * @return the error
-   */
-  public JsonRpc20Response.Error getError() {
-    return error;
-  }
-
-  public void setError(JsonRpc20Response.Error error) {
-    this.error = error;
-  }
-}
+public interface KeyStore {}

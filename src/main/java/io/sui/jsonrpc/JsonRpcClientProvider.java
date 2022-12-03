@@ -72,9 +72,12 @@ public abstract class JsonRpcClientProvider {
         .thenAccept(
             jsonRpc20Response -> {
               if (jsonRpc20Response.getError() != null) {
-                SuiApiException e = new SuiApiException(jsonRpc20Response.getError());
+                final SuiApiException e;
                 if (jsonRpc20Response.getThrowable() != null) {
-                  e.setCause(jsonRpc20Response.getThrowable());
+                  e = new SuiApiException(jsonRpc20Response.getThrowable());
+                  e.setError(jsonRpc20Response.getError());
+                } else {
+                  e = new SuiApiException(jsonRpc20Response.getError());
                 }
                 future.completeExceptionally(e);
               } else {

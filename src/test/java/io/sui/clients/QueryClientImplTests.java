@@ -14,7 +14,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui;
+package io.sui.clients;
 
 import static io.sui.models.objects.MoveFunctionArgType.ObjectValueKindMoveFunctionArgType.ObjectValueKind.ByMutableReference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
