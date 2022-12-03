@@ -21,11 +21,11 @@ import io.sui.models.CommitteeInfoResponse;
 import io.sui.models.events.EventId;
 import io.sui.models.events.EventQuery;
 import io.sui.models.events.PaginatedEvents;
-import io.sui.models.objects.GetObjectResponse;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveNormalizedStruct;
+import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.TransactionResponse;
 import java.util.List;
@@ -46,7 +46,7 @@ public interface QueryClient {
    * @param id the id
    * @return the object
    */
-  CompletableFuture<GetObjectResponse> getObject(String id);
+  CompletableFuture<ObjectResponse> getObject(String id);
 
   /**
    * Gets objects owned by address.
@@ -70,7 +70,7 @@ public interface QueryClient {
    * @param id the id
    * @return the raw object
    */
-  CompletableFuture<GetObjectResponse> getRawObject(String id);
+  CompletableFuture<ObjectResponse> getRawObject(String id);
 
   /**
    * Gets total transaction number.
@@ -166,4 +166,13 @@ public interface QueryClient {
    */
   CompletableFuture<MoveNormalizedStruct> getNormalizedMoveStruct(
       String suiPackage, String module, String struct);
+
+  /**
+   * Try get past object completable future.
+   *
+   * @param objectId the object id
+   * @param version the version
+   * @return the completable future
+   */
+  CompletableFuture<ObjectResponse> tryGetPastObject(String objectId, long version);
 }

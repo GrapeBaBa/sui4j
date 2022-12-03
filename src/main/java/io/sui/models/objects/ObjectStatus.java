@@ -28,5 +28,15 @@ public enum ObjectStatus {
   /** Not exists object status. */
   NotExists,
   /** Deleted object status. */
-  Deleted
+  Deleted,
+  /** Object not exists object status. */
+  ObjectNotExists,
+  /** Object deleted object status. */
+  ObjectDeleted,
+  /** Version found object status. */
+  VersionFound,
+  /** Version not found object status. */
+  VersionNotFound,
+  /** Version too high object status. */
+  VersionTooHigh
 }

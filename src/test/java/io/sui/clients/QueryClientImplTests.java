@@ -37,8 +37,6 @@ import io.sui.models.events.EventKind.CoinBalanceChangeEventKind;
 import io.sui.models.events.EventQuery.TransactionEventQuery;
 import io.sui.models.events.MoveEvent;
 import io.sui.models.events.PaginatedEvents;
-import io.sui.models.objects.GetObjectResponse;
-import io.sui.models.objects.GetObjectResponse.ObjectIdResponseDetails;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveFunctionArgType.ObjectValueKindMoveFunctionArgType;
 import io.sui.models.objects.MoveFunctionArgType.PureFunctionMoveFunctionArgType;
@@ -49,8 +47,12 @@ import io.sui.models.objects.MoveNormalizedType.MoveNormalizedStructType;
 import io.sui.models.objects.MoveNormalizedType.MutableReferenceMoveNormalizedType;
 import io.sui.models.objects.MoveNormalizedType.TypeMoveNormalizedType;
 import io.sui.models.objects.MoveVisibility;
+import io.sui.models.objects.ObjectResponse;
+import io.sui.models.objects.ObjectResponse.ObjectIdHigherVersionResponseDetails;
+import io.sui.models.objects.ObjectResponse.ObjectIdResponseDetails;
 import io.sui.models.objects.ObjectStatus;
 import io.sui.models.objects.SuiData;
+import io.sui.models.objects.SuiData.MoveObject;
 import io.sui.models.objects.SuiObject;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.objects.SuiObjectOwner;
@@ -206,6 +208,16 @@ class QueryClientImplTests {
             if ("/sui_getNormalizedMoveStruct".equals(request.getPath())) {
               return getMockResponse("mockdata/getNormalizedMoveStruct.json");
             }
+
+            if ("/sui_tryGetPastObject".equals(request.getPath())) {
+              JsonRpc20Request jsonRpc20Request =
+                  ((GsonJsonHandler) jsonHandler).getGson().fromJson(body, JsonRpc20Request.class);
+              if (jsonRpc20Request.getParams().get(1).equals(1L)) {
+                return getMockResponse("mockdata/tryGetPastObjectHigher.json");
+              } else {
+                return getMockResponse("mockdata/tryGetPastObject.json");
+              }
+            }
             return new MockResponse().setResponseCode(404);
           }
         };
@@ -259,9 +271,9 @@ class QueryClientImplTests {
   @Test
   @DisplayName("Test getObject returns existing move object.")
   void getObjectExistingMoveObject() throws ExecutionException, InterruptedException {
-    CompletableFuture<GetObjectResponse> res =
+    CompletableFuture<ObjectResponse> res =
         client.getObject("0x342950ba2451c2f27ed128e591c2b4551e5177c2");
-    GetObjectResponse response = res.get();
+    ObjectResponse response = res.get();
     System.out.println(response);
     assertEquals(ObjectStatus.Exists, response.getStatus());
     SuiObject suiObject = (SuiObject) response.getDetails();
@@ -283,10 +295,10 @@ class QueryClientImplTests {
   @Test
   @DisplayName("Test getObject returns non existing object.")
   void getObjectNoExist() throws ExecutionException, InterruptedException {
-    CompletableFuture<GetObjectResponse> res =
+    CompletableFuture<ObjectResponse> res =
         client.getObject("0xa204b49f2a65eb3d418ccae864b331c524c2fa76");
 
-    GetObjectResponse response = res.get();
+    ObjectResponse response = res.get();
     System.out.println(response);
     assertEquals(ObjectStatus.NotExists, response.getStatus());
     ObjectIdResponseDetails objectIdResponseDetails =
@@ -304,7 +316,7 @@ class QueryClientImplTests {
   @Test
   @DisplayName("Test getObject with invalid params.")
   void getObjectInvalidParams() throws ExecutionException, InterruptedException {
-    CompletableFuture<GetObjectResponse> res = client.getObject("");
+    CompletableFuture<ObjectResponse> res = client.getObject("");
 
     CompletableFuture<Throwable> completableFuture = new CompletableFuture<>();
     res.whenComplete(
@@ -364,9 +376,9 @@ class QueryClientImplTests {
   @Test
   @DisplayName("Test getRawObject returns existing move object.")
   void getRawObjectExistingMoveObject() throws ExecutionException, InterruptedException {
-    CompletableFuture<GetObjectResponse> res =
+    CompletableFuture<ObjectResponse> res =
         client.getRawObject("0x342950ba2451c2f27ed128e591c2b4551e5177c2");
-    GetObjectResponse response = res.get();
+    ObjectResponse response = res.get();
     System.out.println(response);
     assertEquals(ObjectStatus.Exists, response.getStatus());
     SuiObject suiObject = (SuiObject) response.getDetails();
@@ -611,5 +623,29 @@ class QueryClientImplTests {
     assertEquals("Store", res.get().getAbilities().getAbilities().get(0));
     assertEquals("size", res.get().getFields().get(1).getName());
     assertEquals(TypeMoveNormalizedType.U64, res.get().getFields().get(1).getType_());
+  }
+
+  /**
+   * Try get past object.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test tryGetPastObject.")
+  void tryGetPastObject() throws ExecutionException, InterruptedException {
+    CompletableFuture<ObjectResponse> res =
+        client.tryGetPastObject("0x163e344adfb74793481c77661f463811b990fe2a", 0);
+    System.out.println(res.get());
+    assertEquals(ObjectStatus.VersionFound, res.get().getStatus());
+    assertTrue(
+        ((MoveObject) ((SuiObject) res.get().getDetails()).getData()).isHas_public_transfer());
+
+    CompletableFuture<ObjectResponse> res1 =
+        client.tryGetPastObject("0x163e344adfb74793481c77661f463811b990fe2a", 1);
+    System.out.println(res1.get());
+    assertEquals(ObjectStatus.VersionTooHigh, res1.get().getStatus());
+    assertEquals(
+        0L, ((ObjectIdHigherVersionResponseDetails) res1.get().getDetails()).getLatest_version());
   }
 }
