@@ -10,7 +10,7 @@ plugins {
 }
 
 
-group 'io.sui'
+group 'me.grapebaba'
 version '0.2.0'
 
 repositories {
