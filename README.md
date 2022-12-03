@@ -14,6 +14,23 @@ WARNING: Note that we are still iterating on the RPC and SDK API before TestNet,
 expect frequent breaking changes in the short-term. We expect the API to stabilize after the
 upcoming TestNet launch.
 
+## Using
+### Maven
+```xml
+<!-- https://mvnrepository.com/artifact/me.grapebaba/sui4j -->
+<dependency>
+	<groupId>me.grapebaba</groupId>
+	<artifactId>sui4j</artifactId>
+	<version>0.2.0</version>
+</dependency>
+```
+
+### Gradle
+```groovy
+// https://mvnrepository.com/artifact/me.grapebaba/sui4j
+implementation 'me.grapebaba:sui4j:0.2.0'
+```
+
 ## Building Locally
 
 To get started you need to install JDK8+, then run the following command:
