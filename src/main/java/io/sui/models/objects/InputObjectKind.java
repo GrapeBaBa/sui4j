@@ -70,11 +70,7 @@ public abstract class InputObjectKind {
 
     @Override
     public String toString() {
-      return "ImmOrOwnedMoveObject{"
-          + "ImmOrOwnedMoveObject="
-          + ImmOrOwnedMoveObject
-          + "} "
-          + super.toString();
+      return "ImmOrOwnedMoveObjectKind{" + "ImmOrOwnedMoveObject=" + ImmOrOwnedMoveObject + '}';
     }
   }
 
@@ -195,7 +191,7 @@ public abstract class InputObjectKind {
 
     @Override
     public String toString() {
-      return "SharedMoveObject{" + "SharedMoveObject=" + SharedMoveObject + "} " + super.toString();
+      return "SharedMoveObjectKind{" + "SharedMoveObject=" + SharedMoveObject + '}';
     }
   }
 
@@ -242,7 +238,7 @@ public abstract class InputObjectKind {
 
     @Override
     public String toString() {
-      return "MovePackage{" + "MovePackage='" + MovePackage + '\'' + "} " + super.toString();
+      return "MovePackageKind{" + "MovePackage='" + MovePackage + '\'' + '}';
     }
   }
 }

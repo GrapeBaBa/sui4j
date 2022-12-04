@@ -117,7 +117,6 @@ public class ParsedSplitCoinResponse {
         + newCoins
         + ", updatedGas="
         + updatedGas
-        + "} "
-        + super.toString();
+        + '}';
   }
 }

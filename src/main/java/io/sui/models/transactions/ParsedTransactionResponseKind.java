@@ -70,7 +70,7 @@ public abstract class ParsedTransactionResponseKind {
 
     @Override
     public String toString() {
-      return "ParsedMergeCoinResponseKind{" + "MergeCoin=" + MergeCoin + "} " + super.toString();
+      return "ParsedMergeCoinResponseKind{" + "MergeCoin=" + MergeCoin + '}';
     }
   }
 
@@ -117,7 +117,7 @@ public abstract class ParsedTransactionResponseKind {
 
     @Override
     public String toString() {
-      return "ParsedPublishResponseKind{" + "Publish=" + Publish + "} " + super.toString();
+      return "ParsedPublishResponseKind{" + "Publish=" + Publish + '}';
     }
   }
 
@@ -164,7 +164,7 @@ public abstract class ParsedTransactionResponseKind {
 
     @Override
     public String toString() {
-      return "ParsedSplitCoinResponseKind{" + "SplitCoin=" + SplitCoin + "} " + super.toString();
+      return "ParsedSplitCoinResponseKind{" + "SplitCoin=" + SplitCoin + '}';
     }
   }
 }

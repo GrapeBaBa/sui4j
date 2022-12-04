@@ -1,0 +1,31 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "txBytes": "VHJhbnNhY3Rpb25EYXRhOjoBAgIAAAAAAAAAAAAAAAAAAAAAAAAAAgEAAAAAAAAAIKn1YXBCrP3RwzTUWY6LRz6edI2rnj3Zc+nVG43b0mObCmRldm5ldF9uZnQEbWludAADAAwLRXhhbXBsZSBORlQALCtBbiBORlQgY3JlYXRlZCBieSB0aGUgU3VpIENvbW1hbmQgTGluZSBUb29sAENCaXBmczovL2JhZmtyZWlibmdxaGwzZ2FhN2Rhb2I0aTJ2Y2N6aWF5MmpqbHA0MzVjZjY2dmhvbm83bnJ2d3c1M3R5ACB/LJ8IRysf9oZE/fx6cN8Qyz1OuX83kIgmaniLa3rDUMmcPPdoO8sAAAAAAAAAACBCg40SfggSzFQMahI975nmGgAM2x9usKqP0vqHXsNP5up5Rk2GeGt6emPj8T95jyn15llHFj40St+3R5NIHHdmH0Y4EbmQ/ioBAAAAAAAAACAlFbCYc2cU/ODG19gg6iSaNrF1NNYDpO4m3M3GDcwSCQEAAAAAAAAAFAAAAAAAAAA=",
+    "gas": {
+      "objectId": "0x163e344adfb74793481c77661f463811b990fe2a",
+      "version": 1,
+      "digest": "JRWwmHNnFPzgxtfYIOokmjaxdTTWA6TuJtzNxg3MEgk="
+    },
+    "inputObjects": [
+      {
+        "MovePackage": "0x0000000000000000000000000000000000000002"
+      },
+      {
+        "ImmOrOwnedMoveObject": {
+          "objectId": "0xb97f379088266a788b6b7ac350c99c3cf7683bcb",
+          "version": 0,
+          "digest": "QoONEn4IEsxUDGoSPe+Z5hoADNsfbrCqj9L6h17DT+Y="
+        }
+      },
+      {
+        "ImmOrOwnedMoveObject": {
+          "objectId": "0x163e344adfb74793481c77661f463811b990fe2a",
+          "version": 1,
+          "digest": "JRWwmHNnFPzgxtfYIOokmjaxdTTWA6TuJtzNxg3MEgk="
+        }
+      }
+    ]
+  },
+  "id": 1
+}

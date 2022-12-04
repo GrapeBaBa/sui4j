@@ -26,6 +26,10 @@ import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
 import io.sui.models.objects.InputObjectKind.ImmOrOwnedMoveObjectKind;
 import io.sui.models.objects.InputObjectKind.MovePackageKind;
+import io.sui.models.transactions.RPCTransactionRequestParams.MoveCallParams;
+import io.sui.models.transactions.RPCTransactionRequestParams.MoveCallRequestParams;
+import io.sui.models.transactions.RPCTransactionRequestParams.TransferObjectParams;
+import io.sui.models.transactions.RPCTransactionRequestParams.TransferObjectRequestParams;
 import io.sui.models.transactions.TransactionBytes;
 import java.io.IOException;
 import java.net.URL;
@@ -101,6 +105,10 @@ class JsonRpcTransactionBuilderTests {
 
             if ("/sui_transferObject".equals(request.getPath())) {
               return getMockResponse("mockdata/transferObject.json");
+            }
+
+            if ("/sui_batchTransaction".equals(request.getPath())) {
+              return getMockResponse("mockdata/batchTransaction.json");
             }
 
             return new MockResponse().setResponseCode(404);
@@ -335,6 +343,47 @@ class JsonRpcTransactionBuilderTests {
     assertEquals("Q0eaI2C4oK8sgnTDm+qb+EknfB/Oo+NyWq02lX+Xhn0=", res.get().getGas().getDigest());
     assertEquals(
         "Q0eaI2C4oK8sgnTDm+qb+EknfB/Oo+NyWq02lX+Xhn0=",
+        ((ImmOrOwnedMoveObjectKind) res.get().getInputObjects().get(1))
+            .getImmOrOwnedMoveObject()
+            .getDigest());
+  }
+
+  /**
+   * Batch transaction.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test batchTransaction.")
+  void batchTransaction() throws ExecutionException, InterruptedException {
+    MoveCallParams moveCallParams = new MoveCallParams();
+    moveCallParams.setPackageObjectId("0x0000000000000000000000000000000000000002");
+    moveCallParams.setModule("devnet_nft");
+    moveCallParams.setFunction("mint");
+    moveCallParams.setArguments(
+        Lists.newArrayList(
+            "Example NFT",
+            "An NFT created by the Sui Command Line Tool",
+            "ipfs://bafkreibngqhl3gaa7daob4i2vccziay2jjlp435cf66vhono7nrvww53ty"));
+    MoveCallRequestParams moveCallRequestParams = new MoveCallRequestParams();
+    moveCallRequestParams.setMoveCallRequestParams(moveCallParams);
+
+    TransferObjectParams transferObjectParams = new TransferObjectParams();
+    transferObjectParams.setObjectId("0xb97f379088266a788b6b7ac350c99c3cf7683bcb");
+    transferObjectParams.setRecipient("0x207f2c9f08472b1ff68644fdfc7a70df10cb3d4e");
+    TransferObjectRequestParams transferObjectRequestParams = new TransferObjectRequestParams();
+    transferObjectRequestParams.setTransferObjectRequestParams(transferObjectParams);
+    CompletableFuture<TransactionBytes> res =
+        transactionBuilder.batchTransaction(
+            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            Lists.newArrayList(moveCallRequestParams, transferObjectRequestParams),
+            "0x163e344adfb74793481c77661f463811b990fe2a",
+            20L);
+    System.out.println(res.get());
+    assertEquals("JRWwmHNnFPzgxtfYIOokmjaxdTTWA6TuJtzNxg3MEgk=", res.get().getGas().getDigest());
+    assertEquals(
+        "QoONEn4IEsxUDGoSPe+Z5hoADNsfbrCqj9L6h17DT+Y=",
         ((ImmOrOwnedMoveObjectKind) res.get().getInputObjects().get(1))
             .getImmOrOwnedMoveObject()
             .getDigest());

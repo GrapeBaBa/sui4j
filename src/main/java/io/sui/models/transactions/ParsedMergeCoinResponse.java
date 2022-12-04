@@ -92,7 +92,6 @@ public class ParsedMergeCoinResponse {
         + updatedCoin
         + ", updatedGas="
         + updatedGas
-        + "} "
-        + super.toString();
+        + '}';
   }
 }
