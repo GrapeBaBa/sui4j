@@ -64,6 +64,7 @@ import io.sui.models.transactions.ParsedTransactionResponseKind.ParsedMergeCoinR
 import io.sui.models.transactions.ParsedTransactionResponseKind.ParsedPublishResponseKind;
 import io.sui.models.transactions.ParsedTransactionResponseKind.ParsedSplitCoinResponseKind;
 import io.sui.models.transactions.TransactionKind;
+import io.sui.models.transactions.TransactionQuery;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -479,6 +480,20 @@ public class GsonJsonHandler implements JsonHandler {
     }
   }
 
+  /** The type Transaction query serializer. */
+  public class TransactionQuerySerializer implements JsonSerializer<TransactionQuery> {
+
+    @Override
+    public JsonElement serialize(
+        TransactionQuery src, Type typeOfSrc, JsonSerializationContext context) {
+      if (src instanceof TransactionQuery.AllQuery) {
+        return new JsonPrimitive(AllQuery.All.name());
+      }
+
+      return gson.toJsonTree(src, typeOfSrc);
+    }
+  }
+
   private final Gson gson;
 
   /** Instantiates a new Gson json handler. */
@@ -509,6 +524,7 @@ public class GsonJsonHandler implements JsonHandler {
             .registerTypeAdapter(CommitteeInfo.class, new CommitteeInfoDeserializer())
             .registerTypeAdapter(MoveFunctionArgType.class, new MoveFunctionArgTypeDeserializer())
             .registerTypeAdapter(InputObjectKind.class, new InputObjectKindDeserializer())
+            .registerTypeAdapter(TransactionQuery.class, new TransactionQuerySerializer())
             .create();
   }
 

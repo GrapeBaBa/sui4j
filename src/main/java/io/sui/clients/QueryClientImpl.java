@@ -31,6 +31,8 @@ import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.SuiObjectInfo;
+import io.sui.models.transactions.PaginatedTransactionDigests;
+import io.sui.models.transactions.TransactionQuery;
 import io.sui.models.transactions.TransactionResponse;
 import java.util.List;
 import java.util.Map;
@@ -205,5 +207,15 @@ public class QueryClientImpl implements QueryClient {
             "sui_tryGetPastObject", Lists.newArrayList(objectId, version));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_tryGetPastObject", request, new TypeToken<ObjectResponse>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<PaginatedTransactionDigests> getTransactions(
+      TransactionQuery query, String cursor, int limit, boolean isDescOrder) {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "sui_getTransactions", Lists.newArrayList(query, cursor, limit, isDescOrder));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_getTransactions", request, new TypeToken<PaginatedTransactionDigests>() {}.getType());
   }
 }
