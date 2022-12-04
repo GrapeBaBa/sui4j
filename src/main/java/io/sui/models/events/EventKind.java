@@ -253,7 +253,7 @@ public abstract class EventKind {
 
     @Override
     public String toString() {
-      return "MutateObjectEventKind{" + "mutateObject=" + mutateObject + "} " + super.toString();
+      return "MutateObjectEventKind{" + "mutateObject=" + mutateObject + '}';
     }
   }
 
@@ -299,7 +299,7 @@ public abstract class EventKind {
 
     @Override
     public String toString() {
-      return "DeleteObjectEventKind{" + "deleteObject=" + deleteObject + "} " + super.toString();
+      return "DeleteObjectEventKind{" + "deleteObject=" + deleteObject + '}';
     }
   }
 
@@ -345,7 +345,7 @@ public abstract class EventKind {
 
     @Override
     public String toString() {
-      return "NewObjectEventKind{" + "newObject=" + newObject + "} " + super.toString();
+      return "NewObjectEventKind{" + "newObject=" + newObject + '}';
     }
   }
 
@@ -391,7 +391,7 @@ public abstract class EventKind {
 
     @Override
     public String toString() {
-      return "EpochChangeEventKind{" + "epochChange=" + epochChange + "} " + super.toString();
+      return "EpochChangeEventKind{" + "epochChange=" + epochChange + '}';
     }
   }
 
@@ -437,7 +437,7 @@ public abstract class EventKind {
 
     @Override
     public String toString() {
-      return "CheckpointEventKind{" + "checkpoint=" + checkpoint + "} " + super.toString();
+      return "CheckpointEventKind{" + "checkpoint=" + checkpoint + '}';
     }
   }
 }

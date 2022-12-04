@@ -58,6 +58,7 @@ import io.sui.models.objects.SuiObjectOwner;
 import io.sui.models.objects.SuiObjectRef;
 import io.sui.models.transactions.AuthorityQuorumSignInfo;
 import io.sui.models.transactions.MoveCall;
+import io.sui.models.transactions.MoveFunction;
 import io.sui.models.transactions.ParsedPublishResponse;
 import io.sui.models.transactions.ParsedTransactionResponseKind;
 import io.sui.models.transactions.ParsedTransactionResponseKind.ParsedMergeCoinResponseKind;
@@ -374,6 +375,20 @@ public class GsonJsonHandler implements JsonHandler {
     }
   }
 
+  /** The type Move function serializer. */
+  public static class MoveFunctionSerializer implements JsonSerializer<MoveFunction> {
+
+    @Override
+    public JsonElement serialize(
+        MoveFunction src, Type typeOfSrc, JsonSerializationContext context) {
+      JsonObject jsonObject = new JsonObject();
+      jsonObject.addProperty("package", src.getSuiPackage());
+      jsonObject.addProperty("module", src.getModule());
+      jsonObject.addProperty("function", src.getFunction());
+      return jsonObject;
+    }
+  }
+
   /** The type Event query serializer. */
   public class EventQuerySerializer implements JsonSerializer<EventQuery> {
 
@@ -525,6 +540,7 @@ public class GsonJsonHandler implements JsonHandler {
             .registerTypeAdapter(MoveFunctionArgType.class, new MoveFunctionArgTypeDeserializer())
             .registerTypeAdapter(InputObjectKind.class, new InputObjectKindDeserializer())
             .registerTypeAdapter(TransactionQuery.class, new TransactionQuerySerializer())
+            .registerTypeAdapter(MoveFunction.class, new MoveFunctionSerializer())
             .create();
   }
 
