@@ -1,0 +1,10 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "data": [
+      "9Kcsc7dJ72oDpyWcwR6ZXqkKXQke4mTGG1UmN2LrVdwj"
+    ],
+    "nextCursor": null
+  },
+  "id": 1
+}

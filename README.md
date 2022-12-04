@@ -97,24 +97,24 @@ TODO
 - [x] sui_getRawObject
 - [x] sui_getTotalTransactionNumber
 - [x] sui_getTransaction
-- [ ] sui_getTransactions
+- [x] sui_getTransactions
 - [x] sui_getTransactionsInRange
 - [x] sui_mergeCoins
-- [x] sui_moveCall
+- [ ] sui_moveCall
 - [x] sui_pay
 - [x] sui_payAllSui
 - [x] sui_paySui
-- [x] sui_publish
+- [ ] sui_publish
 - [x] sui_splitCoin
 - [x] sui_splitCoinEqual
 - [ ] sui_subscribeEvent
 - [x] sui_transferObject
 - [x] sui_transferSui
-- [ ] sui_tryGetPastObject
+- [x] sui_tryGetPastObject
 
 ## Examples
 
-### create client
+### create query client
 
 ```java
 final String BASE_URL="http://localhost:9000";
@@ -122,7 +122,7 @@ final JsonHandler jsonHandler=new GsonJsonHandler();
 
 final JsonRpcClientProvider jsonRpcClientProvider=
 	new OkHttpJsonRpcClientProvider(BASE_URL,jsonHandler);
-final SuiClient client=new SuiClientImpl(jsonRpcClientProvider);
+final QueryClient client=new QueryClientImpl(jsonRpcClientProvider);
 ```
 
 ### sui_getCommitteeInfo

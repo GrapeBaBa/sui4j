@@ -60,7 +60,10 @@ import io.sui.models.objects.SuiObjectOwner.AddressOwner;
 import io.sui.models.objects.SuiObjectRef;
 import io.sui.models.transactions.ExecutionStatus.ExecutionStatusType;
 import io.sui.models.transactions.MoveCall;
+import io.sui.models.transactions.PaginatedTransactionDigests;
 import io.sui.models.transactions.TransactionKind;
+import io.sui.models.transactions.TransactionQuery;
+import io.sui.models.transactions.TransactionQuery.AllQuery;
 import io.sui.models.transactions.TransactionResponse;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -217,6 +220,10 @@ class QueryClientImplTests {
               } else {
                 return getMockResponse("mockdata/tryGetPastObject.json");
               }
+            }
+
+            if ("/sui_getTransactions".equals(request.getPath())) {
+              return getMockResponse("mockdata/getTransactions.json");
             }
             return new MockResponse().setResponseCode(404);
           }
@@ -647,5 +654,21 @@ class QueryClientImplTests {
     assertEquals(ObjectStatus.VersionTooHigh, res1.get().getStatus());
     assertEquals(
         0L, ((ObjectIdHigherVersionResponseDetails) res1.get().getDetails()).getLatest_version());
+  }
+
+  /**
+   * Gets transactions.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getTransactions.")
+  void getTransactions() throws ExecutionException, InterruptedException {
+    TransactionQuery query = AllQuery.All;
+    CompletableFuture<PaginatedTransactionDigests> res =
+        client.getTransactions(query, null, 10, false);
+    System.out.println(res.get());
+    assertEquals("9Kcsc7dJ72oDpyWcwR6ZXqkKXQke4mTGG1UmN2LrVdwj", res.get().getData().get(0));
   }
 }

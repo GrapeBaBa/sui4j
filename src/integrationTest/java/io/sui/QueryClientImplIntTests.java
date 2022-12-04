@@ -35,6 +35,10 @@ import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.SuiObjectInfo;
+import io.sui.models.transactions.PaginatedTransactionDigests;
+import io.sui.models.transactions.TransactionQuery;
+import io.sui.models.transactions.TransactionQuery.AllQuery;
+import io.sui.models.transactions.TransactionQuery.FromAddressQuery;
 import io.sui.models.transactions.TransactionResponse;
 import java.util.List;
 import java.util.Map;
@@ -438,6 +442,27 @@ class QueryClientImplIntTests {
 
     CompletableFuture<ObjectResponse> res1 =
         client.tryGetPastObject("0x163e344adfb74793481c77661f463811b990fe2a", 1);
+    System.out.println(res1.get());
+  }
+
+  /**
+   * Gets transactions.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getTransactions.")
+  void getTransactions() throws ExecutionException, InterruptedException {
+    TransactionQuery query = AllQuery.All;
+    CompletableFuture<PaginatedTransactionDigests> res =
+        client.getTransactions(query, null, 10, false);
+    System.out.println(res.get());
+
+    FromAddressQuery query1 = new FromAddressQuery();
+    query1.setFromAddress("0xea79464d86786b7a7a63e3f13f798f29f5e65947");
+    CompletableFuture<PaginatedTransactionDigests> res1 =
+        client.getTransactions(query1, null, 10, false);
     System.out.println(res1.get());
   }
 }

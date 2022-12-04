@@ -27,6 +27,8 @@ import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.SuiObjectInfo;
+import io.sui.models.transactions.PaginatedTransactionDigests;
+import io.sui.models.transactions.TransactionQuery;
 import io.sui.models.transactions.TransactionResponse;
 import java.util.List;
 import java.util.Map;
@@ -175,4 +177,16 @@ public interface QueryClient {
    * @return the completable future
    */
   CompletableFuture<ObjectResponse> tryGetPastObject(String objectId, long version);
+
+  /**
+   * Gets transactions.
+   *
+   * @param query the query
+   * @param cursor the cursor
+   * @param limit the limit
+   * @param isDescOrder the is desc order
+   * @return the transactions
+   */
+  CompletableFuture<PaginatedTransactionDigests> getTransactions(
+      TransactionQuery query, String cursor, int limit, boolean isDescOrder);
 }
