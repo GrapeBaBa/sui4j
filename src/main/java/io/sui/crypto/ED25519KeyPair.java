@@ -19,10 +19,14 @@ package io.sui.crypto;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.CryptoException;
+import org.bouncycastle.crypto.Signer;
 import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
 import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
+import org.bouncycastle.crypto.signers.Ed25519Signer;
 import org.bouncycastle.jcajce.provider.digest.SHA3.Digest256;
 import org.bouncycastle.util.Arrays;
+import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 
 /**
@@ -55,6 +59,25 @@ public class ED25519KeyPair extends SuiKeyPair<AsymmetricCipherKeyPair> {
                 ((Ed25519PublicKeyParameters) keyPair.getPublic()).getEncoded(),
                 SignatureScheme.ED25519.getScheme()));
     return "0x" + StringUtils.substring(Hex.toHexString(hash), 0, 40);
+  }
+
+  @Override
+  public String publicKey() {
+    return Base64.toBase64String(((Ed25519PublicKeyParameters) keyPair.getPublic()).getEncoded());
+  }
+
+  @Override
+  public String sign(String msg) throws SigningException {
+    Signer signer = new Ed25519Signer();
+    signer.init(true, keyPair.getPrivate());
+    byte[] msgBytes = Base64.decode(msg);
+    signer.update(msgBytes, 0, msgBytes.length);
+    try {
+      byte[] signature = signer.generateSignature();
+      return Base64.toBase64String(signature);
+    } catch (CryptoException e) {
+      throw new SigningException(e);
+    }
   }
 
   /**

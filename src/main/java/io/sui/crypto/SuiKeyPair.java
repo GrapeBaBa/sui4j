@@ -53,6 +53,22 @@ public abstract class SuiKeyPair<T> {
   public abstract String address();
 
   /**
+   * Public key string.
+   *
+   * @return the string
+   */
+  public abstract String publicKey();
+
+  /**
+   * Sign string.
+   *
+   * @param msg the msg
+   * @return the string
+   * @throws SigningException the signing exception
+   */
+  public abstract String sign(String msg) throws SigningException;
+
+  /**
    * Decode base64 sui key pair.
    *
    * @param encoded the encoded

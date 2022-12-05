@@ -57,6 +57,10 @@ import io.sui.models.objects.SuiObject;
 import io.sui.models.objects.SuiObjectOwner;
 import io.sui.models.objects.SuiObjectRef;
 import io.sui.models.transactions.AuthorityQuorumSignInfo;
+import io.sui.models.transactions.ExecuteTransactionResponse;
+import io.sui.models.transactions.ExecuteTransactionResponse.EffectsCertResponse;
+import io.sui.models.transactions.ExecuteTransactionResponse.ImmediateReturnResponse;
+import io.sui.models.transactions.ExecuteTransactionResponse.TxCertResponse;
 import io.sui.models.transactions.MoveCall;
 import io.sui.models.transactions.MoveFunction;
 import io.sui.models.transactions.ParsedPublishResponse;
@@ -509,6 +513,30 @@ public class GsonJsonHandler implements JsonHandler {
     }
   }
 
+  /** The type Execute transaction response deserializer. */
+  public class ExecuteTransactionResponseDeserializer
+      implements JsonDeserializer<ExecuteTransactionResponse> {
+
+    @Override
+    public ExecuteTransactionResponse deserialize(
+        JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        throws JsonParseException {
+      if (json.getAsJsonObject().get("ImmediateReturn") != null
+          && !json.getAsJsonObject().get("ImmediateReturn").isJsonNull()) {
+        return gson.fromJson(json, ImmediateReturnResponse.class);
+      }
+      if (json.getAsJsonObject().get("TxCert") != null
+          && !json.getAsJsonObject().get("TxCert").isJsonNull()) {
+        return gson.fromJson(json, TxCertResponse.class);
+      }
+      if (json.getAsJsonObject().get("EffectsCert") != null
+          && !json.getAsJsonObject().get("EffectsCert").isJsonNull()) {
+        return gson.fromJson(json, EffectsCertResponse.class);
+      }
+      return null;
+    }
+  }
+
   private final Gson gson;
 
   /** Instantiates a new Gson json handler. */
@@ -541,6 +569,8 @@ public class GsonJsonHandler implements JsonHandler {
             .registerTypeAdapter(InputObjectKind.class, new InputObjectKindDeserializer())
             .registerTypeAdapter(TransactionQuery.class, new TransactionQuerySerializer())
             .registerTypeAdapter(MoveFunction.class, new MoveFunctionSerializer())
+            .registerTypeAdapter(
+                ExecuteTransactionResponse.class, new ExecuteTransactionResponseDeserializer())
             .create();
   }
 

@@ -19,8 +19,11 @@ package io.sui.clients;
 
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import io.sui.crypto.SignatureScheme;
 import io.sui.jsonrpc.JsonRpc20Request;
 import io.sui.jsonrpc.JsonRpcClientProvider;
+import io.sui.models.transactions.ExecuteTransactionRequestType;
+import io.sui.models.transactions.ExecuteTransactionResponse;
 import io.sui.models.transactions.TransactionEffects;
 import java.util.concurrent.CompletableFuture;
 
@@ -50,5 +53,22 @@ public class ExecutionClientImpl implements ExecutionClient {
             "sui_dryRunTransaction", Lists.newArrayList(txBytes));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_dryRunTransaction", request, new TypeToken<TransactionEffects>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<ExecuteTransactionResponse> executeTransaction(
+      String txBytes,
+      SignatureScheme signatureScheme,
+      String signature,
+      String publicKey,
+      ExecuteTransactionRequestType requestType) {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "sui_executeTransaction",
+            Lists.newArrayList(txBytes, signatureScheme, signature, publicKey, requestType));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_executeTransaction",
+        request,
+        new TypeToken<ExecuteTransactionResponse>() {}.getType());
   }
 }

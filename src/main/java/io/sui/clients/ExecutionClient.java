@@ -17,6 +17,9 @@
 package io.sui.clients;
 
 
+import io.sui.crypto.SignatureScheme;
+import io.sui.models.transactions.ExecuteTransactionRequestType;
+import io.sui.models.transactions.ExecuteTransactionResponse;
 import io.sui.models.transactions.TransactionEffects;
 import java.util.concurrent.CompletableFuture;
 
@@ -35,4 +38,21 @@ public interface ExecutionClient {
    * @return the completable future
    */
   CompletableFuture<TransactionEffects> dryRunTransaction(String txBytes);
+
+  /**
+   * Execute transaction completable future.
+   *
+   * @param txBytes the tx bytes
+   * @param signatureScheme the signature scheme
+   * @param signature the signature
+   * @param publicKey the public key
+   * @param requestType the request type
+   * @return the completable future
+   */
+  CompletableFuture<ExecuteTransactionResponse> executeTransaction(
+      String txBytes,
+      SignatureScheme signatureScheme,
+      String signature,
+      String publicKey,
+      ExecuteTransactionRequestType requestType);
 }
