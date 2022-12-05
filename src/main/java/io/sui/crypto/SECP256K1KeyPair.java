@@ -18,12 +18,15 @@ package io.sui.crypto;
 
 import static org.bouncycastle.util.Arrays.prepend;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
+import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.crypto.Sign;
+import org.web3j.crypto.Sign.SignatureData;
 
 /**
  * The type Secp256k1 key pair.
@@ -64,5 +67,22 @@ public class SECP256K1KeyPair extends SuiKeyPair<ECKeyPair> {
                 Sign.publicPointFromPrivate(keyPair.getPrivateKey()).getEncoded(true),
                 SignatureScheme.Secp256k1.getScheme()));
     return "0x" + StringUtils.substring(Hex.toHexString(hash), 0, 40);
+  }
+
+  @Override
+  public String publicKey() {
+    return Base64.toBase64String(
+        Sign.publicPointFromPrivate(keyPair.getPrivateKey()).getEncoded(true));
+  }
+
+  @Override
+  public String sign(String msg) {
+    final SignatureData signatureData =
+        Sign.signMessage(msg.getBytes(StandardCharsets.UTF_8), keyPair);
+    final byte[] value = new byte[65];
+    System.arraycopy(signatureData.getR(), 0, value, 0, 32);
+    System.arraycopy(signatureData.getS(), 0, value, 32, 32);
+    System.arraycopy(signatureData.getV(), 0, value, 64, 1);
+    return Base64.toBase64String(value);
   }
 }
