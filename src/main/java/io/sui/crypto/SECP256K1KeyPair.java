@@ -18,15 +18,15 @@ package io.sui.crypto;
 
 import static org.bouncycastle.util.Arrays.prepend;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
+import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.ECKey.ECDSASignature;
+import org.bitcoinj.core.Sha256Hash;
+import org.bitcoinj.core.Utils;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
-import org.web3j.crypto.ECKeyPair;
-import org.web3j.crypto.Sign;
-import org.web3j.crypto.Sign.SignatureData;
 
 /**
  * The type Secp256k1 key pair.
@@ -35,7 +35,7 @@ import org.web3j.crypto.Sign.SignatureData;
  * @since 2022.11
  */
 @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-public class SECP256K1KeyPair extends SuiKeyPair<ECKeyPair> {
+public class SECP256K1KeyPair extends SuiKeyPair<ECKey> {
 
   /**
    * Instantiates a new Secp 256 k 1 key pair.
@@ -43,7 +43,7 @@ public class SECP256K1KeyPair extends SuiKeyPair<ECKeyPair> {
    * @param privateKey the secret key
    */
   public SECP256K1KeyPair(byte[] privateKey) {
-    this.keyPair = ECKeyPair.create(privateKey);
+    this.keyPair = ECKey.fromPrivate(privateKey);
   }
 
   /**
@@ -62,27 +62,47 @@ public class SECP256K1KeyPair extends SuiKeyPair<ECKeyPair> {
   public String address() {
     SHA3.Digest256 digest256 = new SHA3.Digest256();
     byte[] hash =
-        digest256.digest(
-            prepend(
-                Sign.publicPointFromPrivate(keyPair.getPrivateKey()).getEncoded(true),
-                SignatureScheme.Secp256k1.getScheme()));
+        digest256.digest(prepend(keyPair.getPubKey(), SignatureScheme.Secp256k1.getScheme()));
     return "0x" + StringUtils.substring(Hex.toHexString(hash), 0, 40);
   }
 
   @Override
   public String publicKey() {
-    return Base64.toBase64String(
-        Sign.publicPointFromPrivate(keyPair.getPrivateKey()).getEncoded(true));
+    return Base64.toBase64String(keyPair.getPubKey());
   }
 
   @Override
-  public String sign(String msg) {
-    final SignatureData signatureData =
-        Sign.signMessage(msg.getBytes(StandardCharsets.UTF_8), keyPair);
-    final byte[] value = new byte[65];
-    System.arraycopy(signatureData.getR(), 0, value, 0, 32);
-    System.arraycopy(signatureData.getS(), 0, value, 32, 32);
-    System.arraycopy(signatureData.getV(), 0, value, 64, 1);
-    return Base64.toBase64String(value);
+  public SignatureScheme signatureScheme() {
+    return SignatureScheme.Secp256k1;
+  }
+
+  @Override
+  public String sign(String msg) throws SigningException {
+    byte[] msgBytes = Base64.decode(msg);
+    Sha256Hash sha256Hash = Sha256Hash.of(msgBytes);
+    ECDSASignature signature = keyPair.sign(sha256Hash);
+    byte recId = findRecoveryId(sha256Hash, signature);
+
+    byte[] sigData = new byte[65]; // 32 bytes for R + 32 bytes for S + 1 recID
+    System.arraycopy(Utils.bigIntegerToBytes(signature.r, 32), 0, sigData, 0, 32);
+    System.arraycopy(Utils.bigIntegerToBytes(signature.s, 32), 0, sigData, 32, 32);
+    sigData[64] = recId;
+    return Base64.toBase64String(sigData);
+  }
+
+  private byte findRecoveryId(Sha256Hash hash, ECDSASignature sig) throws SigningException {
+    byte recId = -1;
+    for (byte i = 0; i < 2; i++) {
+      ECKey k = ECKey.recoverFromSignature(i, sig, hash, keyPair.isCompressed());
+      if (k != null && Arrays.equals(k.getPubKey(), keyPair.getPubKey())) {
+        recId = i;
+        break;
+      }
+    }
+    if (recId == -1) {
+      throw new SigningException(
+          "Could not construct a recoverable key. This should never happen.");
+    }
+    return recId;
   }
 }

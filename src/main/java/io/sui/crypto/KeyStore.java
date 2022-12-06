@@ -16,10 +16,29 @@
 
 package io.sui.crypto;
 
+
+import java.util.NavigableSet;
+
 /**
  * The interface Key store.
  *
  * @author grapebaba
  * @since 2022.11
  */
-public interface KeyStore {}
+public interface KeyStore {
+
+  /**
+   * Gets by address.
+   *
+   * @param address the address
+   * @return the by address
+   */
+  SuiKeyPair<?> getByAddress(String address);
+
+  /**
+   * Addresses navigable set.
+   *
+   * @return the navigable set
+   */
+  NavigableSet<String> addresses();
+}

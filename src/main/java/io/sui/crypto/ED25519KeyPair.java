@@ -67,6 +67,11 @@ public class ED25519KeyPair extends SuiKeyPair<AsymmetricCipherKeyPair> {
   }
 
   @Override
+  public SignatureScheme signatureScheme() {
+    return SignatureScheme.ED25519;
+  }
+
+  @Override
   public String sign(String msg) throws SigningException {
     Signer signer = new Ed25519Signer();
     signer.init(true, keyPair.getPrivate());

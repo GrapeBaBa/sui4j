@@ -17,6 +17,7 @@
 package io.sui.crypto;
 
 
+import java.util.NavigableSet;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
@@ -29,4 +30,14 @@ public abstract class AbstractKeyStore implements KeyStore {
 
   /** The Keys. */
   protected final ConcurrentSkipListMap<String, SuiKeyPair<?>> keys = new ConcurrentSkipListMap<>();
+
+  @Override
+  public SuiKeyPair<?> getByAddress(String address) {
+    return this.keys.get(address);
+  }
+
+  @Override
+  public NavigableSet<String> addresses() {
+    return this.keys.navigableKeySet();
+  }
 }

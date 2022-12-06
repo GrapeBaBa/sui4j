@@ -32,4 +32,8 @@ public class SigningException extends Exception {
   public SigningException(Throwable cause) {
     super(cause);
   }
+
+  public SigningException(String message) {
+    super(message);
+  }
 }

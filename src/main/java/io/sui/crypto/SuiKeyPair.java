@@ -17,6 +17,8 @@
 package io.sui.crypto;
 
 
+import java.security.Security;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 
 /**
@@ -27,6 +29,12 @@ import org.bouncycastle.util.encoders.Base64;
  * @since 2022.11
  */
 public abstract class SuiKeyPair<T> {
+
+  static {
+    if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+      Security.addProvider(new BouncyCastleProvider());
+    }
+  }
 
   /** The Key pair. */
   protected T keyPair;
@@ -58,6 +66,13 @@ public abstract class SuiKeyPair<T> {
    * @return the string
    */
   public abstract String publicKey();
+
+  /**
+   * Signature scheme signature scheme.
+   *
+   * @return the signature scheme
+   */
+  public abstract SignatureScheme signatureScheme();
 
   /**
    * Sign string.
