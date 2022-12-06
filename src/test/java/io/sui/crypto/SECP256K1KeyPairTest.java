@@ -17,18 +17,13 @@
 package io.sui.crypto;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-import org.bouncycastle.jcajce.provider.digest.SHA3;
-import org.bouncycastle.jcajce.provider.digest.SHA3.Digest256;
+import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.ECKey.ECDSASignature;
+import org.bitcoinj.core.Sha256Hash;
 import org.bouncycastle.util.encoders.Base64;
 import org.junit.jupiter.api.Test;
-import org.web3j.crypto.ECKeyPair;
-import org.web3j.crypto.Sign;
-import org.web3j.crypto.Sign.SignatureData;
 
 /**
  * The type Secp256k1 key pair test.
@@ -39,40 +34,26 @@ import org.web3j.crypto.Sign.SignatureData;
 @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
 class SECP256K1KeyPairTest {
 
-  /**
-   * Address.
-   *
-   * @throws NoSuchAlgorithmException the no such algorithm exception
-   */
+  /** Address. */
   @Test
-  void address() throws NoSuchAlgorithmException {
+  void address() {
     final String base64 =
         "AQLE7fDdDt4nrbGgCX8umsFscJRFY4t3Bkrk3MaB"
             + "b1nnA6dD5QHIFrPAdPQtdDyfoJNjiN/ghxuVLxfHxehcwec0";
-    final SuiKeyPair<ECKeyPair> secp256K1KeyPair =
-        SECP256K1KeyPair.decodeBase64(Base64.decode(base64));
+    final SuiKeyPair<ECKey> secp256K1KeyPair = SECP256K1KeyPair.decodeBase64(Base64.decode(base64));
 
     assertEquals("0xe8da3f038048e2cd6339e916a926874d0d0604b7", secp256K1KeyPair.address());
   }
 
-  /**
-   * Decode base 64.
-   *
-   * @throws SignatureException the signature exception
-   */
+  /** Decode base 64. */
   @Test
-  void decodeBase64() throws SignatureException {
+  void decodeBase64() {
     final String base64 =
         "AQLE7fDdDt4nrbGgCX8umsFscJRFY4t3Bkrk3MaBb1nnA6dD5QH"
             + "IFrPAdPQtdDyfoJNjiN/ghxuVLxfHxehcwec0";
-    final SuiKeyPair<ECKeyPair> secp256K1KeyPair =
-        SECP256K1KeyPair.decodeBase64(Base64.decode(base64));
+    final SuiKeyPair<ECKey> secp256K1KeyPair = SECP256K1KeyPair.decodeBase64(Base64.decode(base64));
     final String msg = "test";
-    final SHA3.Digest256 digest = new Digest256();
-    final byte[] encodedHash = digest.digest(msg.getBytes(StandardCharsets.UTF_8));
-    final SignatureData signatureData =
-        Sign.signMessage(encodedHash, secp256K1KeyPair.keyPair, false);
-    BigInteger pubKeyRecovered = Sign.signedMessageHashToKey(encodedHash, signatureData);
-    assertEquals(secp256K1KeyPair.getKeyPair().getPublicKey(), pubKeyRecovered);
+    final ECDSASignature signature = secp256K1KeyPair.keyPair.sign(Sha256Hash.of(msg.getBytes()));
+    assertTrue(secp256K1KeyPair.keyPair.verify(Sha256Hash.of(msg.getBytes()), signature));
   }
 }
