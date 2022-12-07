@@ -23,6 +23,7 @@ import io.sui.jsonrpc.JsonRpc20Request;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.models.transactions.RPCTransactionRequestParams;
 import io.sui.models.transactions.TransactionBytes;
+import io.sui.models.transactions.TypeTag;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -146,5 +147,31 @@ public class JsonRpcTransactionBuilder implements TransactionBuilder {
             Lists.newArrayList(signer, batchTransactionParams, gas, gasBudget));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_batchTransaction", request, new TypeToken<TransactionBytes>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<TransactionBytes> moveCall(
+      String signer,
+      String packageObjectId,
+      String module,
+      String function,
+      List<TypeTag> typeArguments,
+      List<?> arguments,
+      String gas,
+      long gasBudget) {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "sui_moveCall",
+            Lists.newArrayList(
+                signer,
+                packageObjectId,
+                module,
+                function,
+                typeArguments,
+                arguments,
+                gas,
+                gasBudget));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_moveCall", request, new TypeToken<TransactionBytes>() {}.getType());
   }
 }

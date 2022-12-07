@@ -70,6 +70,9 @@ import io.sui.models.transactions.ParsedTransactionResponseKind.ParsedPublishRes
 import io.sui.models.transactions.ParsedTransactionResponseKind.ParsedSplitCoinResponseKind;
 import io.sui.models.transactions.TransactionKind;
 import io.sui.models.transactions.TransactionQuery;
+import io.sui.models.transactions.TypeTag;
+import io.sui.models.transactions.TypeTag.StructType;
+import io.sui.models.transactions.TypeTag.VectorType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -513,6 +516,15 @@ public class GsonJsonHandler implements JsonHandler {
     }
   }
 
+  /** The type Type tag serializer. */
+  public static class TypeTagSerializer implements JsonSerializer<TypeTag> {
+
+    @Override
+    public JsonElement serialize(TypeTag src, Type typeOfSrc, JsonSerializationContext context) {
+      return new JsonPrimitive(src.toString());
+    }
+  }
+
   /** The type Execute transaction response deserializer. */
   public class ExecuteTransactionResponseDeserializer
       implements JsonDeserializer<ExecuteTransactionResponse> {
@@ -571,6 +583,9 @@ public class GsonJsonHandler implements JsonHandler {
             .registerTypeAdapter(MoveFunction.class, new MoveFunctionSerializer())
             .registerTypeAdapter(
                 ExecuteTransactionResponse.class, new ExecuteTransactionResponseDeserializer())
+            .registerTypeAdapter(StructType.class, new TypeTagSerializer())
+            .registerTypeAdapter(VectorType.class, new TypeTagSerializer())
+            .registerTypeAdapter(TypeTag.class, new TypeTagSerializer())
             .create();
   }
 
