@@ -109,7 +109,6 @@ public class Sui {
                     future.completeExceptionally(new SuiApiException(e));
                     return future;
                   }
-                  System.out.println(signature);
                   return executionClient.executeTransaction(
                       txBytes, signatureScheme, signature, publicKey, requestType);
                 });

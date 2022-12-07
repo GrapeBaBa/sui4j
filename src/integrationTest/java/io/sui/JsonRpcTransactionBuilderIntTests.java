@@ -28,7 +28,9 @@ import io.sui.models.transactions.RPCTransactionRequestParams.MoveCallParams;
 import io.sui.models.transactions.RPCTransactionRequestParams.MoveCallRequestParams;
 import io.sui.models.transactions.RPCTransactionRequestParams.TransferObjectParams;
 import io.sui.models.transactions.RPCTransactionRequestParams.TransferObjectRequestParams;
+import io.sui.models.transactions.StructTag;
 import io.sui.models.transactions.TransactionBytes;
+import io.sui.models.transactions.TypeTag;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.BeforeAll;
@@ -313,6 +315,43 @@ class JsonRpcTransactionBuilderIntTests {
             Lists.newArrayList(moveCallRequestParams, transferObjectRequestParams),
             "0x163e344adfb74793481c77661f463811b990fe2a",
             20L);
+    CompletableFuture<Object> future = new CompletableFuture<>();
+    res.whenComplete(
+        (transactionResponse, throwable) -> {
+          if (throwable != null) {
+            future.complete(throwable);
+          } else {
+            future.complete(transactionResponse);
+          }
+        });
+    System.out.println(future.get());
+  }
+
+  /**
+   * Move call.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test moveCall.")
+  void moveCall() throws ExecutionException, InterruptedException {
+    final TypeTag.StructType structType = new TypeTag.StructType();
+    StructTag structTag = new StructTag();
+    structTag.setAddress("0x2");
+    structTag.setModule("sui");
+    structTag.setName("SUI");
+    structType.setStructTag(structTag);
+    CompletableFuture<TransactionBytes> res =
+        transactionBuilder.moveCall(
+            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            "0x0000000000000000000000000000000000000002",
+            "pay",
+            "split",
+            Lists.newArrayList(structType),
+            Lists.newArrayList("0x05f71eb5dc69224ef8e3a4c13917c799190237d9", 10000L),
+            null,
+            1000L);
     CompletableFuture<Object> future = new CompletableFuture<>();
     res.whenComplete(
         (transactionResponse, throwable) -> {

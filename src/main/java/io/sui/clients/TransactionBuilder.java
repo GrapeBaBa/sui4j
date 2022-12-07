@@ -19,6 +19,7 @@ package io.sui.clients;
 
 import io.sui.models.transactions.RPCTransactionRequestParams;
 import io.sui.models.transactions.TransactionBytes;
+import io.sui.models.transactions.TypeTag;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -155,6 +156,29 @@ public interface TransactionBuilder {
   CompletableFuture<TransactionBytes> batchTransaction(
       String signer,
       List<RPCTransactionRequestParams> batchTransactionParams,
+      String gas,
+      long gasBudget);
+
+  /**
+   * Move call completable future.
+   *
+   * @param signer the signer
+   * @param packageObjectId the package object id
+   * @param module the module
+   * @param function the function
+   * @param typeArguments the type arguments
+   * @param arguments the arguments
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @return the completable future
+   */
+  CompletableFuture<TransactionBytes> moveCall(
+      String signer,
+      String packageObjectId,
+      String module,
+      String function,
+      List<TypeTag> typeArguments,
+      List<?> arguments,
       String gas,
       long gasBudget);
 }

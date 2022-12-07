@@ -30,7 +30,9 @@ import io.sui.models.transactions.RPCTransactionRequestParams.MoveCallParams;
 import io.sui.models.transactions.RPCTransactionRequestParams.MoveCallRequestParams;
 import io.sui.models.transactions.RPCTransactionRequestParams.TransferObjectParams;
 import io.sui.models.transactions.RPCTransactionRequestParams.TransferObjectRequestParams;
+import io.sui.models.transactions.StructTag;
 import io.sui.models.transactions.TransactionBytes;
+import io.sui.models.transactions.TypeTag;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -109,6 +111,10 @@ class JsonRpcTransactionBuilderTests {
 
             if ("/sui_batchTransaction".equals(request.getPath())) {
               return getMockResponse("mockdata/batchTransaction.json");
+            }
+
+            if ("/sui_moveCall".equals(request.getPath())) {
+              return getMockResponse("mockdata/moveCall.json");
             }
 
             return new MockResponse().setResponseCode(404);
@@ -385,6 +391,40 @@ class JsonRpcTransactionBuilderTests {
     assertEquals(
         "QoONEn4IEsxUDGoSPe+Z5hoADNsfbrCqj9L6h17DT+Y=",
         ((ImmOrOwnedMoveObjectKind) res.get().getInputObjects().get(1))
+            .getImmOrOwnedMoveObject()
+            .getDigest());
+  }
+
+  /**
+   * Move call.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test moveCall.")
+  void moveCall() throws ExecutionException, InterruptedException {
+    final TypeTag.StructType structType = new TypeTag.StructType();
+    StructTag structTag = new StructTag();
+    structTag.setAddress("0x2");
+    structTag.setModule("sui");
+    structTag.setName("SUI");
+    structType.setStructTag(structTag);
+    CompletableFuture<TransactionBytes> res =
+        transactionBuilder.moveCall(
+            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            "0x0000000000000000000000000000000000000002",
+            "pay",
+            "split",
+            Lists.newArrayList(structType),
+            Lists.newArrayList("0x05f71eb5dc69224ef8e3a4c13917c799190237d9", 10000L),
+            null,
+            1000L);
+    System.out.println(res.get());
+    assertEquals("QXXmgG+hHAubzXbL3QhpLPJfakHqNLMp6DZAVyO00c8=", res.get().getGas().getDigest());
+    assertEquals(
+        "QXXmgG+hHAubzXbL3QhpLPJfakHqNLMp6DZAVyO00c8=",
+        ((ImmOrOwnedMoveObjectKind) res.get().getInputObjects().get(2))
             .getImmOrOwnedMoveObject()
             .getDigest());
   }
