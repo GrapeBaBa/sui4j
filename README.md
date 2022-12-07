@@ -105,7 +105,7 @@ TODO
 - [x] sui_pay
 - [x] sui_payAllSui
 - [x] sui_paySui
-- [ ] sui_publish
+- [x] sui_publish
 - [x] sui_splitCoin
 - [x] sui_splitCoinEqual
 - [ ] sui_subscribeEvent
