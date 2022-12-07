@@ -80,10 +80,11 @@ cd sui/target/release
 TODO
 
 ## Supported APIs
-- [ ] sui_batchTransaction
+- [x] sui_batchTransaction
 - [x] sui_dryRunTransaction
-- [ ] sui_executeTransaction
-- [ ] sui_getCoinMetadata
+- [x] sui_executeTransaction
+- [x] sui_getCoinMetadata
+- [ ] sui_executeTransactionSerializedSig
 - [x] sui_getCommitteeInfo
 - [x] sui_getEvents
 - [x] sui_getMoveFunctionArgTypes
@@ -100,7 +101,7 @@ TODO
 - [x] sui_getTransactions
 - [x] sui_getTransactionsInRange
 - [x] sui_mergeCoins
-- [ ] sui_moveCall
+- [x] sui_moveCall
 - [x] sui_pay
 - [x] sui_payAllSui
 - [x] sui_paySui

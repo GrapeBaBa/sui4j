@@ -28,7 +28,6 @@ import io.sui.jsonrpc.JsonRpc20Request;
 import io.sui.jsonrpc.JsonRpc20Response.Error.ErrorCode;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
-import io.sui.models.CommitteeInfoResponse;
 import io.sui.models.SuiApiException;
 import io.sui.models.events.CoinBalanceChangeEvent;
 import io.sui.models.events.CoinBalanceChangeEvent.BalanceChangeType;
@@ -37,6 +36,8 @@ import io.sui.models.events.EventKind.CoinBalanceChangeEventKind;
 import io.sui.models.events.EventQuery.TransactionEventQuery;
 import io.sui.models.events.MoveEvent;
 import io.sui.models.events.PaginatedEvents;
+import io.sui.models.objects.CoinMetadata;
+import io.sui.models.objects.CommitteeInfoResponse;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveFunctionArgType.ObjectValueKindMoveFunctionArgType;
 import io.sui.models.objects.MoveFunctionArgType.PureFunctionMoveFunctionArgType;
@@ -224,6 +225,10 @@ class QueryClientImplTests {
 
             if ("/sui_getTransactions".equals(request.getPath())) {
               return getMockResponse("mockdata/getTransactions.json");
+            }
+
+            if ("/sui_getCoinMetadata".equals(request.getPath())) {
+              return getMockResponse("mockdata/getCoinMetadata.json");
             }
             return new MockResponse().setResponseCode(404);
           }
@@ -670,5 +675,20 @@ class QueryClientImplTests {
         client.getTransactions(query, null, 10, false);
     System.out.println(res.get());
     assertEquals("9Kcsc7dJ72oDpyWcwR6ZXqkKXQke4mTGG1UmN2LrVdwj", res.get().getData().get(0));
+  }
+
+  /**
+   * Gets coin metadata.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getCoinMetadata.")
+  void getCoinMetadata() throws ExecutionException, InterruptedException {
+    CompletableFuture<CoinMetadata> res = client.getCoinMetadata("0x2::sui::SUI");
+    System.out.println(res.get());
+    assertEquals(9, res.get().getDecimals());
+    assertEquals("SUI", res.get().getSymbol());
   }
 }
