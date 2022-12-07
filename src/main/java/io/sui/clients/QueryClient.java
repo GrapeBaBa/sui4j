@@ -17,10 +17,11 @@
 package io.sui.clients;
 
 
-import io.sui.models.CommitteeInfoResponse;
 import io.sui.models.events.EventId;
 import io.sui.models.events.EventQuery;
 import io.sui.models.events.PaginatedEvents;
+import io.sui.models.objects.CoinMetadata;
+import io.sui.models.objects.CommitteeInfoResponse;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
@@ -189,4 +190,12 @@ public interface QueryClient {
    */
   CompletableFuture<PaginatedTransactionDigests> getTransactions(
       TransactionQuery query, String cursor, int limit, boolean isDescOrder);
+
+  /**
+   * Gets coin metadata.
+   *
+   * @param coinType the coin type
+   * @return the coin metadata
+   */
+  CompletableFuture<CoinMetadata> getCoinMetadata(String coinType);
 }

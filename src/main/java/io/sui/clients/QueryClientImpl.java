@@ -21,10 +21,11 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import io.sui.jsonrpc.JsonRpc20Request;
 import io.sui.jsonrpc.JsonRpcClientProvider;
-import io.sui.models.CommitteeInfoResponse;
 import io.sui.models.events.EventId;
 import io.sui.models.events.EventQuery;
 import io.sui.models.events.PaginatedEvents;
+import io.sui.models.objects.CoinMetadata;
+import io.sui.models.objects.CommitteeInfoResponse;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
@@ -217,5 +218,14 @@ public class QueryClientImpl implements QueryClient {
             "sui_getTransactions", Lists.newArrayList(query, cursor, limit, isDescOrder));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_getTransactions", request, new TypeToken<PaginatedTransactionDigests>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<CoinMetadata> getCoinMetadata(String coinType) {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "sui_getCoinMetadata", Lists.newArrayList(coinType));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_getCoinMetadata", request, new TypeToken<CoinMetadata>() {}.getType());
   }
 }

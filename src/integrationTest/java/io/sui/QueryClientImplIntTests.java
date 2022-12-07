@@ -25,10 +25,11 @@ import io.sui.jsonrpc.JsonHandler;
 import io.sui.jsonrpc.JsonRpc20Response.Error.ErrorCode;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
-import io.sui.models.CommitteeInfoResponse;
 import io.sui.models.SuiApiException;
 import io.sui.models.events.EventQuery.TransactionEventQuery;
 import io.sui.models.events.PaginatedEvents;
+import io.sui.models.objects.CoinMetadata;
+import io.sui.models.objects.CommitteeInfoResponse;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
@@ -464,5 +465,18 @@ class QueryClientImplIntTests {
     CompletableFuture<PaginatedTransactionDigests> res1 =
         client.getTransactions(query1, null, 10, false);
     System.out.println(res1.get());
+  }
+
+  /**
+   * Gets coin metadata.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getCoinMetadata.")
+  void getCoinMetadata() throws ExecutionException, InterruptedException {
+    CompletableFuture<CoinMetadata> res = client.getCoinMetadata("0x2::sui::SUI");
+    System.out.println(res.get());
   }
 }
