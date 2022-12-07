@@ -174,4 +174,14 @@ public class JsonRpcTransactionBuilder implements TransactionBuilder {
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_moveCall", request, new TypeToken<TransactionBytes>() {}.getType());
   }
+
+  @Override
+  public CompletableFuture<TransactionBytes> publish(
+      String signer, List<String> compiledModules, String gas, long gasBudget) {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "sui_publish", Lists.newArrayList(signer, compiledModules, gas, gasBudget));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_publish", request, new TypeToken<TransactionBytes>() {}.getType());
+  }
 }

@@ -181,4 +181,16 @@ public interface TransactionBuilder {
       List<?> arguments,
       String gas,
       long gasBudget);
+
+  /**
+   * Publish completable future.
+   *
+   * @param signer the signer
+   * @param compiledModules the compiled modules
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @return the completable future
+   */
+  CompletableFuture<TransactionBytes> publish(
+      String signer, List<String> compiledModules, String gas, long gasBudget);
 }

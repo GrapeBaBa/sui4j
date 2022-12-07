@@ -117,6 +117,10 @@ class JsonRpcTransactionBuilderTests {
               return getMockResponse("mockdata/moveCall.json");
             }
 
+            if ("/sui_publish".equals(request.getPath())) {
+              return getMockResponse("mockdata/publish.json");
+            }
+
             return new MockResponse().setResponseCode(404);
           }
         };
@@ -427,5 +431,40 @@ class JsonRpcTransactionBuilderTests {
         ((ImmOrOwnedMoveObjectKind) res.get().getInputObjects().get(2))
             .getImmOrOwnedMoveObject()
             .getDigest());
+  }
+
+  /**
+   * Publish.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test publish.")
+  void publish() throws ExecutionException, InterruptedException {
+    CompletableFuture<TransactionBytes> res =
+        transactionBuilder.publish(
+            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            Lists.newArrayList(
+                "oRzrCwYAAAAKAQAIAggMAxQuBEICBUQrB2+IAQj3ASgKnwIKDKkCkwEN"
+                    + "vAMEAAABAQECAQMABAgAAwYCAAENBAAABQABAAAHAgEAAAgDAQAACQQFAAAK"
+                    + "BgEAAAsEBwABDgIIAAMPCQUAAhALAQEICAoCBggAAwABBwgBAQcIAAEGCAAB"
+                    + "BQMHCAADBwgBAQMBCAIBBggBAQgAAQkAB2NvdW50ZXIGb2JqZWN0CHRyYW5z"
+                    + "ZmVyCnR4X2NvbnRleHQHQ291bnRlcgxhc3NlcnRfdmFsdWUJVHhDb250ZXh0"
+                    + "BmNyZWF0ZQlpbmNyZW1lbnQFb3duZXIJc2V0X3ZhbHVlBXZhbHVlAmlkA1VJ"
+                    + "RANuZXcGc2VuZGVyDHNoYXJlX29iamVjdAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                    + "AAAAAAAAAAAAAAAAAAAAAAAAAAIAAgMMCAIJBQsDAAEEAAEJCwAQABQLASED"
+                    + "CAYAAAAAAAAAACcCAQEEAAEJCgARBgsALhEHBgAAAAAAAAAAEgA4AAICAQQA"
+                    + "AQkKABAAFAYBAAAAAAAAABYLAA8AFQIDAQAAAQQLABABFAIEAQQAAREKABAB"
+                    + "FAsCLhEHIQMMCwABBgAAAAAAAAAAJwsBCwAPABUCBQEAAAEECwAQABQCAAIAAQA="),
+            "0x05f71eb5dc69224ef8e3a4c13917c799190237d9",
+            100L);
+    System.out.println(res.get());
+    assertEquals(
+        "XpJDVPOW3OjFJJ9iDhU3GZjJWmDt4NX3XF4H4uA53+0=",
+        ((ImmOrOwnedMoveObjectKind) res.get().getInputObjects().get(1))
+            .getImmOrOwnedMoveObject()
+            .getDigest());
+    assertEquals("XpJDVPOW3OjFJJ9iDhU3GZjJWmDt4NX3XF4H4uA53+0=", res.get().getGas().getDigest());
   }
 }
