@@ -33,13 +33,32 @@ import io.sui.jsonrpc.JsonHandler;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
 import io.sui.models.SuiApiException;
+import io.sui.models.events.EventId;
+import io.sui.models.events.EventQuery;
+import io.sui.models.events.PaginatedEvents;
+import io.sui.models.objects.CoinMetadata;
+import io.sui.models.objects.CommitteeInfoResponse;
+import io.sui.models.objects.MoveFunctionArgType;
+import io.sui.models.objects.MoveNormalizedFunction;
+import io.sui.models.objects.MoveNormalizedModule;
+import io.sui.models.objects.MoveNormalizedStruct;
+import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.ExecuteTransactionRequestType;
 import io.sui.models.transactions.ExecuteTransactionResponse;
+import io.sui.models.transactions.PaginatedTransactionDigests;
+import io.sui.models.transactions.RPCTransactionRequestParams;
 import io.sui.models.transactions.TransactionBytes;
+import io.sui.models.transactions.TransactionEffects;
+import io.sui.models.transactions.TransactionQuery;
+import io.sui.models.transactions.TransactionResponse;
+import io.sui.models.transactions.TypeTag;
 import java.util.List;
+import java.util.Map;
+import java.util.NavigableSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The type Sui.
@@ -47,7 +66,7 @@ import java.util.function.Function;
  * @author grapebaba
  * @since 2022.11
  */
-public class Sui {
+public class Sui implements QueryClient, ExecutionClient, KeyStore {
 
   private final KeyStore keyStore;
 
@@ -93,53 +112,374 @@ public class Sui {
       ExecuteTransactionRequestType requestType) {
     return this.transactionBuilder
         .transferSui(signer, coin, gasBudget, recipient, amount)
-        .thenCompose(
-            (Function<TransactionBytes, CompletableFuture<ExecuteTransactionResponse>>)
-                transactionBytes -> {
-                  final SuiKeyPair<?> suiKeyPair = keyStore.getByAddress(signer);
-                  final String publicKey = suiKeyPair.publicKey();
-                  final SignatureScheme signatureScheme = suiKeyPair.signatureScheme();
-                  final String txBytes = transactionBytes.getTxBytes();
-                  final String signature;
-                  try {
-                    signature = suiKeyPair.sign(txBytes);
-                  } catch (SigningException e) {
-                    CompletableFuture<ExecuteTransactionResponse> future =
-                        new CompletableFuture<>();
-                    future.completeExceptionally(new SuiApiException(e));
-                    return future;
-                  }
-                  return executionClient.executeTransaction(
-                      txBytes, signatureScheme, signature, publicKey, requestType);
-                });
+        .thenCompose(signAndExecuteTransactionFunction(signer, requestType));
   }
 
   /**
-   * Gets objects owned by address.
+   * Move call completable future.
    *
-   * @param address the address
-   * @return the objects owned by address
+   * @param signer the signer
+   * @param packageObjectId the package object id
+   * @param module the module
+   * @param function the function
+   * @param typeArguments the type arguments
+   * @param arguments the arguments
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @param requestType the request type
+   * @return the completable future
    */
+  public CompletableFuture<ExecuteTransactionResponse> moveCall(
+      String signer,
+      String packageObjectId,
+      String module,
+      String function,
+      List<TypeTag> typeArguments,
+      List<?> arguments,
+      String gas,
+      long gasBudget,
+      ExecuteTransactionRequestType requestType) {
+    return this.transactionBuilder
+        .moveCall(
+            signer, packageObjectId, module, function, typeArguments, arguments, gas, gasBudget)
+        .thenCompose(signAndExecuteTransactionFunction(signer, requestType));
+  }
+
+  /**
+   * Batch transaction completable future.
+   *
+   * @param signer the signer
+   * @param batchTransactionParams the batch transaction params
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @param requestType the request type
+   * @return the completable future
+   */
+  public CompletableFuture<ExecuteTransactionResponse> batchTransaction(
+      String signer,
+      List<RPCTransactionRequestParams> batchTransactionParams,
+      String gas,
+      long gasBudget,
+      ExecuteTransactionRequestType requestType) {
+    return this.transactionBuilder
+        .batchTransaction(signer, batchTransactionParams, gas, gasBudget)
+        .thenCompose(signAndExecuteTransactionFunction(signer, requestType));
+  }
+
+  /**
+   * Pay sui completable future.
+   *
+   * @param signer the signer
+   * @param inputCoins the input coins
+   * @param recipients the recipients
+   * @param amounts the amounts
+   * @param gasBudget the gas budget
+   * @param requestType the request type
+   * @return the completable future
+   */
+  public CompletableFuture<ExecuteTransactionResponse> paySui(
+      String signer,
+      List<String> inputCoins,
+      List<String> recipients,
+      List<Long> amounts,
+      long gasBudget,
+      ExecuteTransactionRequestType requestType) {
+    return this.transactionBuilder
+        .paySui(signer, inputCoins, recipients, amounts, gasBudget)
+        .thenCompose(signAndExecuteTransactionFunction(signer, requestType));
+  }
+
+  /**
+   * Pay completable future.
+   *
+   * @param signer the signer
+   * @param inputCoins the input coins
+   * @param recipients the recipients
+   * @param amounts the amounts
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @param requestType the request type
+   * @return the completable future
+   */
+  public CompletableFuture<ExecuteTransactionResponse> pay(
+      String signer,
+      List<String> inputCoins,
+      List<String> recipients,
+      List<Long> amounts,
+      String gas,
+      long gasBudget,
+      ExecuteTransactionRequestType requestType) {
+    return this.transactionBuilder
+        .pay(signer, inputCoins, recipients, amounts, gas, gasBudget)
+        .thenCompose(signAndExecuteTransactionFunction(signer, requestType));
+  }
+
+  /**
+   * Merge coins completable future.
+   *
+   * @param signer the signer
+   * @param primaryCoin the primary coin
+   * @param toMergeCoin the to merge coin
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @param requestType the request type
+   * @return the completable future
+   */
+  public CompletableFuture<ExecuteTransactionResponse> mergeCoins(
+      String signer,
+      String primaryCoin,
+      String toMergeCoin,
+      String gas,
+      long gasBudget,
+      ExecuteTransactionRequestType requestType) {
+    return this.transactionBuilder
+        .mergeCoins(signer, primaryCoin, toMergeCoin, gas, gasBudget)
+        .thenCompose(signAndExecuteTransactionFunction(signer, requestType));
+  }
+
+  /**
+   * Split coin completable future.
+   *
+   * @param signer the signer
+   * @param coin the coin
+   * @param splitAmounts the split amounts
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @param requestType the request type
+   * @return the completable future
+   */
+  public CompletableFuture<ExecuteTransactionResponse> splitCoin(
+      String signer,
+      String coin,
+      List<Long> splitAmounts,
+      String gas,
+      long gasBudget,
+      ExecuteTransactionRequestType requestType) {
+    return this.transactionBuilder
+        .splitCoin(signer, coin, splitAmounts, gas, gasBudget)
+        .thenCompose(signAndExecuteTransactionFunction(signer, requestType));
+  }
+
+  /**
+   * Pay all sui completable future.
+   *
+   * @param signer the signer
+   * @param inputCoins the input coins
+   * @param recipient the recipient
+   * @param gasBudget the gas budget
+   * @param requestType the request type
+   * @return the completable future
+   */
+  public CompletableFuture<ExecuteTransactionResponse> payAllSui(
+      String signer,
+      List<String> inputCoins,
+      String recipient,
+      long gasBudget,
+      ExecuteTransactionRequestType requestType) {
+    return this.transactionBuilder
+        .payAllSui(signer, inputCoins, recipient, gasBudget)
+        .thenCompose(signAndExecuteTransactionFunction(signer, requestType));
+  }
+
+  /**
+   * Publish completable future.
+   *
+   * @param signer the signer
+   * @param compiledModules the compiled modules
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @param requestType the request type
+   * @return the completable future
+   */
+  public CompletableFuture<ExecuteTransactionResponse> publish(
+      String signer,
+      List<String> compiledModules,
+      String gas,
+      long gasBudget,
+      ExecuteTransactionRequestType requestType) {
+    return this.transactionBuilder
+        .publish(signer, compiledModules, gas, gasBudget)
+        .thenCompose(signAndExecuteTransactionFunction(signer, requestType));
+  }
+
+  /**
+   * Split coin equal completable future.
+   *
+   * @param signer the signer
+   * @param coin the coin
+   * @param splitCount the split count
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @param requestType the request type
+   * @return the completable future
+   */
+  public CompletableFuture<ExecuteTransactionResponse> splitCoinEqual(
+      String signer,
+      String coin,
+      long splitCount,
+      String gas,
+      long gasBudget,
+      ExecuteTransactionRequestType requestType) {
+    return this.transactionBuilder
+        .splitCoinEqual(signer, coin, splitCount, gas, gasBudget)
+        .thenCompose(signAndExecuteTransactionFunction(signer, requestType));
+  }
+
+  /**
+   * Transfer object completable future.
+   *
+   * @param signer the signer
+   * @param suiObject the sui object
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @param recipient the recipient
+   * @param requestType the request type
+   * @return the completable future
+   */
+  public CompletableFuture<ExecuteTransactionResponse> transferObject(
+      String signer,
+      String suiObject,
+      String recipient,
+      String gas,
+      long gasBudget,
+      ExecuteTransactionRequestType requestType) {
+    return this.transactionBuilder
+        .transferObject(signer, suiObject, recipient, gas, gasBudget)
+        .thenCompose(signAndExecuteTransactionFunction(signer, requestType));
+  }
+
+  @Override
+  public CompletableFuture<ObjectResponse> getObject(String id) {
+    return queryClient.getObject(id);
+  }
+
+  @Override
   public CompletableFuture<List<SuiObjectInfo>> getObjectsOwnedByAddress(String address) {
-    return this.queryClient.getObjectsOwnedByAddress(address);
+    return queryClient.getObjectsOwnedByAddress(address);
+  }
+
+  @Override
+  public CompletableFuture<List<SuiObjectInfo>> getObjectsOwnedByObject(String objectId) {
+    return queryClient.getObjectsOwnedByObject(objectId);
+  }
+
+  @Override
+  public CompletableFuture<ObjectResponse> getRawObject(String id) {
+    return queryClient.getRawObject(id);
+  }
+
+  @Override
+  public CompletableFuture<Long> getTotalTransactionNumber() {
+    return queryClient.getTotalTransactionNumber();
+  }
+
+  @Override
+  public CompletableFuture<TransactionResponse> getTransaction(String digest) {
+    return queryClient.getTransaction(digest);
+  }
+
+  @Override
+  public CompletableFuture<List<String>> getTransactionsInRange(Long start, Long end) {
+    return queryClient.getTransactionsInRange(start, end);
+  }
+
+  @Override
+  public CompletableFuture<PaginatedEvents> getEvents(
+      EventQuery query, EventId cursor, int limit, boolean isDescOrder) {
+    return queryClient.getEvents(query, cursor, limit, isDescOrder);
+  }
+
+  @Override
+  public CompletableFuture<Map<String, MoveNormalizedModule>> getNormalizedMoveModulesByPackage(
+      String packageId) {
+    return queryClient.getNormalizedMoveModulesByPackage(packageId);
+  }
+
+  @Override
+  public CompletableFuture<CommitteeInfoResponse> getCommitteeInfo(Long epoch) {
+    return queryClient.getCommitteeInfo(epoch);
+  }
+
+  @Override
+  public CompletableFuture<List<MoveFunctionArgType>> getMoveFunctionArgTypes(
+      String suiPackage, String module, String function) {
+    return queryClient.getMoveFunctionArgTypes(suiPackage, module, function);
+  }
+
+  @Override
+  public CompletableFuture<MoveNormalizedFunction> getNormalizedMoveFunction(
+      String suiPackage, String module, String function) {
+    return queryClient.getNormalizedMoveFunction(suiPackage, module, function);
+  }
+
+  @Override
+  public CompletableFuture<MoveNormalizedModule> getNormalizedMoveModule(
+      String suiPackage, String module) {
+    return queryClient.getNormalizedMoveModule(suiPackage, module);
+  }
+
+  @Override
+  public CompletableFuture<MoveNormalizedStruct> getNormalizedMoveStruct(
+      String suiPackage, String module, String struct) {
+    return queryClient.getNormalizedMoveStruct(suiPackage, module, struct);
+  }
+
+  @Override
+  public CompletableFuture<ObjectResponse> tryGetPastObject(String objectId, long version) {
+    return queryClient.tryGetPastObject(objectId, version);
+  }
+
+  @Override
+  public CompletableFuture<PaginatedTransactionDigests> getTransactions(
+      TransactionQuery query, String cursor, int limit, boolean isDescOrder) {
+    return queryClient.getTransactions(query, cursor, limit, isDescOrder);
+  }
+
+  @Override
+  public CompletableFuture<CoinMetadata> getCoinMetadata(String coinType) {
+    return queryClient.getCoinMetadata(coinType);
+  }
+
+  @Override
+  public CompletableFuture<TransactionEffects> dryRunTransaction(String txBytes) {
+    return executionClient.dryRunTransaction(txBytes);
+  }
+
+  @Override
+  public CompletableFuture<ExecuteTransactionResponse> executeTransaction(
+      String txBytes,
+      SignatureScheme signatureScheme,
+      String signature,
+      String publicKey,
+      ExecuteTransactionRequestType requestType) {
+    return executionClient.executeTransaction(
+        txBytes, signatureScheme, signature, publicKey, requestType);
   }
 
   /**
-   * Gets key store.
+   * Execute transaction completable future.
    *
-   * @return the key store
+   * @param txBytes the tx bytes
+   * @param signer the signer
+   * @param requestType the request type
+   * @return the completable future
    */
-  public KeyStore getKeyStore() {
-    return keyStore;
+  public CompletableFuture<ExecuteTransactionResponse> executeTransaction(
+      String txBytes, String signer, ExecuteTransactionRequestType requestType) {
+    final SuiKeyPair<?> suiKeyPair = keyStore.getByAddress(signer);
+    final String publicKey = suiKeyPair.publicKey();
+    final SignatureScheme signatureScheme = suiKeyPair.signatureScheme();
+    return signAndExecuteTransaction(txBytes, requestType, suiKeyPair, publicKey, signatureScheme);
   }
 
-  /**
-   * Gets query client.
-   *
-   * @return the query client
-   */
-  public QueryClient getQueryClient() {
-    return queryClient;
+  @Override
+  public SuiKeyPair<?> getByAddress(String address) {
+    return keyStore.getByAddress(address);
+  }
+
+  @Override
+  public NavigableSet<String> addresses() {
+    return keyStore.addresses();
   }
 
   /**
@@ -151,12 +491,33 @@ public class Sui {
     return transactionBuilder;
   }
 
-  /**
-   * Gets execution client.
-   *
-   * @return the execution client
-   */
-  public ExecutionClient getExecutionClient() {
-    return executionClient;
+  private CompletableFuture<ExecuteTransactionResponse> signAndExecuteTransaction(
+      String txBytes,
+      ExecuteTransactionRequestType requestType,
+      SuiKeyPair<?> suiKeyPair,
+      String publicKey,
+      SignatureScheme signatureScheme) {
+    final String signature;
+    try {
+      signature = suiKeyPair.sign(txBytes);
+    } catch (SigningException e) {
+      CompletableFuture<ExecuteTransactionResponse> future = new CompletableFuture<>();
+      future.completeExceptionally(new SuiApiException(e));
+      return future;
+    }
+    return executionClient.executeTransaction(
+        txBytes, signatureScheme, signature, publicKey, requestType);
+  }
+
+  @NotNull private Function<TransactionBytes, CompletableFuture<ExecuteTransactionResponse>>
+      signAndExecuteTransactionFunction(String signer, ExecuteTransactionRequestType requestType) {
+    return transactionBytes -> {
+      final SuiKeyPair<?> suiKeyPair = keyStore.getByAddress(signer);
+      final String publicKey = suiKeyPair.publicKey();
+      final SignatureScheme signatureScheme = suiKeyPair.signatureScheme();
+      final String txBytes = transactionBytes.getTxBytes();
+      return signAndExecuteTransaction(
+          txBytes, requestType, suiKeyPair, publicKey, signatureScheme);
+    };
   }
 }

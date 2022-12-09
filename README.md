@@ -15,20 +15,23 @@ expect frequent breaking changes in the short-term. We expect the API to stabili
 upcoming TestNet launch.
 
 ## Using
+
 ### Maven
+
 ```xml
 <!-- https://mvnrepository.com/artifact/me.grapebaba/sui4j -->
 <dependency>
-	<groupId>me.grapebaba</groupId>
-	<artifactId>sui4j</artifactId>
-	<version>0.2.0</version>
+<groupId>me.grapebaba</groupId>
+<artifactId>sui4j</artifactId>
+<version>0.3.1</version>
 </dependency>
 ```
 
 ### Gradle
+
 ```groovy
 // https://mvnrepository.com/artifact/me.grapebaba/sui4j
-implementation 'me.grapebaba:sui4j:0.2.0'
+implementation 'me.grapebaba:sui4j:0.3.1'
 ```
 
 ## Building Locally
@@ -75,11 +78,8 @@ cd sui/target/release
 ./gradlew integrationTest
 ```
 
-### To run E2E tests against DevNet
-
-TODO
-
 ## Supported APIs
+
 - [x] sui_batchTransaction
 - [x] sui_dryRunTransaction
 - [x] sui_executeTransaction
@@ -112,113 +112,58 @@ TODO
 - [x] sui_transferObject
 - [x] sui_transferSui
 - [x] sui_tryGetPastObject
+- [ ] sui_getTransactionAuthSigners
+- [ ] sui_getSuiSystemState
+
+> Note: Event subscribe API and KeyPair generation will be supported soon.
 
 ## Examples
 
-### create query client
-
 ```java
-final String BASE_URL="http://localhost:9000";
-final JsonHandler jsonHandler=new GsonJsonHandler();
+String BASE_URL="http://localhost:9000";
+// It must be a absolute path
+	String TEST_KEY_STORE_PATH=
+	System.getProperty("user.home")+"/.sui/sui_config/sui.keystore";
+	Sui sui=new Sui(BASE_URL,TEST_KEY_STORE_PATH);
 
-final JsonRpcClientProvider jsonRpcClientProvider=
-	new OkHttpJsonRpcClientProvider(BASE_URL,jsonHandler);
-final QueryClient client=new QueryClientImpl(jsonRpcClientProvider);
-```
-
-### sui_getCommitteeInfo
-
-```java
-	CompletableFuture<CommitteeInfoResponse> res=client.getCommitteeInfo(1L);
-```
-
-### sui_getEvents
-
-```java
-	TransactionEventQuery query=new TransactionEventQuery();
-	query.setTransaction("ov1tDrhdOqRW2uFweTbSSTaQbBbnjHWmrsh675lwb0Q=");
-	CompletableFuture<PaginatedEvents> res=client.getEvents(query,null,1,false);
-```
-
-### sui_getMoveFunctionArgTypes
-
-```java
-	CompletableFuture<List<MoveFunctionArgType>>res=
-	client.getMoveFunctionArgTypes("0x0000000000000000000000000000000000000002","bag","add");
-```
-
-### sui_getNormalizedMoveFunction
-
-```java
-	CompletableFuture<MoveNormalizedFunction> res=
-	client.getNormalizedMoveFunction(
-	"0x0000000000000000000000000000000000000002","bag","add");
-```
-
-### sui_getNormalizedMoveModule
-
-```java
-	CompletableFuture<MoveNormalizedModule> res=
-	client.getNormalizedMoveModule("0x0000000000000000000000000000000000000002","bag");
-```
-
-### sui_getNormalizedMoveModulesByPackage
-
-```java
-	CompletableFuture<Map<String, MoveNormalizedModule>>res=
-	client.getNormalizedMoveModulesByPackage("0x0000000000000000000000000000000000000002");
-```
-
-### sui_getNormalizedMoveStruct
-
-```java
-	CompletableFuture<MoveNormalizedStruct> res=
-	client.getNormalizedMoveStruct("0x0000000000000000000000000000000000000002","bag","Bag");
-```
-
-### sui_getObject
-
-```java
-	CompletableFuture<GetObjectResponse> res=
-	client.getObject("0x342950ba2451c2f27ed128e591c2b4551e5177c2");
-```
-
-### sui_getObjectsOwnedByAddress
-
-```java
+// query objects
 	CompletableFuture<List<SuiObjectInfo>>res=
-	client.getObjectsOwnedByAddress("0xea79464d86786b7a7a63e3f13f798f29f5e65947");
+	sui.getObjectsOwnedByAddress("0xea79464d86786b7a7a63e3f13f798f29f5e65947");
+	List<SuiObjectInfo> objects=res.get();
+	String coinObjectId=objects.get(0).getObjectId();
+	List<String> addresses=new ArrayList<>(sui.addresses());
+
+// Transfer sui
+	CompletableFuture<ExecuteTransactionResponse> res1=
+	sui.transferSui(
+	"0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+	coinObjectId,
+	100L,
+	addresses.get(0),
+	2000L,
+	ExecuteTransactionRequestType.WaitForLocalExecution);
+
+	CompletableFuture<ExecuteTransactionResponse> res2=
+	sui.moveCall(
+	"0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+	"0x0000000000000000000000000000000000000002",
+	"devnet_nft",
+	"mint",
+	Lists.newArrayList(),
+	Lists.newArrayList(
+	"Example NFT",
+	"An example NFT.",
+	"ipfs://bafkreibngqhl3gaa7daob4i2vccziay2jjlp435cf66vhono7nrvww53ty"),
+	null,
+	2000L,
+	ExecuteTransactionRequestType.WaitForLocalExecution);
 ```
 
-### sui_getObjectsOwnedByObject
+For more examples, you can see [SuiIntTests](src/integrationTest/java/io/sui/SuiIntTests.java)
 
-```java
-	CompletableFuture<List<SuiObjectInfo>>res=
-	client.getObjectsOwnedByObject("0xde2952390ab3d0cfbb0a0602532480ed5ec99cf3");
-```
+## Further
 
-### sui_getRawObject
+Will add [BCS](https://github.com/diem/bcs) to implement local transaction serialization soon.
 
-```java
-	CompletableFuture<GetObjectResponse> res=
-	client.getRawObject("0x342950ba2451c2f27ed128e591c2b4551e5177c2");
-```
-
-### sui_getTotalTransactionNumber
-
-```java
-	CompletableFuture<Long> res=client.getTotalTransactionNumber();
-```
-
-### sui_getTransaction
-
-```java
-	CompletableFuture<TransactionResponse> res=
-	client.getTransaction("3Dda4/74LXf6GmOxMxp3qdbW/WdQ6/8EHobZ1LvSyYk=");
-```
-
-### sui_getTransactionsInRange
-
-```java
-	CompletableFuture<List<String>>res=client.getTransactionsInRange(0L,100L);
-```
+## Contribution
+To help sui4j grow, follow [Contributing to sui4j](CONTRIBUTING.md).
