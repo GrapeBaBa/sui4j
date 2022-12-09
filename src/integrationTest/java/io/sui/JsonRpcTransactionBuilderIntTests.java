@@ -268,9 +268,9 @@ class JsonRpcTransactionBuilderIntTests {
         transactionBuilder.transferObject(
             "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
             "0x26cab55541e4b0f362211f9394200b7e41fd45eb",
+            "0x51de405091c9f971fc6085d384f9ba764f268fca",
             "0x26cab55541e4b0f362211f9394200b7e41fd45eb",
-            1L,
-            "0x51de405091c9f971fc6085d384f9ba764f268fca");
+            1L);
     CompletableFuture<Object> future = new CompletableFuture<>();
     res.whenComplete(
         (transactionResponse, throwable) -> {
@@ -362,6 +362,30 @@ class JsonRpcTransactionBuilderIntTests {
           }
         });
     System.out.println(future.get());
+
+    CompletableFuture<TransactionBytes> res2 =
+        transactionBuilder.moveCall(
+            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            "0x0000000000000000000000000000000000000002",
+            "devnet_nft",
+            "mint",
+            Lists.newArrayList(),
+            Lists.newArrayList(
+                "Example NFT",
+                "An example NFT.",
+                "ipfs://bafkreibngqhl3gaa7daob4i2vccziay2jjlp435cf66vhono7nrvww53ty"),
+            null,
+            5000L);
+    CompletableFuture<Object> future1 = new CompletableFuture<>();
+    res2.whenComplete(
+        (transactionResponse, throwable) -> {
+          if (throwable != null) {
+            future1.complete(throwable);
+          } else {
+            future1.complete(transactionResponse);
+          }
+        });
+    System.out.println(future1.get());
   }
 
   /**

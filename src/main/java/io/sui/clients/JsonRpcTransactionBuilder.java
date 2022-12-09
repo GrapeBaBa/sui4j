@@ -127,7 +127,7 @@ public class JsonRpcTransactionBuilder implements TransactionBuilder {
 
   @Override
   public CompletableFuture<TransactionBytes> transferObject(
-      String signer, String suiObject, String gas, long gasBudget, String recipient) {
+      String signer, String suiObject, String recipient, String gas, long gasBudget) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
             "sui_transferObject", Lists.newArrayList(signer, suiObject, gas, gasBudget, recipient));

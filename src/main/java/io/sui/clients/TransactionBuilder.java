@@ -142,7 +142,7 @@ public interface TransactionBuilder {
    * @return the completable future
    */
   CompletableFuture<TransactionBytes> transferObject(
-      String signer, String suiObject, String gas, long gasBudget, String recipient);
+      String signer, String suiObject, String recipient, String gas, long gasBudget);
 
   /**
    * Batch transaction completable future.

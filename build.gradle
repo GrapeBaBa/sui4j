@@ -11,7 +11,7 @@ plugins {
 
 
 group 'me.grapebaba'
-version '0.3.0'
+version '0.3.1'
 
 repositories {
 	mavenCentral()
@@ -65,7 +65,8 @@ jacocoTestReport {
 			fileTree(dir: it, exclude: [
 					"io/sui/models/**",
 					"io/sui/jsonrpc/JsonRpc20Request.class",
-					"io/sui/jsonrpc/JsonRpc20Response*.class"
+					"io/sui/jsonrpc/JsonRpc20Response*.class",
+					"io/sui/Sui.class"
 			])
 		}))
 	}
@@ -81,7 +82,8 @@ jacocoTestCoverageVerification {
 			fileTree(dir: it, exclude: [
 					"io/sui/models/**",
 					"io/sui/jsonrpc/JsonRpc20Request.class",
-					"io/sui/jsonrpc/JsonRpc20Response*.class"
+					"io/sui/jsonrpc/JsonRpc20Response*.class",
+					"io/sui/Sui.class"
 			])
 		}))
 	}

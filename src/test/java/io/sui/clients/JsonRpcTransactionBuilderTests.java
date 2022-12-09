@@ -346,9 +346,9 @@ class JsonRpcTransactionBuilderTests {
         transactionBuilder.transferObject(
             "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
             "0x26cab55541e4b0f362211f9394200b7e41fd45eb",
+            "0x51de405091c9f971fc6085d384f9ba764f268fca",
             "0x26cab55541e4b0f362211f9394200b7e41fd45eb",
-            1L,
-            "0x51de405091c9f971fc6085d384f9ba764f268fca");
+            1L);
     System.out.println(res.get());
     assertEquals("Q0eaI2C4oK8sgnTDm+qb+EknfB/Oo+NyWq02lX+Xhn0=", res.get().getGas().getDigest());
     assertEquals(
