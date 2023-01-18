@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -34,9 +34,7 @@ class SuiKeyPairTest {
   /** Decode base 64. */
   @Test
   void decodeBase64() {
-    final String base64 =
-        "AQLE7fDdDt4nrbGgCX8umsFscJRFY4t3Bkrk3MaB"
-            + "b1nnA6dD5QHIFrPAdPQtdDyfoJNjiN/ghxuVLxfHxehcwec0";
+    final String base64 = "ADfbVnAT2QLG7W+bM+1ENzEKAxnoUx10+WfGg5zx8VRm";
     try {
       SuiKeyPair.decodeBase64(base64);
     } catch (SignatureSchemeNotSupportedException e) {

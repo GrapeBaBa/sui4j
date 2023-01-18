@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -37,20 +37,16 @@ class SECP256K1KeyPairTest {
   /** Address. */
   @Test
   void address() {
-    final String base64 =
-        "AQLE7fDdDt4nrbGgCX8umsFscJRFY4t3Bkrk3MaB"
-            + "b1nnA6dD5QHIFrPAdPQtdDyfoJNjiN/ghxuVLxfHxehcwec0";
+    final String base64 = "ABw1fhWdG+Ni9eFfyLdfdmsiMWyirHCV/UVC9jcloBm8";
     final SuiKeyPair<ECKey> secp256K1KeyPair = SECP256K1KeyPair.decodeBase64(Base64.decode(base64));
 
-    assertEquals("0xe8da3f038048e2cd6339e916a926874d0d0604b7", secp256K1KeyPair.address());
+    assertEquals("0xea650e4199befc011d2373decabc4c3deb0275d8", secp256K1KeyPair.address());
   }
 
   /** Decode base 64. */
   @Test
   void decodeBase64() {
-    final String base64 =
-        "AQLE7fDdDt4nrbGgCX8umsFscJRFY4t3Bkrk3MaBb1nnA6dD5QH"
-            + "IFrPAdPQtdDyfoJNjiN/ghxuVLxfHxehcwec0";
+    final String base64 = "ABw1fhWdG+Ni9eFfyLdfdmsiMWyirHCV/UVC9jcloBm8";
     final SuiKeyPair<ECKey> secp256K1KeyPair = SECP256K1KeyPair.decodeBase64(Base64.decode(base64));
     final String msg = "test";
     final ECDSASignature signature = secp256K1KeyPair.keyPair.sign(Sha256Hash.of(msg.getBytes()));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -40,20 +40,16 @@ class ED25519KeyPairTest {
   /** Address. */
   @Test
   void address() {
-    final String base64 =
-        "AOSqUUDaiPGYESoI/G13YwT2qyWW/RRvsW2G7IoCG"
-            + "URYYbRLmbwt4NZ9m9x7s8taYhCJg9OQdkrmSTVioUVpCSM=";
+    final String base64 = "ADfbVnAT2QLG7W+bM+1ENzEKAxnoUx10+WfGg5zx8VRm";
     final ED25519KeyPair keyPair = ED25519KeyPair.decodeBase64(Base64.decode(base64));
 
-    assertEquals("0x1e7752f22228753e5745f5ac8ad4ef1bbc502845", keyPair.address());
+    assertEquals("0x0a7421363a1f6a82800f7c9340ac02b5905798cb", keyPair.address());
   }
 
   /** Decode base 64. */
   @Test
   void decodeBase64() throws CryptoException {
-    final String base64 =
-        "AOSqUUDaiPGYESoI/G13YwT2qyWW/RRvsW2G7IoCG"
-            + "URYYbRLmbwt4NZ9m9x7s8taYhCJg9OQdkrmSTVioUVpCSM=";
+    final String base64 = "ADfbVnAT2QLG7W+bM+1ENzEKAxnoUx10+WfGg5zx8VRm";
     final ED25519KeyPair ed25519KeyPair = ED25519KeyPair.decodeBase64(Base64.decode(base64));
 
     Signer signer = new Ed25519Signer();
