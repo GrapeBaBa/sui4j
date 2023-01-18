@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -53,9 +53,7 @@ public class SECP256K1KeyPair extends SuiKeyPair<ECKey> {
    * @return the sui key pair
    */
   public static SECP256K1KeyPair decodeBase64(byte[] encoded) {
-    final int compressedPublicKeySize = 33;
-    return new SECP256K1KeyPair(
-        Arrays.copyOfRange(encoded, 1 + compressedPublicKeySize, encoded.length));
+    return new SECP256K1KeyPair(Arrays.copyOfRange(encoded, 1, encoded.length));
   }
 
   @Override

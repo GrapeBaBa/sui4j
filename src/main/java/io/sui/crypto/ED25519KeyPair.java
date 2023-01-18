@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -92,8 +92,7 @@ public class ED25519KeyPair extends SuiKeyPair<AsymmetricCipherKeyPair> {
    * @return the sui key pair
    */
   public static ED25519KeyPair decodeBase64(byte[] encoded) {
-    Ed25519PrivateKeyParameters privateKeyParameters =
-        new Ed25519PrivateKeyParameters(encoded, 1 + Ed25519PublicKeyParameters.KEY_SIZE);
+    Ed25519PrivateKeyParameters privateKeyParameters = new Ed25519PrivateKeyParameters(encoded, 1);
     Ed25519PublicKeyParameters publicKeyParameters = privateKeyParameters.generatePublicKey();
     return new ED25519KeyPair(privateKeyParameters, publicKeyParameters);
   }
