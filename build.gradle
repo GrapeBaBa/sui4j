@@ -63,6 +63,7 @@ jacocoTestReport {
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
 			fileTree(dir: it, exclude: [
+					"com/novi/**",
 					"io/sui/models/**",
 					"io/sui/jsonrpc/JsonRpc20Request.class",
 					"io/sui/jsonrpc/JsonRpc20Response*.class",
@@ -80,6 +81,8 @@ jacocoTestCoverageVerification {
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
 			fileTree(dir: it, exclude: [
+					"com/novi/**",
+					"io/sui/bcsgen/**",
 					"io/sui/models/**",
 					"io/sui/jsonrpc/JsonRpc20Request.class",
 					"io/sui/jsonrpc/JsonRpc20Response*.class",
@@ -136,7 +139,7 @@ spotless {
 		importOrder()
 
 		removeUnusedImports()
-
+		targetExclude("src/main/java/com/**/*.java","src/main/java/io/sui/bcsgen/*.java")
 	}
 }
 
@@ -257,3 +260,7 @@ nexusPublishing {
 		sonatype()
 	}
 }
+
+checkstyleMain
+		.exclude('io/sui/bcsgen/*.java')
+		.exclude('com/novi/**/*.java')
