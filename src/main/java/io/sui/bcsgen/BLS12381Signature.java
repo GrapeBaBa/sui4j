@@ -1,17 +1,17 @@
 package io.sui.bcsgen;
 
 
-public final class ObjectDigest {
-    public final com.novi.serde.Bytes value;
+public final class BLS12381Signature {
+    public final java.util.@com.novi.serde.ArrayLen(length=48) List<@com.novi.serde.Unsigned Byte> sig;
 
-    public ObjectDigest(com.novi.serde.Bytes value) {
-        java.util.Objects.requireNonNull(value, "value must not be null");
-        this.value = value;
+    public BLS12381Signature(java.util.@com.novi.serde.ArrayLen(length=48) List<@com.novi.serde.Unsigned Byte> sig) {
+        java.util.Objects.requireNonNull(sig, "sig must not be null");
+        this.sig = sig;
     }
 
     public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
         serializer.increase_container_depth();
-        serializer.serialize_bytes(value);
+        TraitHelpers.serialize_array48_u8_array(sig, serializer);
         serializer.decrease_container_depth();
     }
 
@@ -21,20 +21,20 @@ public final class ObjectDigest {
         return serializer.get_bytes();
     }
 
-    public static ObjectDigest deserialize(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+    public static BLS12381Signature deserialize(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
         deserializer.increase_container_depth();
         Builder builder = new Builder();
-        builder.value = deserializer.deserialize_bytes();
+        builder.sig = TraitHelpers.deserialize_array48_u8_array(deserializer);
         deserializer.decrease_container_depth();
         return builder.build();
     }
 
-    public static ObjectDigest bcsDeserialize(byte[] input) throws com.novi.serde.DeserializationError {
+    public static BLS12381Signature bcsDeserialize(byte[] input) throws com.novi.serde.DeserializationError {
         if (input == null) {
              throw new com.novi.serde.DeserializationError("Cannot deserialize null array");
         }
         com.novi.serde.Deserializer deserializer = new com.novi.bcs.BcsDeserializer(input);
-        ObjectDigest value = deserialize(deserializer);
+        BLS12381Signature value = deserialize(deserializer);
         if (deserializer.get_buffer_offset() < input.length) {
              throw new com.novi.serde.DeserializationError("Some input bytes were not read");
         }
@@ -45,23 +45,23 @@ public final class ObjectDigest {
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        ObjectDigest other = (ObjectDigest) obj;
-        if (!java.util.Objects.equals(this.value, other.value)) { return false; }
+        BLS12381Signature other = (BLS12381Signature) obj;
+        if (!java.util.Objects.equals(this.sig, other.sig)) { return false; }
         return true;
     }
 
     public int hashCode() {
         int value = 7;
-        value = 31 * value + (this.value != null ? this.value.hashCode() : 0);
+        value = 31 * value + (this.sig != null ? this.sig.hashCode() : 0);
         return value;
     }
 
     public static final class Builder {
-        public com.novi.serde.Bytes value;
+        public java.util.@com.novi.serde.ArrayLen(length=48) List<@com.novi.serde.Unsigned Byte> sig;
 
-        public ObjectDigest build() {
-            return new ObjectDigest(
-                value
+        public BLS12381Signature build() {
+            return new BLS12381Signature(
+                sig
             );
         }
     }

@@ -23,10 +23,6 @@ package io.sui.models.transactions;
  * @since 2022.11
  */
 public enum ExecuteTransactionRequestType {
-  /** Immediate return execute transaction request type. */
-  ImmediateReturn,
-  /** Wait for tx cert execute transaction request type. */
-  WaitForTxCert,
   /** Wait for effects cert execute transaction request type. */
   WaitForEffectsCert,
   /** Wait for local execution execute transaction request type. */

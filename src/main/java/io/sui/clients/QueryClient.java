@@ -28,11 +28,13 @@ import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.SuiObjectInfo;
+import io.sui.models.objects.SuiObjectRef;
 import io.sui.models.transactions.PaginatedTransactionDigests;
 import io.sui.models.transactions.TransactionQuery;
 import io.sui.models.transactions.TransactionResponse;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -94,7 +96,7 @@ public interface QueryClient {
    * Gets transactions in range.
    *
    * @param start the start
-   * @param end the end
+   * @param end   the end
    * @return the transactions in range
    */
   CompletableFuture<List<String>> getTransactionsInRange(Long start, Long end);
@@ -102,9 +104,9 @@ public interface QueryClient {
   /**
    * Gets events.
    *
-   * @param query the query
-   * @param cursor the cursor
-   * @param limit the limit
+   * @param query       the query
+   * @param cursor      the cursor
+   * @param limit       the limit
    * @param isDescOrder the is desc order
    * @return the events
    */
@@ -132,8 +134,8 @@ public interface QueryClient {
    * Gets move function arg types.
    *
    * @param suiPackage the sui package
-   * @param module the module
-   * @param function the function
+   * @param module     the module
+   * @param function   the function
    * @return the move function arg types
    */
   CompletableFuture<List<MoveFunctionArgType>> getMoveFunctionArgTypes(
@@ -143,8 +145,8 @@ public interface QueryClient {
    * Gets normalized move function.
    *
    * @param suiPackage the sui package
-   * @param module the module
-   * @param function the function
+   * @param module     the module
+   * @param function   the function
    * @return the normalized move function
    */
   CompletableFuture<MoveNormalizedFunction> getNormalizedMoveFunction(
@@ -154,7 +156,7 @@ public interface QueryClient {
    * Gets normalized move module.
    *
    * @param suiPackage the sui package
-   * @param module the module
+   * @param module     the module
    * @return the normalized move module
    */
   CompletableFuture<MoveNormalizedModule> getNormalizedMoveModule(String suiPackage, String module);
@@ -163,8 +165,8 @@ public interface QueryClient {
    * Gets normalized move struct.
    *
    * @param suiPackage the sui package
-   * @param module the module
-   * @param struct the struct
+   * @param module     the module
+   * @param struct     the struct
    * @return the normalized move struct
    */
   CompletableFuture<MoveNormalizedStruct> getNormalizedMoveStruct(
@@ -174,7 +176,7 @@ public interface QueryClient {
    * Try get past object completable future.
    *
    * @param objectId the object id
-   * @param version the version
+   * @param version  the version
    * @return the completable future
    */
   CompletableFuture<ObjectResponse> tryGetPastObject(String objectId, long version);
@@ -182,9 +184,9 @@ public interface QueryClient {
   /**
    * Gets transactions.
    *
-   * @param query the query
-   * @param cursor the cursor
-   * @param limit the limit
+   * @param query       the query
+   * @param cursor      the cursor
+   * @param limit       the limit
    * @param isDescOrder the is desc order
    * @return the transactions
    */
@@ -198,4 +200,20 @@ public interface QueryClient {
    * @return the coin metadata
    */
   CompletableFuture<CoinMetadata> getCoinMetadata(String coinType);
+
+  /**
+   * Gets reference gas price.
+   *
+   * @return the reference gas price
+   */
+  CompletableFuture<Long> getReferenceGasPrice();
+
+
+  /**
+   * Gets object ref.
+   *
+   * @param id the id
+   * @return the object ref
+   */
+  CompletableFuture<SuiObjectRef> getObjectRef(String id);
 }

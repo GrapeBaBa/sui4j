@@ -1,10 +1,10 @@
 package io.sui.bcsgen;
 
 
-public final class ObjectDigest {
+public final class AuthorityPublicKeyBytes {
     public final com.novi.serde.Bytes value;
 
-    public ObjectDigest(com.novi.serde.Bytes value) {
+    public AuthorityPublicKeyBytes(com.novi.serde.Bytes value) {
         java.util.Objects.requireNonNull(value, "value must not be null");
         this.value = value;
     }
@@ -21,7 +21,7 @@ public final class ObjectDigest {
         return serializer.get_bytes();
     }
 
-    public static ObjectDigest deserialize(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+    public static AuthorityPublicKeyBytes deserialize(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
         deserializer.increase_container_depth();
         Builder builder = new Builder();
         builder.value = deserializer.deserialize_bytes();
@@ -29,12 +29,12 @@ public final class ObjectDigest {
         return builder.build();
     }
 
-    public static ObjectDigest bcsDeserialize(byte[] input) throws com.novi.serde.DeserializationError {
+    public static AuthorityPublicKeyBytes bcsDeserialize(byte[] input) throws com.novi.serde.DeserializationError {
         if (input == null) {
              throw new com.novi.serde.DeserializationError("Cannot deserialize null array");
         }
         com.novi.serde.Deserializer deserializer = new com.novi.bcs.BcsDeserializer(input);
-        ObjectDigest value = deserialize(deserializer);
+        AuthorityPublicKeyBytes value = deserialize(deserializer);
         if (deserializer.get_buffer_offset() < input.length) {
              throw new com.novi.serde.DeserializationError("Some input bytes were not read");
         }
@@ -45,7 +45,7 @@ public final class ObjectDigest {
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        ObjectDigest other = (ObjectDigest) obj;
+        AuthorityPublicKeyBytes other = (AuthorityPublicKeyBytes) obj;
         if (!java.util.Objects.equals(this.value, other.value)) { return false; }
         return true;
     }
@@ -59,8 +59,8 @@ public final class ObjectDigest {
     public static final class Builder {
         public com.novi.serde.Bytes value;
 
-        public ObjectDigest build() {
-            return new ObjectDigest(
+        public AuthorityPublicKeyBytes build() {
+            return new AuthorityPublicKeyBytes(
                 value
             );
         }

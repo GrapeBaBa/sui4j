@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -35,6 +35,16 @@ public class TransactionBytes {
   private List<InputObjectKind> inputObjects;
 
   private String txBytes;
+
+  private io.sui.bcsgen.TransactionData localTxBytes;
+
+  public io.sui.bcsgen.TransactionData getLocalTxBytes() {
+    return localTxBytes;
+  }
+
+  public void setLocalTxBytes(io.sui.bcsgen.TransactionData localTxBytes) {
+    this.localTxBytes = localTxBytes;
+  }
 
   /**
    * Gets gas.
@@ -101,12 +111,13 @@ public class TransactionBytes {
     TransactionBytes that = (TransactionBytes) o;
     return gas.equals(that.gas)
         && inputObjects.equals(that.inputObjects)
-        && txBytes.equals(that.txBytes);
+        && txBytes.equals(that.txBytes)
+        && localTxBytes.equals(that.localTxBytes);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(gas, inputObjects, txBytes);
+    return Objects.hash(gas, inputObjects, txBytes, localTxBytes);
   }
 
   @Override
@@ -119,6 +130,8 @@ public class TransactionBytes {
         + ", txBytes='"
         + txBytes
         + '\''
+        + ", localTxBytes="
+        + localTxBytes
         + '}';
   }
 }

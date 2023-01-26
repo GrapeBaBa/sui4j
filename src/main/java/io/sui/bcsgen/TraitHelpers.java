@@ -18,18 +18,18 @@ final class TraitHelpers {
         return obj;
     }
 
-    static void serialize_array32_u8_array(java.util.@com.novi.serde.ArrayLen(length=32) List<@com.novi.serde.Unsigned Byte> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-        if (value.size() != 32) {
-            throw new IllegalArgumentException("Invalid length for fixed-size array: " + value.size() + " instead of "+ 32);
+    static void serialize_array48_u8_array(java.util.@com.novi.serde.ArrayLen(length=48) List<@com.novi.serde.Unsigned Byte> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+        if (value.size() != 48) {
+            throw new IllegalArgumentException("Invalid length for fixed-size array: " + value.size() + " instead of "+ 48);
         }
         for (@com.novi.serde.Unsigned Byte item : value) {
             serializer.serialize_u8(item);
         }
     }
 
-    static java.util.@com.novi.serde.ArrayLen(length=32) List<@com.novi.serde.Unsigned Byte> deserialize_array32_u8_array(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-        java.util.List<@com.novi.serde.Unsigned Byte> obj = new java.util.ArrayList<@com.novi.serde.Unsigned Byte>(32);
-        for (long i = 0; i < 32; i++) {
+    static java.util.@com.novi.serde.ArrayLen(length=48) List<@com.novi.serde.Unsigned Byte> deserialize_array48_u8_array(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        java.util.List<@com.novi.serde.Unsigned Byte> obj = new java.util.ArrayList<@com.novi.serde.Unsigned Byte>(48);
+        for (long i = 0; i < 48; i++) {
             obj.add(deserializer.deserialize_u8());
         }
         return obj;
@@ -67,6 +67,60 @@ final class TraitHelpers {
             obj.put(key, value);
         }
         return obj;
+    }
+
+    static void serialize_option_DeleteKind(java.util.Optional<DeleteKind> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+        if (value.isPresent()) {
+            serializer.serialize_option_tag(true);
+            value.get().serialize(serializer);
+        } else {
+            serializer.serialize_option_tag(false);
+        }
+    }
+
+    static java.util.Optional<DeleteKind> deserialize_option_DeleteKind(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        boolean tag = deserializer.deserialize_option_tag();
+        if (!tag) {
+            return java.util.Optional.empty();
+        } else {
+            return java.util.Optional.of(DeleteKind.deserialize(deserializer));
+        }
+    }
+
+    static void serialize_option_MoveLocation(java.util.Optional<MoveLocation> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+        if (value.isPresent()) {
+            serializer.serialize_option_tag(true);
+            value.get().serialize(serializer);
+        } else {
+            serializer.serialize_option_tag(false);
+        }
+    }
+
+    static java.util.Optional<MoveLocation> deserialize_option_MoveLocation(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        boolean tag = deserializer.deserialize_option_tag();
+        if (!tag) {
+            return java.util.Optional.empty();
+        } else {
+            return java.util.Optional.of(MoveLocation.deserialize(deserializer));
+        }
+    }
+
+    static void serialize_option_ObjectFormatOptions(java.util.Optional<ObjectFormatOptions> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+        if (value.isPresent()) {
+            serializer.serialize_option_tag(true);
+            value.get().serialize(serializer);
+        } else {
+            serializer.serialize_option_tag(false);
+        }
+    }
+
+    static java.util.Optional<ObjectFormatOptions> deserialize_option_ObjectFormatOptions(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        boolean tag = deserializer.deserialize_option_tag();
+        if (!tag) {
+            return java.util.Optional.empty();
+        } else {
+            return java.util.Optional.of(ObjectFormatOptions.deserialize(deserializer));
+        }
     }
 
     static void serialize_option_u64(java.util.Optional<@com.novi.serde.Unsigned Long> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
@@ -129,6 +183,38 @@ final class TraitHelpers {
         java.util.List<GenesisObject> obj = new java.util.ArrayList<GenesisObject>((int) length);
         for (long i = 0; i < length; i++) {
             obj.add(GenesisObject.deserialize(deserializer));
+        }
+        return obj;
+    }
+
+    static void serialize_vector_MoveFieldLayout(java.util.List<MoveFieldLayout> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+        serializer.serialize_len(value.size());
+        for (MoveFieldLayout item : value) {
+            item.serialize(serializer);
+        }
+    }
+
+    static java.util.List<MoveFieldLayout> deserialize_vector_MoveFieldLayout(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        long length = deserializer.deserialize_len();
+        java.util.List<MoveFieldLayout> obj = new java.util.ArrayList<MoveFieldLayout>((int) length);
+        for (long i = 0; i < length; i++) {
+            obj.add(MoveFieldLayout.deserialize(deserializer));
+        }
+        return obj;
+    }
+
+    static void serialize_vector_MoveTypeLayout(java.util.List<MoveTypeLayout> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+        serializer.serialize_len(value.size());
+        for (MoveTypeLayout item : value) {
+            item.serialize(serializer);
+        }
+    }
+
+    static java.util.List<MoveTypeLayout> deserialize_vector_MoveTypeLayout(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        long length = deserializer.deserialize_len();
+        java.util.List<MoveTypeLayout> obj = new java.util.ArrayList<MoveTypeLayout>((int) length);
+        for (long i = 0; i < length; i++) {
+            obj.add(MoveTypeLayout.deserialize(deserializer));
         }
         return obj;
     }
