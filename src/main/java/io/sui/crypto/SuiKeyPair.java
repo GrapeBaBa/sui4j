@@ -36,7 +36,9 @@ public abstract class SuiKeyPair<T> {
     }
   }
 
-  /** The Key pair. */
+  /**
+   * The Key pair.
+   */
   protected T keyPair;
 
   /**
@@ -65,7 +67,17 @@ public abstract class SuiKeyPair<T> {
    *
    * @return the string
    */
-  public abstract String publicKey();
+  public String publicKey() {
+    return Base64.toBase64String(this.publicKeyBytes());
+  }
+
+
+  /**
+   * Public key byte [ ].
+   *
+   * @return the byte [ ]
+   */
+  public abstract byte[] publicKeyBytes();
 
   /**
    * Signature scheme signature scheme.
@@ -81,7 +93,19 @@ public abstract class SuiKeyPair<T> {
    * @return the string
    * @throws SigningException the signing exception
    */
-  public abstract String sign(String msg) throws SigningException;
+  public String sign(String msg) throws SigningException {
+    byte[] msgBytes = Base64.decode(msg);
+    return Base64.toBase64String(this.sign(msgBytes));
+  }
+
+  /**
+   * Sign string.
+   *
+   * @param msg the msg
+   * @return the string
+   * @throws SigningException the signing exception
+   */
+  public abstract byte[] sign(byte[] msg) throws SigningException;
 
   /**
    * Decode base64 sui key pair.

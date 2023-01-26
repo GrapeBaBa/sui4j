@@ -65,8 +65,8 @@ public class SECP256K1KeyPair extends SuiKeyPair<ECKey> {
   }
 
   @Override
-  public String publicKey() {
-    return Base64.toBase64String(keyPair.getPubKey());
+  public byte[] publicKeyBytes() {
+    return keyPair.getPubKey();
   }
 
   @Override
@@ -75,9 +75,8 @@ public class SECP256K1KeyPair extends SuiKeyPair<ECKey> {
   }
 
   @Override
-  public String sign(String msg) throws SigningException {
-    byte[] msgBytes = Base64.decode(msg);
-    Sha256Hash sha256Hash = Sha256Hash.of(msgBytes);
+  public byte[] sign(byte[] msg) throws SigningException {
+    Sha256Hash sha256Hash = Sha256Hash.of(msg);
     ECDSASignature signature = keyPair.sign(sha256Hash);
     byte recId = findRecoveryId(sha256Hash, signature);
 
@@ -85,7 +84,7 @@ public class SECP256K1KeyPair extends SuiKeyPair<ECKey> {
     System.arraycopy(Utils.bigIntegerToBytes(signature.r, 32), 0, sigData, 0, 32);
     System.arraycopy(Utils.bigIntegerToBytes(signature.s, 32), 0, sigData, 32, 32);
     sigData[64] = recId;
-    return Base64.toBase64String(sigData);
+    return sigData;
   }
 
   private byte findRecoveryId(Sha256Hash hash, ECDSASignature sig) throws SigningException {

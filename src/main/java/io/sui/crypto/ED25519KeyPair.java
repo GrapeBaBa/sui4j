@@ -42,7 +42,7 @@ public class ED25519KeyPair extends SuiKeyPair<AsymmetricCipherKeyPair> {
    * Instantiates a new Ed 25519 key pair.
    *
    * @param privateKeyParameters the private key parameters
-   * @param publicKeyParameters the public key parameters
+   * @param publicKeyParameters  the public key parameters
    */
   public ED25519KeyPair(
       Ed25519PrivateKeyParameters privateKeyParameters,
@@ -62,8 +62,8 @@ public class ED25519KeyPair extends SuiKeyPair<AsymmetricCipherKeyPair> {
   }
 
   @Override
-  public String publicKey() {
-    return Base64.toBase64String(((Ed25519PublicKeyParameters) keyPair.getPublic()).getEncoded());
+  public byte[] publicKeyBytes() {
+    return ((Ed25519PublicKeyParameters) keyPair.getPublic()).getEncoded();
   }
 
   @Override
@@ -72,14 +72,12 @@ public class ED25519KeyPair extends SuiKeyPair<AsymmetricCipherKeyPair> {
   }
 
   @Override
-  public String sign(String msg) throws SigningException {
+  public byte[] sign(byte[] msg) throws SigningException {
     Signer signer = new Ed25519Signer();
     signer.init(true, keyPair.getPrivate());
-    byte[] msgBytes = Base64.decode(msg);
-    signer.update(msgBytes, 0, msgBytes.length);
+    signer.update(msg, 0, msg.length);
     try {
-      byte[] signature = signer.generateSignature();
-      return Base64.toBase64String(signature);
+      return signer.generateSignature();
     } catch (CryptoException e) {
       throw new SigningException(e);
     }

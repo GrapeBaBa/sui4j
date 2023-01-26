@@ -19,6 +19,7 @@ package io.sui.jsonrpc;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -47,21 +48,22 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
   /**
    * Instantiates a new Ok http json rpc client provider.
    *
-   * @param baseUrl the base url
+   * @param baseUrl     the base url
    * @param jsonHandler the json handler
    */
   public OkHttpJsonRpcClientProvider(String baseUrl, JsonHandler jsonHandler) {
     this.baseUrl = baseUrl;
     this.jsonHandler = jsonHandler;
-    this.client = new OkHttpClient().newBuilder().build();
+    this.client = new OkHttpClient().newBuilder().readTimeout(Duration.ofSeconds(30))
+        .writeTimeout(Duration.ofSeconds(30)).build();
   }
 
   /**
    * Call completable future.
    *
-   * @param <T> the type parameter
+   * @param <T>     the type parameter
    * @param request the request
-   * @param url the url
+   * @param url     the url
    * @param typeOfT the type of t
    * @return the completable future
    */

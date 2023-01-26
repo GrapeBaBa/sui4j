@@ -27,11 +27,21 @@ import java.util.Map;
  * @since 2022.11
  */
 public enum SignatureScheme {
-  /** Ed 25519 signature scheme. */
+  /**
+   * Ed25519 signature scheme.
+   */
   ED25519((byte) 0x00),
-  /** Secp 256 k 1 signature scheme. */
+  /**
+   * Secp256k1 signature scheme.
+   */
   Secp256k1((byte) 0x01),
-  /** Bls 12381 signature scheme. */
+  /**
+   * Secp256r1 signature scheme.
+   */
+  Secp256r1((byte) 0x02),
+  /**
+   * BLS12381 signature scheme.
+   */
   BLS12381((byte) 0xff);
 
   private static final Map<Byte, SignatureScheme> BY_SCHEME = new HashMap<>();

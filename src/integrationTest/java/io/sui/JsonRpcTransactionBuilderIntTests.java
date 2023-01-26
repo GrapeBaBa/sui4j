@@ -51,7 +51,9 @@ class JsonRpcTransactionBuilderIntTests {
 
   private static TransactionBuilder transactionBuilder;
 
-  /** Before all. */
+  /**
+   * Before all.
+   */
   @BeforeAll
   static void beforeAll() {
     JsonRpcClientProvider jsonRpcClientProvider =
@@ -62,7 +64,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Gets split coin.
    *
-   * @throws ExecutionException the execution exception
+   * @throws ExecutionException   the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -90,7 +92,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Split coin equal.
    *
-   * @throws ExecutionException the execution exception
+   * @throws ExecutionException   the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -118,7 +120,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Merge coins.
    *
-   * @throws ExecutionException the execution exception
+   * @throws ExecutionException   the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -146,7 +148,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Pay.
    *
-   * @throws ExecutionException the execution exception
+   * @throws ExecutionException   the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -175,7 +177,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Pay sui.
    *
-   * @throws ExecutionException the execution exception
+   * @throws ExecutionException   the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -203,7 +205,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Pay all sui.
    *
-   * @throws ExecutionException the execution exception
+   * @throws ExecutionException   the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -230,7 +232,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Transfer sui.
    *
-   * @throws ExecutionException the execution exception
+   * @throws ExecutionException   the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -238,11 +240,11 @@ class JsonRpcTransactionBuilderIntTests {
   void transferSui() throws ExecutionException, InterruptedException {
     CompletableFuture<TransactionBytes> res =
         transactionBuilder.transferSui(
-            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
-            "0x26cab55541e4b0f362211f9394200b7e41fd45eb",
-            1L,
-            "0x51de405091c9f971fc6085d384f9ba764f268fca",
-            20000L);
+            "0x0a7421363a1f6a82800f7c9340ac02b5905798cb",
+            "0x45a795430b8adee6da9450c8c83e4b5d757fa2a5",
+            200L,
+            "0xfa423b6448e5e83d03e0d98ce00b5be32da5ee86",
+            2000L);
     CompletableFuture<Object> future = new CompletableFuture<>();
     res.whenComplete(
         (transactionResponse, throwable) -> {
@@ -258,7 +260,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Transfer object.
    *
-   * @throws ExecutionException the execution exception
+   * @throws ExecutionException   the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -286,7 +288,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Batch transaction.
    *
-   * @throws ExecutionException the execution exception
+   * @throws ExecutionException   the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -330,7 +332,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Move call.
    *
-   * @throws ExecutionException the execution exception
+   * @throws ExecutionException   the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -391,7 +393,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Publish.
    *
-   * @throws ExecutionException the execution exception
+   * @throws ExecutionException   the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test

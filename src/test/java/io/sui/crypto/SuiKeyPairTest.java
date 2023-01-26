@@ -18,6 +18,9 @@ package io.sui.crypto;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.novi.serde.DeserializationError;
+import com.novi.serde.SerializationError;
+import io.sui.bcsgen.TransactionData;
 import java.nio.charset.StandardCharsets;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.encoders.Base64;
@@ -31,7 +34,18 @@ import org.junit.jupiter.api.Test;
  */
 class SuiKeyPairTest {
 
-  /** Decode base 64. */
+  @Test
+  void dsda() throws DeserializationError, SerializationError {
+    String a = "AAP6QjtkSOXoPQPg2YzgC1vjLaXuhgHoAwAAAAAAAAp0ITY6H2qCgA98k0CsArWQV5jLAykExC6ho+WShcCYXFiNia8DXrkBAAAAAAAAACB5nE7FsyYq1ZZ1RW5rmNBWY8tRMVaFLgaKyubriPiN2gEAAAAAAAAAZAAAAAAAAAA=";
+    String b = "AAP6QjtkSOXoPQPg2YzgC1vjLaXuhgHoAwAAAAAAAAp0ITY6H2qCgA98k0CsArWQV5jLAykExC6ho+WShcCYXFiNia8DXrkBAAAAAAAAACB5nE7FsyYq1ZZ1RW5rmNBWY8tRMVaFLgaKyubriPiN2gEAAAAAAAAAZAAAAAAAAA==";
+    TransactionData transactionData = TransactionData.bcsDeserialize(Base64.decode(a));
+    System.out.println(Base64.toBase64String(transactionData.bcsSerialize()));
+    System.out.println(a.equals(Base64.toBase64String(transactionData.bcsSerialize())));
+  }
+
+  /**
+   * Decode base 64.
+   */
   @Test
   void decodeBase64() {
     final String base64 = "ADfbVnAT2QLG7W+bM+1ENzEKAxnoUx10+WfGg5zx8VRm";

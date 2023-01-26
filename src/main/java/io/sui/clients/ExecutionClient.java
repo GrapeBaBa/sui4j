@@ -42,17 +42,12 @@ public interface ExecutionClient {
   /**
    * Execute transaction completable future.
    *
-   * @param txBytes the tx bytes
-   * @param signatureScheme the signature scheme
-   * @param signature the signature
-   * @param publicKey the public key
-   * @param requestType the request type
+   * @param txBytes                  the tx bytes
+   * @param serializedSignatureBytes the serialized signature bytes
+   * @param requestType              the request type
    * @return the completable future
    */
-  CompletableFuture<ExecuteTransactionResponse> executeTransaction(
-      String txBytes,
-      SignatureScheme signatureScheme,
-      String signature,
-      String publicKey,
+  CompletableFuture<ExecuteTransactionResponse> executeTransaction(String txBytes,
+      String serializedSignatureBytes,
       ExecuteTransactionRequestType requestType);
 }
