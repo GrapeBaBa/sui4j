@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -17,7 +17,6 @@
 package io.sui.clients;
 
 
-import io.sui.crypto.SignatureScheme;
 import io.sui.models.transactions.ExecuteTransactionRequestType;
 import io.sui.models.transactions.ExecuteTransactionResponse;
 import io.sui.models.transactions.TransactionEffects;
@@ -42,12 +41,11 @@ public interface ExecutionClient {
   /**
    * Execute transaction completable future.
    *
-   * @param txBytes                  the tx bytes
+   * @param txBytes the tx bytes
    * @param serializedSignatureBytes the serialized signature bytes
-   * @param requestType              the request type
+   * @param requestType the request type
    * @return the completable future
    */
-  CompletableFuture<ExecuteTransactionResponse> executeTransaction(String txBytes,
-      String serializedSignatureBytes,
-      ExecuteTransactionRequestType requestType);
+  CompletableFuture<ExecuteTransactionResponse> executeTransaction(
+      String txBytes, String serializedSignatureBytes, ExecuteTransactionRequestType requestType);
 }

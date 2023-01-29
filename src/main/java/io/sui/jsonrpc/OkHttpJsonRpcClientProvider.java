@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -48,22 +48,26 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
   /**
    * Instantiates a new Ok http json rpc client provider.
    *
-   * @param baseUrl     the base url
+   * @param baseUrl the base url
    * @param jsonHandler the json handler
    */
   public OkHttpJsonRpcClientProvider(String baseUrl, JsonHandler jsonHandler) {
     this.baseUrl = baseUrl;
     this.jsonHandler = jsonHandler;
-    this.client = new OkHttpClient().newBuilder().readTimeout(Duration.ofSeconds(30))
-        .writeTimeout(Duration.ofSeconds(30)).build();
+    this.client =
+        new OkHttpClient()
+            .newBuilder()
+            .readTimeout(Duration.ofSeconds(30))
+            .writeTimeout(Duration.ofSeconds(30))
+            .build();
   }
 
   /**
    * Call completable future.
    *
-   * @param <T>     the type parameter
+   * @param <T> the type parameter
    * @param request the request
-   * @param url     the url
+   * @param url the url
    * @param typeOfT the type of t
    * @return the completable future
    */

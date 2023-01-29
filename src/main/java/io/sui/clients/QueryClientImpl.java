@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -17,9 +17,6 @@
 package io.sui.clients;
 
 
-import static io.sui.models.objects.ObjectStatus.Deleted;
-import static io.sui.models.objects.ObjectStatus.Exists;
-
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import io.sui.jsonrpc.JsonRpc20Request;
@@ -34,7 +31,6 @@ import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectResponse;
-import io.sui.models.objects.SuiObject;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.objects.SuiObjectRef;
 import io.sui.models.transactions.PaginatedTransactionDigests;
@@ -43,7 +39,6 @@ import io.sui.models.transactions.TransactionResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 
 /**
  * The type Sui client.
@@ -69,19 +64,11 @@ public class QueryClientImpl implements QueryClient {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request("sui_getObject", Lists.newArrayList(id));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getObject", request, new TypeToken<ObjectResponse>() {
-        }.getType());
+        "/sui_getObject", request, new TypeToken<ObjectResponse>() {}.getType());
   }
 
   public CompletableFuture<SuiObjectRef> getObjectRef(String id) {
-    return this.getObject(id).thenApply(objectResponse -> {
-      if (Exists == objectResponse.getStatus()) {
-        return ((SuiObject) objectResponse.getDetails()).getReference();
-      } else if (Deleted == objectResponse.getStatus()) {
-        return (SuiObjectRef) objectResponse.getDetails();
-      }
-      throw new SuiObjectNotFoundException();
-    });
+    return this.getObject(id).thenApply(ObjectResponse::getObjectRef);
   }
 
   @Override
@@ -92,8 +79,7 @@ public class QueryClientImpl implements QueryClient {
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_getObjectsOwnedByAddress",
         request,
-        new TypeToken<List<SuiObjectInfo>>() {
-        }.getType());
+        new TypeToken<List<SuiObjectInfo>>() {}.getType());
   }
 
   @Override
@@ -102,8 +88,7 @@ public class QueryClientImpl implements QueryClient {
         this.jsonRpcClientProvider.createJsonRpc20Request(
             "sui_getObjectsOwnedByObject", Lists.newArrayList(objectId));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getObjectsOwnedByObject", request, new TypeToken<List<SuiObjectInfo>>() {
-        }.getType());
+        "/sui_getObjectsOwnedByObject", request, new TypeToken<List<SuiObjectInfo>>() {}.getType());
   }
 
   @Override
@@ -112,8 +97,7 @@ public class QueryClientImpl implements QueryClient {
         this.jsonRpcClientProvider.createJsonRpc20Request(
             "sui_getRawObject", Lists.newArrayList(id));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getRawObject", request, new TypeToken<ObjectResponse>() {
-        }.getType());
+        "/sui_getRawObject", request, new TypeToken<ObjectResponse>() {}.getType());
   }
 
   @Override
@@ -122,8 +106,7 @@ public class QueryClientImpl implements QueryClient {
         this.jsonRpcClientProvider.createJsonRpc20Request(
             "sui_getTotalTransactionNumber", Lists.newArrayList());
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getTotalTransactionNumber", request, new TypeToken<Long>() {
-        }.getType());
+        "/sui_getTotalTransactionNumber", request, new TypeToken<Long>() {}.getType());
   }
 
   @Override
@@ -132,8 +115,7 @@ public class QueryClientImpl implements QueryClient {
         this.jsonRpcClientProvider.createJsonRpc20Request(
             "sui_getTransaction", Lists.newArrayList(digest));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getTransaction", request, new TypeToken<TransactionResponse>() {
-        }.getType());
+        "/sui_getTransaction", request, new TypeToken<TransactionResponse>() {}.getType());
   }
 
   @Override
@@ -142,8 +124,7 @@ public class QueryClientImpl implements QueryClient {
         this.jsonRpcClientProvider.createJsonRpc20Request(
             "sui_getTransactionsInRange", Lists.newArrayList(start, end));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getTransactionsInRange", request, new TypeToken<List<String>>() {
-        }.getType());
+        "/sui_getTransactionsInRange", request, new TypeToken<List<String>>() {}.getType());
   }
 
   @Override
@@ -153,8 +134,7 @@ public class QueryClientImpl implements QueryClient {
         this.jsonRpcClientProvider.createJsonRpc20Request(
             "sui_getEvents", Lists.newArrayList(query, cursor, limit, isDescOrder));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getEvents", request, new TypeToken<PaginatedEvents>() {
-        }.getType());
+        "/sui_getEvents", request, new TypeToken<PaginatedEvents>() {}.getType());
   }
 
   @Override
@@ -166,8 +146,7 @@ public class QueryClientImpl implements QueryClient {
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_getNormalizedMoveModulesByPackage",
         request,
-        new TypeToken<Map<String, MoveNormalizedModule>>() {
-        }.getType());
+        new TypeToken<Map<String, MoveNormalizedModule>>() {}.getType());
   }
 
   @Override
@@ -176,8 +155,7 @@ public class QueryClientImpl implements QueryClient {
         this.jsonRpcClientProvider.createJsonRpc20Request(
             "sui_getCommitteeInfo", Lists.newArrayList(epoch));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getCommitteeInfo", request, new TypeToken<CommitteeInfoResponse>() {
-        }.getType());
+        "/sui_getCommitteeInfo", request, new TypeToken<CommitteeInfoResponse>() {}.getType());
   }
 
   @Override
@@ -189,8 +167,7 @@ public class QueryClientImpl implements QueryClient {
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_getMoveFunctionArgTypes",
         request,
-        new TypeToken<List<MoveFunctionArgType>>() {
-        }.getType());
+        new TypeToken<List<MoveFunctionArgType>>() {}.getType());
   }
 
   @Override
@@ -202,8 +179,7 @@ public class QueryClientImpl implements QueryClient {
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_getNormalizedMoveFunction",
         request,
-        new TypeToken<MoveNormalizedFunction>() {
-        }.getType());
+        new TypeToken<MoveNormalizedFunction>() {}.getType());
   }
 
   @Override
@@ -215,8 +191,7 @@ public class QueryClientImpl implements QueryClient {
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_getNormalizedMoveModule",
         request,
-        new TypeToken<MoveNormalizedModule>() {
-        }.getType());
+        new TypeToken<MoveNormalizedModule>() {}.getType());
   }
 
   @Override
@@ -228,8 +203,7 @@ public class QueryClientImpl implements QueryClient {
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_getNormalizedMoveStruct",
         request,
-        new TypeToken<MoveNormalizedStruct>() {
-        }.getType());
+        new TypeToken<MoveNormalizedStruct>() {}.getType());
   }
 
   @Override
@@ -238,8 +212,7 @@ public class QueryClientImpl implements QueryClient {
         this.jsonRpcClientProvider.createJsonRpc20Request(
             "sui_tryGetPastObject", Lists.newArrayList(objectId, version));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_tryGetPastObject", request, new TypeToken<ObjectResponse>() {
-        }.getType());
+        "/sui_tryGetPastObject", request, new TypeToken<ObjectResponse>() {}.getType());
   }
 
   @Override
@@ -249,8 +222,7 @@ public class QueryClientImpl implements QueryClient {
         this.jsonRpcClientProvider.createJsonRpc20Request(
             "sui_getTransactions", Lists.newArrayList(query, cursor, limit, isDescOrder));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getTransactions", request, new TypeToken<PaginatedTransactionDigests>() {
-        }.getType());
+        "/sui_getTransactions", request, new TypeToken<PaginatedTransactionDigests>() {}.getType());
   }
 
   @Override
@@ -259,8 +231,7 @@ public class QueryClientImpl implements QueryClient {
         this.jsonRpcClientProvider.createJsonRpc20Request(
             "sui_getCoinMetadata", Lists.newArrayList(coinType));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getCoinMetadata", request, new TypeToken<CoinMetadata>() {
-        }.getType());
+        "/sui_getCoinMetadata", request, new TypeToken<CoinMetadata>() {}.getType());
   }
 
   @Override
@@ -269,7 +240,6 @@ public class QueryClientImpl implements QueryClient {
         this.jsonRpcClientProvider.createJsonRpc20Request(
             "sui_getReferenceGasPrice", Lists.newArrayList());
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getReferenceGasPrice", request, new TypeToken<Long>() {
-        }.getType());
+        "/sui_getReferenceGasPrice", request, new TypeToken<Long>() {}.getType());
   }
 }

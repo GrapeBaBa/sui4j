@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -16,7 +16,10 @@
 
 package io.sui.models.objects;
 
+import static io.sui.models.objects.ObjectStatus.Deleted;
+import static io.sui.models.objects.ObjectStatus.Exists;
 
+import io.sui.clients.SuiObjectNotFoundException;
 import java.util.Objects;
 
 /**
@@ -310,5 +313,19 @@ public class ObjectResponse {
   @Override
   public String toString() {
     return "GetObjectResponse{" + "status=" + status + ", details=" + details + '}';
+  }
+
+  /**
+   * Gets object ref.
+   *
+   * @return the object ref
+   */
+  public SuiObjectRef getObjectRef() {
+    if (Exists == this.getStatus()) {
+      return ((SuiObject) this.getDetails()).getReference();
+    } else if (Deleted == this.getStatus()) {
+      return (SuiObjectRef) this.getDetails();
+    }
+    throw new SuiObjectNotFoundException();
   }
 }
