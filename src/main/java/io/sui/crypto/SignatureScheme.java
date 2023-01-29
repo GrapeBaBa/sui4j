@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -27,21 +27,13 @@ import java.util.Map;
  * @since 2022.11
  */
 public enum SignatureScheme {
-  /**
-   * Ed25519 signature scheme.
-   */
+  /** Ed25519 signature scheme. */
   ED25519((byte) 0x00),
-  /**
-   * Secp256k1 signature scheme.
-   */
+  /** Secp256k1 signature scheme. */
   Secp256k1((byte) 0x01),
-  /**
-   * Secp256r1 signature scheme.
-   */
+  /** Secp256r1 signature scheme. */
   Secp256r1((byte) 0x02),
-  /**
-   * BLS12381 signature scheme.
-   */
+  /** BLS12381 signature scheme. */
   BLS12381((byte) 0xff);
 
   private static final Map<Byte, SignatureScheme> BY_SCHEME = new HashMap<>();

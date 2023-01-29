@@ -62,12 +62,10 @@ import io.sui.models.transactions.TypeTag;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.encoders.Base64;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The type Sui.
@@ -88,7 +86,7 @@ public class Sui {
   /**
    * Instantiates a new Sui.
    *
-   * @param rpcEndpoint  the rpc endpoint
+   * @param rpcEndpoint the rpc endpoint
    * @param keyStorePath the key store path
    */
   public Sui(String rpcEndpoint, String keyStorePath) {
@@ -98,8 +96,8 @@ public class Sui {
   /**
    * Instantiates a new Sui.
    *
-   * @param rpcEndpoint                the rpc endpoint
-   * @param keyStorePath               the key store path
+   * @param rpcEndpoint the rpc endpoint
+   * @param keyStorePath the key store path
    * @param useLocalTransactionBuilder the use local transaction builder
    */
   public Sui(String rpcEndpoint, String keyStorePath, boolean useLocalTransactionBuilder) {
@@ -118,11 +116,11 @@ public class Sui {
   /**
    * Transfer sui completable future.
    *
-   * @param signer      the signer
-   * @param coin        the coin
-   * @param gasBudget   the gas budget
-   * @param recipient   the recipient
-   * @param amount      the amount
+   * @param signer the signer
+   * @param coin the coin
+   * @param gasBudget the gas budget
+   * @param recipient the recipient
+   * @param amount the amount
    * @param requestType the request type
    * @return the completable future
    */
@@ -141,15 +139,15 @@ public class Sui {
   /**
    * Move call completable future.
    *
-   * @param signer          the signer
+   * @param signer the signer
    * @param packageObjectId the package object id
-   * @param module          the module
-   * @param function        the function
-   * @param typeArguments   the type arguments
-   * @param arguments       the arguments
-   * @param gas             the gas
-   * @param gasBudget       the gas budget
-   * @param requestType     the request type
+   * @param module the module
+   * @param function the function
+   * @param typeArguments the type arguments
+   * @param arguments the arguments
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @param requestType the request type
    * @return the completable future
    */
   public CompletableFuture<ExecuteTransactionResponse> moveCall(
@@ -171,11 +169,11 @@ public class Sui {
   /**
    * Batch transaction completable future.
    *
-   * @param signer                 the signer
+   * @param signer the signer
    * @param batchTransactionParams the batch transaction params
-   * @param gas                    the gas
-   * @param gasBudget              the gas budget
-   * @param requestType            the request type
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @param requestType the request type
    * @return the completable future
    */
   public CompletableFuture<ExecuteTransactionResponse> batchTransaction(
@@ -192,11 +190,11 @@ public class Sui {
   /**
    * Pay sui completable future.
    *
-   * @param signer      the signer
-   * @param inputCoins  the input coins
-   * @param recipients  the recipients
-   * @param amounts     the amounts
-   * @param gasBudget   the gas budget
+   * @param signer the signer
+   * @param inputCoins the input coins
+   * @param recipients the recipients
+   * @param amounts the amounts
+   * @param gasBudget the gas budget
    * @param requestType the request type
    * @return the completable future
    */
@@ -215,12 +213,12 @@ public class Sui {
   /**
    * Pay completable future.
    *
-   * @param signer      the signer
-   * @param inputCoins  the input coins
-   * @param recipients  the recipients
-   * @param amounts     the amounts
-   * @param gas         the gas
-   * @param gasBudget   the gas budget
+   * @param signer the signer
+   * @param inputCoins the input coins
+   * @param recipients the recipients
+   * @param amounts the amounts
+   * @param gas the gas
+   * @param gasBudget the gas budget
    * @param requestType the request type
    * @return the completable future
    */
@@ -240,11 +238,11 @@ public class Sui {
   /**
    * Merge coins completable future.
    *
-   * @param signer      the signer
+   * @param signer the signer
    * @param primaryCoin the primary coin
    * @param toMergeCoin the to merge coin
-   * @param gas         the gas
-   * @param gasBudget   the gas budget
+   * @param gas the gas
+   * @param gasBudget the gas budget
    * @param requestType the request type
    * @return the completable future
    */
@@ -263,12 +261,12 @@ public class Sui {
   /**
    * Split coin completable future.
    *
-   * @param signer       the signer
-   * @param coin         the coin
+   * @param signer the signer
+   * @param coin the coin
    * @param splitAmounts the split amounts
-   * @param gas          the gas
-   * @param gasBudget    the gas budget
-   * @param requestType  the request type
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @param requestType the request type
    * @return the completable future
    */
   public CompletableFuture<ExecuteTransactionResponse> splitCoin(
@@ -286,10 +284,10 @@ public class Sui {
   /**
    * Pay all sui completable future.
    *
-   * @param signer      the signer
-   * @param inputCoins  the input coins
-   * @param recipient   the recipient
-   * @param gasBudget   the gas budget
+   * @param signer the signer
+   * @param inputCoins the input coins
+   * @param recipient the recipient
+   * @param gasBudget the gas budget
    * @param requestType the request type
    * @return the completable future
    */
@@ -307,11 +305,11 @@ public class Sui {
   /**
    * Publish completable future.
    *
-   * @param signer          the signer
+   * @param signer the signer
    * @param compiledModules the compiled modules
-   * @param gas             the gas
-   * @param gasBudget       the gas budget
-   * @param requestType     the request type
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @param requestType the request type
    * @return the completable future
    */
   public CompletableFuture<ExecuteTransactionResponse> publish(
@@ -328,11 +326,11 @@ public class Sui {
   /**
    * Split coin equal completable future.
    *
-   * @param signer      the signer
-   * @param coin        the coin
-   * @param splitCount  the split count
-   * @param gas         the gas
-   * @param gasBudget   the gas budget
+   * @param signer the signer
+   * @param coin the coin
+   * @param splitCount the split count
+   * @param gas the gas
+   * @param gasBudget the gas budget
    * @param requestType the request type
    * @return the completable future
    */
@@ -351,11 +349,11 @@ public class Sui {
   /**
    * Transfer object completable future.
    *
-   * @param signer      the signer
-   * @param suiObject   the sui object
-   * @param recipient   the recipient
-   * @param gas         the gas
-   * @param gasBudget   the gas budget
+   * @param signer the signer
+   * @param suiObject the sui object
+   * @param recipient the recipient
+   * @param gas the gas
+   * @param gasBudget the gas budget
    * @param requestType the request type
    * @return the completable future
    */
@@ -434,7 +432,7 @@ public class Sui {
    * Gets transactions in range.
    *
    * @param start the start
-   * @param end   the end
+   * @param end the end
    * @return the transactions in range
    */
   public CompletableFuture<List<String>> getTransactionsInRange(Long start, Long end) {
@@ -444,9 +442,9 @@ public class Sui {
   /**
    * Gets events.
    *
-   * @param query       the query
-   * @param cursor      the cursor
-   * @param limit       the limit
+   * @param query the query
+   * @param cursor the cursor
+   * @param limit the limit
    * @param isDescOrder the is desc order
    * @return the events
    */
@@ -480,8 +478,8 @@ public class Sui {
    * Gets move function arg types.
    *
    * @param suiPackage the sui package
-   * @param module     the module
-   * @param function   the function
+   * @param module the module
+   * @param function the function
    * @return the move function arg types
    */
   public CompletableFuture<List<MoveFunctionArgType>> getMoveFunctionArgTypes(
@@ -493,8 +491,8 @@ public class Sui {
    * Gets normalized move function.
    *
    * @param suiPackage the sui package
-   * @param module     the module
-   * @param function   the function
+   * @param module the module
+   * @param function the function
    * @return the normalized move function
    */
   public CompletableFuture<MoveNormalizedFunction> getNormalizedMoveFunction(
@@ -506,7 +504,7 @@ public class Sui {
    * Gets normalized move module.
    *
    * @param suiPackage the sui package
-   * @param module     the module
+   * @param module the module
    * @return the normalized move module
    */
   public CompletableFuture<MoveNormalizedModule> getNormalizedMoveModule(
@@ -518,8 +516,8 @@ public class Sui {
    * Gets normalized move struct.
    *
    * @param suiPackage the sui package
-   * @param module     the module
-   * @param struct     the struct
+   * @param module the module
+   * @param struct the struct
    * @return the normalized move struct
    */
   public CompletableFuture<MoveNormalizedStruct> getNormalizedMoveStruct(
@@ -531,7 +529,7 @@ public class Sui {
    * Try get past object completable future.
    *
    * @param objectId the object id
-   * @param version  the version
+   * @param version the version
    * @return the completable future
    */
   public CompletableFuture<ObjectResponse> tryGetPastObject(String objectId, long version) {
@@ -541,9 +539,9 @@ public class Sui {
   /**
    * Gets transactions.
    *
-   * @param query       the query
-   * @param cursor      the cursor
-   * @param limit       the limit
+   * @param query the query
+   * @param cursor the cursor
+   * @param limit the limit
    * @param isDescOrder the is desc order
    * @return the transactions
    */
@@ -622,9 +620,9 @@ public class Sui {
   /**
    * Execute transaction completable future.
    *
-   * @param signer          the signer
+   * @param signer the signer
    * @param transactionData the transaction data
-   * @param requestType     the request type
+   * @param requestType the request type
    * @return the completable future
    */
   public CompletableFuture<ExecuteTransactionResponse> executeTransaction(
@@ -635,10 +633,10 @@ public class Sui {
   /**
    * Execute transaction completable future.
    *
-   * @param signer          the signer
+   * @param signer the signer
    * @param transactionData the transaction data
-   * @param intent          the intent
-   * @param requestType     the request type
+   * @param intent the intent
+   * @param requestType the request type
    * @return the completable future
    */
   public CompletableFuture<ExecuteTransactionResponse> executeTransaction(
@@ -725,17 +723,16 @@ public class Sui {
     }
 
     final byte[] serializedSignatureBytes =
-        Arrays.concatenate(new byte[]{signatureScheme.getScheme()}, signature, publicKey);
+        Arrays.concatenate(new byte[] {signatureScheme.getScheme()}, signature, publicKey);
     final String serializedSignature = Base64.toBase64String(serializedSignatureBytes);
 
     return executionClient.executeTransaction(
         Base64.toBase64String(transactionData), serializedSignature, requestType);
   }
 
-  @NotNull
   private Function<TransactionBytes, CompletableFuture<ExecuteTransactionResponse>>
-  signAndExecuteTransactionFunction(
-      String signer, Intent intent, ExecuteTransactionRequestType requestType) {
+      signAndExecuteTransactionFunction(
+          String signer, Intent intent, ExecuteTransactionRequestType requestType) {
     return transactionBytes -> {
       final SuiKeyPair<?> suiKeyPair = keyStore.getByAddress(signer);
       final byte[] publicKey = suiKeyPair.publicKeyBytes();

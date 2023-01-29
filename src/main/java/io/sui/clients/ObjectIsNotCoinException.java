@@ -16,11 +16,15 @@
 
 package io.sui.clients;
 
-/** The type No supported type tag exception. */
-public class NoSupportedTypeTagException extends RuntimeException {
+/** The type Object is not coin exception. */
+public class ObjectIsNotCoinException extends RuntimeException {
 
-  /** Instantiates a new No supported type tag exception. */
-  public NoSupportedTypeTagException() {
-    super("no supported type tag.");
+  /**
+   * Instantiates a new Object is not coin exception.
+   *
+   * @param objectId the object id
+   */
+  public ObjectIsNotCoinException(String objectId) {
+    super(String.format("object %s is not a valid coin object", objectId));
   }
 }

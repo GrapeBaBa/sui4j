@@ -51,12 +51,12 @@ public final class MoveCall {
 
     public static MoveCall bcsDeserialize(byte[] input) throws com.novi.serde.DeserializationError {
         if (input == null) {
-             throw new com.novi.serde.DeserializationError("Cannot deserialize null array");
+            throw new com.novi.serde.DeserializationError("Cannot deserialize null array");
         }
         com.novi.serde.Deserializer deserializer = new com.novi.bcs.BcsDeserializer(input);
         MoveCall value = deserialize(deserializer);
         if (deserializer.get_buffer_offset() < input.length) {
-             throw new com.novi.serde.DeserializationError("Some input bytes were not read");
+            throw new com.novi.serde.DeserializationError("Some input bytes were not read");
         }
         return value;
     }

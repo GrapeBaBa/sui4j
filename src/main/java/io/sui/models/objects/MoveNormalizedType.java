@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -337,13 +337,12 @@ public interface MoveNormalizedType {
         Struct struct = (Struct) o;
         return address.equals(struct.address)
             && module.equals(struct.module)
-            && name.equals(struct.name)
-            && type_arguments.equals(struct.type_arguments);
+            && name.equals(struct.name);
       }
 
       @Override
       public int hashCode() {
-        return Objects.hash(address, module, name, type_arguments);
+        return Objects.hash(address, module, name);
       }
 
       @Override

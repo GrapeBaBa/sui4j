@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -16,11 +16,11 @@
 
 package io.sui.clients;
 
-/** The type No supported type tag exception. */
-public class NoSupportedTypeTagException extends RuntimeException {
+/** The type Gas in pay coins exception. */
+public class GasInPayCoinsException extends RuntimeException {
 
-  /** Instantiates a new No supported type tag exception. */
-  public NoSupportedTypeTagException() {
-    super("no supported type tag.");
+  /** Instantiates a new Gas in pay coins exception. */
+  public GasInPayCoinsException() {
+    super("gas in pay coins, use paySui instead.");
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -51,9 +51,7 @@ class JsonRpcTransactionBuilderIntTests {
 
   private static TransactionBuilder transactionBuilder;
 
-  /**
-   * Before all.
-   */
+  /** Before all. */
   @BeforeAll
   static void beforeAll() {
     JsonRpcClientProvider jsonRpcClientProvider =
@@ -64,7 +62,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Gets split coin.
    *
-   * @throws ExecutionException   the execution exception
+   * @throws ExecutionException the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -92,7 +90,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Split coin equal.
    *
-   * @throws ExecutionException   the execution exception
+   * @throws ExecutionException the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -120,7 +118,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Merge coins.
    *
-   * @throws ExecutionException   the execution exception
+   * @throws ExecutionException the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -148,7 +146,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Pay.
    *
-   * @throws ExecutionException   the execution exception
+   * @throws ExecutionException the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -177,7 +175,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Pay sui.
    *
-   * @throws ExecutionException   the execution exception
+   * @throws ExecutionException the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -205,7 +203,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Pay all sui.
    *
-   * @throws ExecutionException   the execution exception
+   * @throws ExecutionException the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -232,7 +230,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Transfer sui.
    *
-   * @throws ExecutionException   the execution exception
+   * @throws ExecutionException the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -260,7 +258,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Transfer object.
    *
-   * @throws ExecutionException   the execution exception
+   * @throws ExecutionException the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -288,7 +286,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Batch transaction.
    *
-   * @throws ExecutionException   the execution exception
+   * @throws ExecutionException the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -332,7 +330,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Move call.
    *
-   * @throws ExecutionException   the execution exception
+   * @throws ExecutionException the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
@@ -393,7 +391,7 @@ class JsonRpcTransactionBuilderIntTests {
   /**
    * Publish.
    *
-   * @throws ExecutionException   the execution exception
+   * @throws ExecutionException the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test

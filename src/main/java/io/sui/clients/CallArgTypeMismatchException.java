@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -16,11 +16,19 @@
 
 package io.sui.clients;
 
-/** The type No supported type tag exception. */
-public class NoSupportedTypeTagException extends RuntimeException {
 
-  /** Instantiates a new No supported type tag exception. */
-  public NoSupportedTypeTagException() {
-    super("no supported type tag.");
+import io.sui.models.objects.MoveNormalizedType;
+
+/** The type Call arg type mismatch exception. */
+public class CallArgTypeMismatchException extends RuntimeException {
+
+  /**
+   * Instantiates a new Call arg type mismatch exception.
+   *
+   * @param moveNormalizedType the move normalized type
+   * @param argVal the arg val
+   */
+  public CallArgTypeMismatchException(MoveNormalizedType moveNormalizedType, Class<?> argVal) {
+    super(String.format("call arg type %s but actual %s mismatch.", moveNormalizedType, argVal));
   }
 }

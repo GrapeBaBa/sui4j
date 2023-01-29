@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -16,11 +16,16 @@
 
 package io.sui.clients;
 
-/** The type No supported type tag exception. */
-public class NoSupportedTypeTagException extends RuntimeException {
+/** The type Move call arg size not match exception. */
+public class MoveCallArgSizeNotMatchException extends RuntimeException {
 
-  /** Instantiates a new No supported type tag exception. */
-  public NoSupportedTypeTagException() {
-    super("no supported type tag.");
+  /**
+   * Instantiates a new Move call arg size not match exception.
+   *
+   * @param expected the expected
+   * @param actual the actual
+   */
+  public MoveCallArgSizeNotMatchException(int expected, int actual) {
+    super(String.format("call arg size expected %d but actual %d mismatch.", expected, actual));
   }
 }

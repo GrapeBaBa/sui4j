@@ -26,7 +26,6 @@ import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
 import org.bouncycastle.crypto.signers.Ed25519Signer;
 import org.bouncycastle.jcajce.provider.digest.SHA3.Digest256;
 import org.bouncycastle.util.Arrays;
-import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 
 /**
@@ -42,7 +41,7 @@ public class ED25519KeyPair extends SuiKeyPair<AsymmetricCipherKeyPair> {
    * Instantiates a new Ed 25519 key pair.
    *
    * @param privateKeyParameters the private key parameters
-   * @param publicKeyParameters  the public key parameters
+   * @param publicKeyParameters the public key parameters
    */
   public ED25519KeyPair(
       Ed25519PrivateKeyParameters privateKeyParameters,
