@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -206,7 +206,7 @@ public interface RPCTransactionRequestParams {
 
     private String function;
 
-    private List<String> typeArguments;
+    private List<TypeTag> typeArguments;
 
     private List<?> arguments;
 
@@ -269,7 +269,7 @@ public interface RPCTransactionRequestParams {
      *
      * @return the type arguments
      */
-    public List<String> getTypeArguments() {
+    public List<TypeTag> getTypeArguments() {
       return typeArguments;
     }
 
@@ -278,7 +278,7 @@ public interface RPCTransactionRequestParams {
      *
      * @param typeArguments the type arguments
      */
-    public void setTypeArguments(List<String> typeArguments) {
+    public void setTypeArguments(List<TypeTag> typeArguments) {
       this.typeArguments = typeArguments;
     }
 

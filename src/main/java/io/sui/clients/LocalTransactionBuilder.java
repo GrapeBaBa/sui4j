@@ -35,6 +35,7 @@ import io.sui.bcsgen.MoveModulePublish;
 import io.sui.bcsgen.MoveValue;
 import io.sui.bcsgen.MoveValue.Bool;
 import io.sui.bcsgen.MoveValue.U8;
+import io.sui.bcsgen.MoveValue.Vector;
 import io.sui.bcsgen.ObjectArg;
 import io.sui.bcsgen.ObjectArg.ImmOrOwnedObject;
 import io.sui.bcsgen.ObjectArg.SharedObject;
@@ -49,6 +50,7 @@ import io.sui.bcsgen.SingleTransactionKind.Call;
 import io.sui.bcsgen.StructTag;
 import io.sui.bcsgen.SuiAddress;
 import io.sui.bcsgen.TransactionData;
+import io.sui.bcsgen.TransactionKind.Batch;
 import io.sui.bcsgen.TransactionKind.Single;
 import io.sui.bcsgen.TransferObject;
 import io.sui.bcsgen.TransferSui.Builder;
@@ -71,12 +73,17 @@ import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.objects.SuiObjectOwner;
 import io.sui.models.objects.SuiObjectRef;
 import io.sui.models.transactions.RPCTransactionRequestParams;
+import io.sui.models.transactions.RPCTransactionRequestParams.MoveCallParams;
+import io.sui.models.transactions.RPCTransactionRequestParams.MoveCallRequestParams;
+import io.sui.models.transactions.RPCTransactionRequestParams.TransferObjectParams;
+import io.sui.models.transactions.RPCTransactionRequestParams.TransferObjectRequestParams;
 import io.sui.models.transactions.TransactionBytes;
 import io.sui.models.transactions.TypeTag;
 import io.sui.models.transactions.TypeTag.StructType;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -499,12 +506,308 @@ public class LocalTransactionBuilder implements TransactionBuilder {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public CompletableFuture<TransactionBytes> batchTransaction(
       String signer,
       List<RPCTransactionRequestParams> batchTransactionParams,
       String gas,
       long gasBudget) {
-    return null;
+    CompletableFuture<SingleTransactionKind>[] kindFutures =
+        (CompletableFuture<SingleTransactionKind>[])
+            batchTransactionParams.stream()
+                .map(
+                    rpcTransactionRequestParams -> {
+                      if (rpcTransactionRequestParams instanceof TransferObjectRequestParams) {
+                        TransferObjectParams transferObjectParams =
+                            ((TransferObjectRequestParams) rpcTransactionRequestParams)
+                                .getTransferObjectRequestParams();
+                        return queryClient
+                            .getObjectRef(transferObjectParams.getObjectId())
+                            .thenApply(
+                                (Function<SuiObjectRef, SingleTransactionKind>)
+                                    suiObjectRef -> {
+                                      List<Byte> recipientBytes =
+                                          geAddressBytes(transferObjectParams.getRecipient());
+                                      final SuiAddress.Builder recipientAddressBuilder =
+                                          new SuiAddress.Builder();
+                                      recipientAddressBuilder.value = recipientBytes;
+
+                                      final TransferObject.Builder transferObjectBuilder =
+                                          new TransferObject.Builder();
+                                      transferObjectBuilder.recipient =
+                                          recipientAddressBuilder.build();
+                                      transferObjectBuilder.object_ref = getObjectRef(suiObjectRef);
+
+                                      final SingleTransactionKind.TransferObject.Builder
+                                          transferObjectKindBuilder =
+                                              new SingleTransactionKind.TransferObject.Builder();
+                                      transferObjectKindBuilder.value =
+                                          transferObjectBuilder.build();
+
+                                      return transferObjectKindBuilder.build();
+                                    });
+                      }
+
+                      if (rpcTransactionRequestParams instanceof MoveCallRequestParams) {
+                        MoveCallParams moveCallParams =
+                            ((MoveCallRequestParams) rpcTransactionRequestParams)
+                                .getMoveCallRequestParams();
+
+                        List<io.sui.bcsgen.TypeTag> bcsTypeArguments =
+                            moveCallParams.getTypeArguments().stream()
+                                .map(LocalTransactionBuilder.this::toBcsTypeTag)
+                                .collect(Collectors.toList());
+
+                        return extractNormalizedFunctionParams(
+                                moveCallParams.getPackageObjectId(),
+                                moveCallParams.getModule(),
+                                moveCallParams.getFunction())
+                            .thenCompose(
+                                (Function<
+                                        List<MoveNormalizedType>,
+                                        CompletableFuture<SingleTransactionKind>>)
+                                    moveNormalizedTypes -> {
+                                      if (moveNormalizedTypes.size()
+                                          != moveCallParams.getArguments().size()) {
+                                        throw new MoveCallArgSizeNotMatchException(
+                                            moveNormalizedTypes.size(),
+                                            moveCallParams.getArguments().size());
+                                      }
+                                      CompletableFuture<CallArg>[] callArgFutures =
+                                          (CompletableFuture<CallArg>[])
+                                              Streams.zip(
+                                                      moveNormalizedTypes.stream(),
+                                                      moveCallParams.getArguments().stream(),
+                                                      (BiFunction<
+                                                              MoveNormalizedType,
+                                                              java.lang.Object,
+                                                              CompletableFuture<CallArg>>)
+                                                          LocalTransactionBuilder.this
+                                                              ::toBcsCallArg)
+                                                  .toArray(CompletableFuture[]::new);
+                                      return CompletableFuture.allOf(callArgFutures)
+                                          .thenCompose(
+                                              (Function<
+                                                      Void,
+                                                      CompletableFuture<SingleTransactionKind>>)
+                                                  unused -> {
+                                                    List<CallArg> callArgs =
+                                                        Arrays.stream(callArgFutures)
+                                                            .map(CompletableFuture::join)
+                                                            .collect(Collectors.toList());
+                                                    List<String> excludeObjects =
+                                                        callArgs.stream()
+                                                            .flatMap(
+                                                                (Function<
+                                                                        CallArg, Stream<ObjectArg>>)
+                                                                    callArg -> {
+                                                                      if (callArg
+                                                                          instanceof ObjVec) {
+                                                                        return ((ObjVec) callArg)
+                                                                            .value.stream();
+                                                                      } else if (callArg
+                                                                          instanceof Object) {
+                                                                        return Stream.of(
+                                                                            ((Object) callArg)
+                                                                                .value);
+                                                                      }
+
+                                                                      return Stream.empty();
+                                                                    })
+                                                            .map(
+                                                                (Function<
+                                                                        ObjectArg,
+                                                                        Optional<String>>)
+                                                                    objectArg -> {
+                                                                      if (objectArg
+                                                                          instanceof SharedObject) {
+                                                                        return Optional.of(
+                                                                            toAddress(
+                                                                                ((SharedObject)
+                                                                                        objectArg)
+                                                                                    .id
+                                                                                    .value
+                                                                                    .value));
+                                                                      }
+
+                                                                      if (objectArg
+                                                                          instanceof
+                                                                          ImmOrOwnedObject) {
+                                                                        return Optional.of(
+                                                                            toAddress(
+                                                                                ((ImmOrOwnedObject)
+                                                                                        objectArg)
+                                                                                    .value
+                                                                                    .field0
+                                                                                    .value
+                                                                                    .value));
+                                                                      }
+
+                                                                      return Optional.empty();
+                                                                    })
+                                                            .filter(Optional::isPresent)
+                                                            .map(Optional::get)
+                                                            .collect(Collectors.toList());
+
+                                                    CompletableFuture<SuiObjectRef> gasRefFuture =
+                                                        selectGas(
+                                                            signer, gas, gasBudget, excludeObjects);
+                                                    CompletableFuture<Long> refGasPriceFuture =
+                                                        queryClient.getReferenceGasPrice();
+                                                    CompletableFuture<SuiObjectRef>
+                                                        packageRefFuture =
+                                                            queryClient.getObjectRef(
+                                                                moveCallParams
+                                                                    .getPackageObjectId());
+                                                    return CompletableFuture.allOf(
+                                                            gasRefFuture, refGasPriceFuture)
+                                                        .thenApply(
+                                                            unused1 -> {
+                                                              Identifier.Builder moduleBuilder =
+                                                                  new Identifier.Builder();
+                                                              moduleBuilder.value =
+                                                                  moveCallParams.getModule();
+                                                              Identifier.Builder functionBuilder =
+                                                                  new Identifier.Builder();
+                                                              functionBuilder.value =
+                                                                  moveCallParams.getFunction();
+
+                                                              SuiObjectRef packageRef =
+                                                                  packageRefFuture.join();
+                                                              final MoveCall.Builder
+                                                                  moveCallBuilder =
+                                                                      new MoveCall.Builder();
+                                                              moveCallBuilder.type_arguments =
+                                                                  bcsTypeArguments;
+                                                              moveCallBuilder.arguments = callArgs;
+                                                              moveCallBuilder.Package =
+                                                                  getObjectRef(packageRef);
+                                                              moveCallBuilder.module =
+                                                                  moduleBuilder.build();
+                                                              moveCallBuilder.function =
+                                                                  functionBuilder.build();
+
+                                                              final Call.Builder
+                                                                  moveCallKindBuilder =
+                                                                      new Call.Builder();
+                                                              moveCallKindBuilder.value =
+                                                                  moveCallBuilder.build();
+
+                                                              return moveCallKindBuilder.build();
+                                                            });
+                                                  });
+                                    });
+                      }
+                      throw new NotSupportedTransactionKindException();
+                    })
+                .toArray(CompletableFuture[]::new);
+    return CompletableFuture.allOf(kindFutures)
+        .thenCompose(
+            (Function<Void, CompletableFuture<TransactionBytes>>)
+                unused -> {
+                  final List<SingleTransactionKind> kinds =
+                      Arrays.stream(kindFutures)
+                          .map(CompletableFuture::join)
+                          .collect(Collectors.toList());
+
+                  List<String> excludeObjects =
+                      kinds.stream()
+                          .map(
+                              singleTransactionKind -> {
+                                if (singleTransactionKind
+                                    instanceof SingleTransactionKind.TransferObject) {
+
+                                  return Lists.newArrayList(
+                                      toAddress(
+                                          ((SingleTransactionKind.TransferObject)
+                                                  singleTransactionKind)
+                                              .value
+                                              .object_ref
+                                              .field0
+                                              .value
+                                              .value));
+                                }
+
+                                if (singleTransactionKind instanceof Call) {
+                                  List<CallArg> callArgs =
+                                      ((Call) singleTransactionKind).value.arguments;
+
+                                  return callArgs.stream()
+                                      .flatMap(
+                                          (Function<CallArg, Stream<ObjectArg>>)
+                                              callArg -> {
+                                                if (callArg instanceof ObjVec) {
+                                                  return ((ObjVec) callArg).value.stream();
+                                                } else if (callArg instanceof Object) {
+                                                  return Stream.of(((Object) callArg).value);
+                                                }
+
+                                                return Stream.empty();
+                                              })
+                                      .map(
+                                          (Function<ObjectArg, Optional<String>>)
+                                              objectArg -> {
+                                                if (objectArg instanceof SharedObject) {
+                                                  return Optional.of(
+                                                      toAddress(
+                                                          ((SharedObject) objectArg)
+                                                              .id
+                                                              .value
+                                                              .value));
+                                                }
+
+                                                if (objectArg instanceof ImmOrOwnedObject) {
+                                                  return Optional.of(
+                                                      toAddress(
+                                                          ((ImmOrOwnedObject) objectArg)
+                                                              .value
+                                                              .field0
+                                                              .value
+                                                              .value));
+                                                }
+
+                                                return Optional.empty();
+                                              })
+                                      .filter(Optional::isPresent)
+                                      .map(Optional::get)
+                                      .collect(Collectors.toList());
+                                }
+
+                                throw new NotSupportedTransactionKindException();
+                              })
+                          .flatMap(Collection::stream)
+                          .collect(Collectors.toList());
+
+                  CompletableFuture<SuiObjectRef> gasRefFuture =
+                      selectGas(signer, gas, gasBudget, excludeObjects);
+                  CompletableFuture<Long> refGasPriceFuture = queryClient.getReferenceGasPrice();
+                  return CompletableFuture.allOf(gasRefFuture, refGasPriceFuture)
+                      .thenApply(
+                          unused12 -> {
+                            final Batch.Builder batchBuilder = new Batch.Builder();
+                            batchBuilder.value = kinds;
+
+                            List<Byte> senderBytes = geAddressBytes(signer);
+                            final SuiAddress.Builder senderAddressBuilder =
+                                new SuiAddress.Builder();
+                            senderAddressBuilder.value = senderBytes;
+
+                            final Long refGasPrice = refGasPriceFuture.join();
+                            final SuiObjectRef gasRef = gasRefFuture.join();
+                            final TransactionData.Builder transactionDataBuilder =
+                                new TransactionData.Builder();
+                            transactionDataBuilder.gas_budget = gasBudget;
+                            transactionDataBuilder.kind = batchBuilder.build();
+                            transactionDataBuilder.gas_price = refGasPrice;
+                            transactionDataBuilder.gas_payment = getObjectRef(gasRef);
+                            transactionDataBuilder.sender = senderAddressBuilder.build();
+
+                            final TransactionBytes transactionBytes = new TransactionBytes();
+                            transactionBytes.setLocalTxBytes(transactionDataBuilder.build());
+                            transactionBytes.setGas(gasRef);
+                            return transactionBytes;
+                          });
+                });
   }
 
   @Override
@@ -682,7 +985,7 @@ public class LocalTransactionBuilder implements TransactionBuilder {
               new io.sui.bcsgen.TypeTag.address.Builder();
           return addressBuilder.build();
         default:
-          throw new NoSupportedTypeTagException();
+          throw new NotSupportedTypeTagException();
       }
     } else if (typeTag instanceof TypeTag.VectorType) {
       io.sui.bcsgen.TypeTag.vector.Builder vectorBuilder =
@@ -881,8 +1184,7 @@ public class LocalTransactionBuilder implements TransactionBuilder {
             });
   }
 
-  @SuppressWarnings("unchecked")
-  private CompletableFuture<CallArg> toBcsCallArg(
+  private Optional<MoveValue> toPureMoveValue(
       MoveNormalizedType moveNormalizedType, java.lang.Object argVal) {
     final MoveValue moveValue;
     if (moveNormalizedType instanceof MoveNormalizedType.TypeMoveNormalizedType) {
@@ -947,58 +1249,10 @@ public class LocalTransactionBuilder implements TransactionBuilder {
           moveValue = addressValueBuilder.build();
           break;
         default:
-          throw new NoSupportedMoveNormalizedTypeException();
+          throw new NotSupportedMoveNormalizedTypeException();
       }
 
-      final Pure.Builder pureBuilder = getPureBuilder(moveValue);
-
-      return CompletableFuture.completedFuture(pureBuilder.build());
-    }
-
-    if (moveNormalizedType instanceof MoveNormalizedType.VectorReferenceMoveNormalizedType) {
-      if (((MoveNormalizedType.VectorReferenceMoveNormalizedType) moveNormalizedType).getVector()
-          == TypeMoveNormalizedType.U8) {
-        checkArgType(moveNormalizedType, argVal, String.class);
-
-        MoveValue.Vector.Builder vectorBuilder = new MoveValue.Vector.Builder();
-        vectorBuilder.value =
-            Arrays.stream(ArrayUtils.toObject(((String) argVal).getBytes()))
-                .map(
-                    (Function<Byte, MoveValue>)
-                        b -> {
-                          U8.Builder u8Builder = new U8.Builder();
-                          u8Builder.value = b;
-                          return u8Builder.build();
-                        })
-                .collect(Collectors.toList());
-        moveValue = vectorBuilder.build();
-
-        final Pure.Builder pureBuilder = getPureBuilder(moveValue);
-
-        return CompletableFuture.completedFuture(pureBuilder.build());
-      }
-
-      if (((MoveNormalizedType.VectorReferenceMoveNormalizedType) moveNormalizedType).getVector()
-          instanceof MoveNormalizedType.MoveNormalizedStructType) {
-        checkArgType(moveNormalizedType, argVal, String[].class);
-
-        CompletableFuture<ObjectArg>[] objectArgFutures =
-            (CompletableFuture<ObjectArg>[])
-                Arrays.stream((String[]) argVal)
-                    .map(this::newObjectArg)
-                    .toArray(CompletableFuture[]::new);
-
-        return CompletableFuture.allOf(objectArgFutures)
-            .thenApply(
-                unused -> {
-                  final CallArg.ObjVec.Builder objVecBuilder = new ObjVec.Builder();
-                  objVecBuilder.value =
-                      Arrays.stream(objectArgFutures)
-                          .map(CompletableFuture::join)
-                          .collect(Collectors.toList());
-                  return objVecBuilder.build();
-                });
-      }
+      return Optional.of(moveValue);
     }
 
     if (moveNormalizedType instanceof MoveNormalizedType.MoveNormalizedStructType) {
@@ -1021,9 +1275,7 @@ public class LocalTransactionBuilder implements TransactionBuilder {
                 .collect(Collectors.toList());
         moveValue = vectorBuilder.build();
 
-        final Pure.Builder pureBuilder = getPureBuilder(moveValue);
-
-        return CompletableFuture.completedFuture(pureBuilder.build());
+        return Optional.of(moveValue);
       } else if (argStruct.equals(RESOLVED_UTF8_STR)) {
         checkArgType(moveNormalizedType, argVal, String.class);
 
@@ -1040,9 +1292,7 @@ public class LocalTransactionBuilder implements TransactionBuilder {
                 .collect(Collectors.toList());
         moveValue = vectorBuilder.build();
 
-        final Pure.Builder pureBuilder = getPureBuilder(moveValue);
-
-        return CompletableFuture.completedFuture(pureBuilder.build());
+        return Optional.of(moveValue);
       } else if (argStruct.equals(RESOLVED_SUI_ID)) {
         checkArgType(moveNormalizedType, argVal, String.class);
 
@@ -1052,26 +1302,109 @@ public class LocalTransactionBuilder implements TransactionBuilder {
         addressValueBuilder.value = addressBuilder.build();
         moveValue = addressValueBuilder.build();
 
-        final Pure.Builder pureBuilder = getPureBuilder(moveValue);
-
-        return CompletableFuture.completedFuture(pureBuilder.build());
+        return Optional.of(moveValue);
       }
     }
 
-    if (moveNormalizedType instanceof MoveNormalizedType.MoveNormalizedTypeParameterType) {
-      final Optional<Struct> structOptional =
-          extractStruct(moveNormalizedType).map(MoveNormalizedStructType::getStruct);
-      if (structOptional.isPresent()) {
+    if (moveNormalizedType instanceof MoveNormalizedType.VectorReferenceMoveNormalizedType) {
+      if (((MoveNormalizedType.VectorReferenceMoveNormalizedType) moveNormalizedType).getVector()
+          == TypeMoveNormalizedType.U8) {
         checkArgType(moveNormalizedType, argVal, String.class);
 
-        return newObjectArg((String) argVal)
+        MoveValue.Vector.Builder vectorBuilder = new MoveValue.Vector.Builder();
+        vectorBuilder.value =
+            Arrays.stream(ArrayUtils.toObject(((String) argVal).getBytes()))
+                .map(
+                    (Function<Byte, MoveValue>)
+                        b -> {
+                          U8.Builder u8Builder = new U8.Builder();
+                          u8Builder.value = b;
+                          return u8Builder.build();
+                        })
+                .collect(Collectors.toList());
+        moveValue = vectorBuilder.build();
+
+        return Optional.of(moveValue);
+      }
+
+      if (!(argVal instanceof List<?>)) {
+        throw new CallArgTypeMismatchException(moveNormalizedType, argVal.getClass());
+      }
+
+      // ObjVec TYPE will be handled later
+      return Optional.empty();
+    }
+
+    return Optional.empty();
+  }
+
+  @SuppressWarnings("unchecked")
+  private CompletableFuture<CallArg> toBcsCallArg(
+      MoveNormalizedType moveNormalizedType, java.lang.Object argVal) {
+    final Optional<MoveValue> pureMoveValue = toPureMoveValue(moveNormalizedType, argVal);
+    if (pureMoveValue.isPresent()) {
+      final CallArg.Pure.Builder pureBuilder = getPureBuilder(pureMoveValue.get());
+      return CompletableFuture.completedFuture(pureBuilder.build());
+    }
+
+    if (moveNormalizedType instanceof MoveNormalizedType.VectorReferenceMoveNormalizedType) {
+
+      if (((MoveNormalizedType.VectorReferenceMoveNormalizedType) moveNormalizedType).getVector()
+          instanceof MoveNormalizedType.MoveNormalizedStructType) {
+        checkArgType(moveNormalizedType, argVal, List.class);
+
+        CompletableFuture<ObjectArg>[] objectArgFutures =
+            (CompletableFuture<ObjectArg>[])
+                Arrays.stream((String[]) argVal)
+                    .map(this::newObjectArg)
+                    .toArray(CompletableFuture[]::new);
+
+        return CompletableFuture.allOf(objectArgFutures)
             .thenApply(
-                objectArg -> {
-                  final Object.Builder objectBuilder = new Object.Builder();
-                  objectBuilder.value = objectArg;
-                  return objectBuilder.build();
+                unused -> {
+                  final CallArg.ObjVec.Builder objVecBuilder = new ObjVec.Builder();
+                  objVecBuilder.value =
+                      Arrays.stream(objectArgFutures)
+                          .map(CompletableFuture::join)
+                          .collect(Collectors.toList());
+                  return objVecBuilder.build();
                 });
       }
+
+      List<?> objects = (List<?>) argVal;
+      List<MoveValue> pureMoveValues =
+          objects.stream()
+              .map(
+                  object ->
+                      toPureMoveValue(
+                          ((MoveNormalizedType.VectorReferenceMoveNormalizedType)
+                                  moveNormalizedType)
+                              .getVector(),
+                          object))
+              .filter(Optional::isPresent)
+              .map(Optional::get)
+              .collect(Collectors.toList());
+
+      MoveValue.Vector.Builder moveValueVectorBuilder = new Vector.Builder();
+      moveValueVectorBuilder.value = pureMoveValues;
+      final CallArg.Pure.Builder pureBuilder = getPureBuilder(moveValueVectorBuilder.build());
+      return CompletableFuture.completedFuture(pureBuilder.build());
+    }
+
+    final Optional<Struct> structOptional =
+        extractStruct(moveNormalizedType).map(MoveNormalizedStructType::getStruct);
+
+    if (structOptional.isPresent()
+        || (moveNormalizedType instanceof MoveNormalizedType.MoveNormalizedTypeParameterType)) {
+      checkArgType(moveNormalizedType, argVal, String.class);
+
+      return newObjectArg((String) argVal)
+          .thenApply(
+              objectArg -> {
+                final Object.Builder objectBuilder = new Object.Builder();
+                objectBuilder.value = objectArg;
+                return objectBuilder.build();
+              });
     }
 
     throw new CallArgTypeMismatchException(moveNormalizedType, argVal.getClass());

@@ -19,6 +19,8 @@ package io.sui;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.google.common.collect.Lists;
+import io.sui.crypto.ED25519KeyPair;
+import io.sui.crypto.SECP256K1KeyPair;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.ExecuteTransactionRequestType;
 import io.sui.models.transactions.ExecuteTransactionResponse;
@@ -67,8 +69,21 @@ public class SuiIntTests {
   @Test
   @DisplayName("Test getObjectsOwnedByAddress.")
   void getObjectsOwnedByAddress() throws ExecutionException, InterruptedException {
-    CompletableFuture<List<SuiObjectInfo>> res =
-        sui.getObjectsOwnedByAddress("0xea79464d86786b7a7a63e3f13f798f29f5e65947");
+    final Optional<String> sender =
+        sui.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return sui.getObjectsOwnedByAddress(s).get().size() > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+    CompletableFuture<List<SuiObjectInfo>> res = sui.getObjectsOwnedByAddress(sender.get());
     List<SuiObjectInfo> response = res.get();
     System.out.println(response);
   }
@@ -83,22 +98,28 @@ public class SuiIntTests {
   @Test
   @DisplayName("Test transferSui.")
   void transferSui() throws ExecutionException, InterruptedException {
-    CompletableFuture<List<SuiObjectInfo>> res =
-        sui.getObjectsOwnedByAddress("0x0a7421363a1f6a82800f7c9340ac02b5905798cb");
+    final String scep256k1sender =
+        sui.addresses().stream()
+            .filter(s -> sui.getByAddress(s) instanceof SECP256K1KeyPair)
+            .findFirst()
+            .get();
+    final String ed25519sender =
+        sui.addresses().stream()
+            .filter(s -> sui.getByAddress(s) instanceof ED25519KeyPair)
+            .findFirst()
+            .get();
+    CompletableFuture<List<SuiObjectInfo>> res = sui.getObjectsOwnedByAddress(ed25519sender);
     List<SuiObjectInfo> objects = res.get();
     String coinObjectId = objects.get(0).getObjectId();
-    List<String> addresses = new ArrayList<>(sui.addresses());
 
     // ED25519 KEY
-    System.out.println(addresses.get(0));
-    System.out.println(coinObjectId);
     CompletableFuture<ExecuteTransactionResponse> res2 =
         sui.transferSui(
-            "0x0a7421363a1f6a82800f7c9340ac02b5905798cb",
+            ed25519sender,
             coinObjectId,
-            200L,
-            "0xfa423b6448e5e83d03e0d98ce00b5be32da5ee86",
             2000L,
+            scep256k1sender,
+            20000L,
             ExecuteTransactionRequestType.WaitForLocalExecution);
     CompletableFuture<Object> future = new CompletableFuture<>();
     res2.whenComplete(
@@ -110,89 +131,41 @@ public class SuiIntTests {
           }
         });
 
+    System.out.println(future.get());
     assertNotNull(
         ((ExecuteTransactionResponse.EffectsCertResponse) future.get())
             .getEffectsCert()
             .getCertificate()
             .getTransactionDigest());
 
-    //    // SECP256K1 KEY
-    //    System.out.println(addresses.get(1));
-    //    CompletableFuture<ExecuteTransactionResponse> res3 =
-    //        sui.transferSui(
-    //            addresses.get(1),
-    //            coinObjectId,
-    //            100L,
-    //            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
-    //            2000L,
-    //            ExecuteTransactionRequestType.WaitForLocalExecution);
-    //    CompletableFuture<Object> future1 = new CompletableFuture<>();
-    //    res3.whenComplete(
-    //        (transactionResponse, throwable) -> {
-    //          if (throwable != null) {
-    //            future1.complete(throwable);
-    //          } else {
-    //            future1.complete(transactionResponse);
-    //          }
-    //        });
-    //
-    //    assertTrue(
-    //        ((SuiApiException) ((CompletionException) future1.get()).getCause())
-    //            .getError()
-    //            .getMessage()
-    //            .contains(addresses.get(1)));
-    //
-    //    // ED25519 KEY
-    //    System.out.println(addresses.get(0));
-    //    CompletableFuture<ExecuteTransactionResponse> res4 =
-    //        sui.transferSui(
-    //            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
-    //            coinObjectId,
-    //            100L,
-    //            addresses.get(0),
-    //            2000L,
-    //            ExecuteTransactionRequestType.WaitForLocalExecution);
-    //    CompletableFuture<Object> future2 = new CompletableFuture<>();
-    //    res4.whenComplete(
-    //        (transactionResponse, throwable) -> {
-    //          if (throwable != null) {
-    //            future2.complete(throwable);
-    //          } else {
-    //            future2.complete(transactionResponse);
-    //          }
-    //        });
-    //
-    //    assertNotNull(
-    //        ((ExecuteTransactionResponse.EffectsCertResponse) future2.get())
-    //            .getEffectsCert()
-    //            .getCertificate()
-    //            .getTransactionDigest());
-    //
-    //    // SECP256K1 KEY
-    //    System.out.println(addresses.get(1));
-    //    CompletableFuture<ExecuteTransactionResponse> res5 =
-    //        sui.transferSui(
-    //            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
-    //            coinObjectId,
-    //            100L,
-    //            addresses.get(1),
-    //            2000L,
-    //            ExecuteTransactionRequestType.WaitForLocalExecution);
-    //    CompletableFuture<Object> future3 = new CompletableFuture<>();
-    //    res5.whenComplete(
-    //        (transactionResponse, throwable) -> {
-    //          if (throwable != null) {
-    //            future3.complete(throwable);
-    //          } else {
-    //            future3.complete(transactionResponse);
-    //          }
-    //        });
-    //
-    //    assertNotNull(
-    //        ((ExecuteTransactionResponse.EffectsCertResponse) future3.get())
-    //            .getEffectsCert()
-    //            .getCertificate()
-    //            .getTransactionDigest());
+    CompletableFuture<List<SuiObjectInfo>> res1 = sui.getObjectsOwnedByAddress(scep256k1sender);
+    List<SuiObjectInfo> objects1 = res1.get();
+    String coinObjectId1 = objects1.get(0).getObjectId();
+    // SCEP256K1 KEY
+    CompletableFuture<ExecuteTransactionResponse> res3 =
+        sui.transferSui(
+            scep256k1sender,
+            coinObjectId1,
+            5000L,
+            ed25519sender,
+            20000L,
+            ExecuteTransactionRequestType.WaitForLocalExecution);
+    CompletableFuture<Object> future1 = new CompletableFuture<>();
+    res3.whenComplete(
+        (transactionResponse, throwable) -> {
+          if (throwable != null) {
+            future1.complete(throwable);
+          } else {
+            future1.complete(transactionResponse);
+          }
+        });
+
+    System.out.println(future1.get());
+    assertNotNull(
+        ((ExecuteTransactionResponse.EffectsCertResponse) future1.get())
+            .getEffectsCert()
+            .getCertificate()
+            .getTransactionDigest());
   }
 
   /**
@@ -259,6 +232,21 @@ public class SuiIntTests {
   @Test
   @DisplayName("Test batchTransaction.")
   void batchTransaction() throws ExecutionException, InterruptedException {
+    final Optional<String> sender =
+        sui.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return sui.getObjectsOwnedByAddress(s).get().size() > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+
     RPCTransactionRequestParams.MoveCallParams moveCallParams = new MoveCallParams();
     moveCallParams.setArguments(
         Lists.newArrayList(
@@ -273,10 +261,9 @@ public class SuiIntTests {
         new MoveCallRequestParams();
     moveCallRequestParams.setMoveCallRequestParams(moveCallParams);
 
-    CompletableFuture<List<SuiObjectInfo>> res =
-        sui.getObjectsOwnedByAddress("0xea79464d86786b7a7a63e3f13f798f29f5e65947");
+    CompletableFuture<List<SuiObjectInfo>> res = sui.getObjectsOwnedByAddress(sender.get());
     List<SuiObjectInfo> objects = res.get();
-    String coinObjectId = objects.get(3).getObjectId();
+    String coinObjectId = objects.get(0).getObjectId();
     List<String> addresses = new ArrayList<>(sui.addresses());
     RPCTransactionRequestParams.TransferObjectParams transferObjectParams =
         new TransferObjectParams();
@@ -287,10 +274,10 @@ public class SuiIntTests {
     transferObjectRequestParams.setTransferObjectRequestParams(transferObjectParams);
     CompletableFuture<ExecuteTransactionResponse> res1 =
         sui.batchTransaction(
-            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            sender.get(),
             Lists.newArrayList(moveCallRequestParams, transferObjectRequestParams),
             null,
-            1000L,
+            5000L,
             ExecuteTransactionRequestType.WaitForLocalExecution);
     CompletableFuture<Object> future = new CompletableFuture<>();
     res1.whenComplete(
@@ -302,6 +289,7 @@ public class SuiIntTests {
           }
         });
 
+    System.out.println(future.get());
     assertNotNull(
         ((ExecuteTransactionResponse.EffectsCertResponse) future.get())
             .getEffectsCert()
@@ -318,14 +306,27 @@ public class SuiIntTests {
   @Test
   @DisplayName("Test paySui.")
   void paySui() throws ExecutionException, InterruptedException {
-    CompletableFuture<List<SuiObjectInfo>> res =
-        sui.getObjectsOwnedByAddress("0xea79464d86786b7a7a63e3f13f798f29f5e65947");
+    final Optional<String> sender =
+        sui.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return sui.getObjectsOwnedByAddress(s).get().size() > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+    CompletableFuture<List<SuiObjectInfo>> res = sui.getObjectsOwnedByAddress(sender.get());
     List<SuiObjectInfo> objects = res.get();
-    String coinObjectId = objects.get(2).getObjectId();
+    String coinObjectId = objects.get(0).getObjectId();
     List<String> addresses = new ArrayList<>(sui.addresses());
     CompletableFuture<ExecuteTransactionResponse> res1 =
         sui.paySui(
-            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            sender.get(),
             Lists.newArrayList(coinObjectId),
             Lists.newArrayList(addresses.get(4), addresses.get(5)),
             Lists.newArrayList(1000L, 1000L),
@@ -341,15 +342,12 @@ public class SuiIntTests {
           }
         });
 
-    if (future.get() instanceof Throwable) {
-      System.out.println(future.get());
-    } else {
-      assertNotNull(
-          ((ExecuteTransactionResponse.EffectsCertResponse) future.get())
-              .getEffectsCert()
-              .getCertificate()
-              .getTransactionDigest());
-    }
+    System.out.println(future.get());
+    assertNotNull(
+        ((ExecuteTransactionResponse.EffectsCertResponse) future.get())
+            .getEffectsCert()
+            .getCertificate()
+            .getTransactionDigest());
   }
 
   /**
@@ -361,13 +359,26 @@ public class SuiIntTests {
   @Test
   @DisplayName("Test splitCoin.")
   void splitCoin() throws ExecutionException, InterruptedException {
-    CompletableFuture<List<SuiObjectInfo>> res =
-        sui.getObjectsOwnedByAddress("0xea79464d86786b7a7a63e3f13f798f29f5e65947");
+    final Optional<String> sender =
+        sui.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return sui.getObjectsOwnedByAddress(s).get().size() > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+    CompletableFuture<List<SuiObjectInfo>> res = sui.getObjectsOwnedByAddress(sender.get());
     List<SuiObjectInfo> objects = res.get();
-    String coinObjectId = objects.get(6).getObjectId();
+    String coinObjectId = objects.get(0).getObjectId();
     CompletableFuture<ExecuteTransactionResponse> res1 =
         sui.splitCoin(
-            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            sender.get(),
             coinObjectId,
             Lists.newArrayList(100000L, 200000L, 100000L),
             null,
@@ -383,15 +394,12 @@ public class SuiIntTests {
           }
         });
 
-    if (future.get() instanceof Throwable) {
-      System.out.println(future.get());
-    } else {
-      assertNotNull(
-          ((ExecuteTransactionResponse.EffectsCertResponse) future.get())
-              .getEffectsCert()
-              .getCertificate()
-              .getTransactionDigest());
-    }
+    System.out.println(future.get());
+    assertNotNull(
+        ((ExecuteTransactionResponse.EffectsCertResponse) future.get())
+            .getEffectsCert()
+            .getCertificate()
+            .getTransactionDigest());
   }
 
   /**
@@ -403,13 +411,26 @@ public class SuiIntTests {
   @Test
   @DisplayName("Test splitCoinEqual.")
   void splitCoinEqual() throws ExecutionException, InterruptedException {
-    CompletableFuture<List<SuiObjectInfo>> res =
-        sui.getObjectsOwnedByAddress("0xea79464d86786b7a7a63e3f13f798f29f5e65947");
+    final Optional<String> sender =
+        sui.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return sui.getObjectsOwnedByAddress(s).get().size() > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+    CompletableFuture<List<SuiObjectInfo>> res = sui.getObjectsOwnedByAddress(sender.get());
     List<SuiObjectInfo> objects = res.get();
-    String coinObjectId = objects.get(6).getObjectId();
+    String coinObjectId = objects.get(0).getObjectId();
     CompletableFuture<ExecuteTransactionResponse> res1 =
         sui.splitCoinEqual(
-            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            sender.get(),
             coinObjectId,
             5L,
             null,
@@ -425,15 +446,13 @@ public class SuiIntTests {
           }
         });
 
-    if (future.get() instanceof Throwable) {
-      System.out.println(future.get());
-    } else {
-      assertNotNull(
-          ((ExecuteTransactionResponse.EffectsCertResponse) future.get())
-              .getEffectsCert()
-              .getCertificate()
-              .getTransactionDigest());
-    }
+    System.out.println(future.get());
+
+    assertNotNull(
+        ((ExecuteTransactionResponse.EffectsCertResponse) future.get())
+            .getEffectsCert()
+            .getCertificate()
+            .getTransactionDigest());
   }
 
   /**
@@ -445,14 +464,27 @@ public class SuiIntTests {
   @Test
   @DisplayName("Test mergeCoins.")
   void mergeCoins() throws ExecutionException, InterruptedException {
-    CompletableFuture<List<SuiObjectInfo>> res =
-        sui.getObjectsOwnedByAddress("0xea79464d86786b7a7a63e3f13f798f29f5e65947");
+    final Optional<String> sender =
+        sui.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return sui.getObjectsOwnedByAddress(s).get().size() > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+    CompletableFuture<List<SuiObjectInfo>> res = sui.getObjectsOwnedByAddress(sender.get());
     List<SuiObjectInfo> objects = res.get();
-    String primaryCoinObjectId = objects.get(3).getObjectId();
-    String toMergeCoinObjectId = objects.get(5).getObjectId();
+    String primaryCoinObjectId = objects.get(0).getObjectId();
+    String toMergeCoinObjectId = objects.get(1).getObjectId();
     CompletableFuture<ExecuteTransactionResponse> res1 =
         sui.mergeCoins(
-            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            sender.get(),
             primaryCoinObjectId,
             toMergeCoinObjectId,
             null,
@@ -468,15 +500,12 @@ public class SuiIntTests {
           }
         });
 
-    if (future.get() instanceof Throwable) {
-      System.out.println(future.get());
-    } else {
-      assertNotNull(
-          ((ExecuteTransactionResponse.EffectsCertResponse) future.get())
-              .getEffectsCert()
-              .getCertificate()
-              .getTransactionDigest());
-    }
+    System.out.println(future.get());
+    assertNotNull(
+        ((ExecuteTransactionResponse.EffectsCertResponse) future.get())
+            .getEffectsCert()
+            .getCertificate()
+            .getTransactionDigest());
   }
 
   /**
@@ -488,14 +517,27 @@ public class SuiIntTests {
   @Test
   @DisplayName("Test payAllSui.")
   void payAllSui() throws ExecutionException, InterruptedException {
-    CompletableFuture<List<SuiObjectInfo>> res =
-        sui.getObjectsOwnedByAddress("0xea79464d86786b7a7a63e3f13f798f29f5e65947");
+    final Optional<String> sender =
+        sui.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return sui.getObjectsOwnedByAddress(s).get().size() > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+    CompletableFuture<List<SuiObjectInfo>> res = sui.getObjectsOwnedByAddress(sender.get());
     List<SuiObjectInfo> objects = res.get();
     List<String> addresses = new ArrayList<>(sui.addresses());
-    String coinObjectId = objects.get(5).getObjectId();
+    String coinObjectId = objects.get(0).getObjectId();
     CompletableFuture<ExecuteTransactionResponse> res1 =
         sui.payAllSui(
-            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            sender.get(),
             Lists.newArrayList(coinObjectId),
             addresses.get(6),
             5000L,
@@ -510,15 +552,13 @@ public class SuiIntTests {
           }
         });
 
-    if (future.get() instanceof Throwable) {
-      System.out.println(future.get());
-    } else {
-      assertNotNull(
-          ((ExecuteTransactionResponse.EffectsCertResponse) future.get())
-              .getEffectsCert()
-              .getCertificate()
-              .getTransactionDigest());
-    }
+    System.out.println(future.get());
+
+    assertNotNull(
+        ((ExecuteTransactionResponse.EffectsCertResponse) future.get())
+            .getEffectsCert()
+            .getCertificate()
+            .getTransactionDigest());
   }
 
   /**
@@ -578,9 +618,10 @@ public class SuiIntTests {
   @Test
   @DisplayName("Test publish.")
   void publish() throws ExecutionException, InterruptedException {
+
     CompletableFuture<ExecuteTransactionResponse> res1 =
         sui.publish(
-            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
+            sui.addresses().first(),
             Lists.newArrayList(
                 "oRzrCwYAAAAKAQAIAggMAxQuBEICBUQrB2+IAQj3ASgKnwIKDKkCkwEN"
                     + "vAMEAAABAQECAQMABAgAAwYCAAENBAAABQABAAAHAgEAAAgDAQAACQQFAAAK"
@@ -606,50 +647,12 @@ public class SuiIntTests {
           }
         });
 
-    if (future.get() instanceof Throwable) {
-      System.out.println(future.get());
-    } else {
-      assertNotNull(
-          ((ExecuteTransactionResponse.EffectsCertResponse) future.get())
-              .getEffectsCert()
-              .getCertificate()
-              .getTransactionDigest());
-    }
-  }
+    System.out.println(future.get());
 
-  @SuppressWarnings("checkstyle:CommentsIndentation")
-  @Test
-  @DisplayName("Test executeTransaction.")
-  void executeTransaction() throws ExecutionException, InterruptedException {
-    //    CompletableFuture<ExecuteTransactionResponse> res1 =
-    //        sui.executeTransaction(
-    //            "VHJhbnNhY3Rpb25EYXRhOjoAAgAAAAAAAAAAAAAAAAAAAAAAAAACAQAAAAAAAAA"
-    //                + "gqfVhcEKs/dHDNNRZjotHPp50jauePdlz6dUbjdvSY5sKZGV2bmV0X25mdARtaW5"
-    //                + "0AAMADAtFeGFtcGxlIE5GVAAQD0FuIGV4YW1wbGUgTkZULgBDQmlwZnM6Ly9iYWZ"
-    //                + "rcmVpYm5ncWhsM2dhYTdkYW9iNGkydmNjemlheTJqamxwNDM1Y2Y2NnZob25vN25"
-    //                + "ydnd3NTN0eep5Rk2GeGt6emPj8T95jyn15llHBfcetdxpIk7446TBORfHmRkCN9k"
-    //                +
-    // "VAAAAAAAAACArlSTbZdDuxBzAXyjsIM2onPldxSlf//vYqXL640o3CQEAAAAAAAAAiBMAAAAAAAA=",
-    //            "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
-    //            ExecuteTransactionRequestType.WaitForLocalExecution);
-    //    CompletableFuture<Object> future = new CompletableFuture<>();
-    //    res1.whenComplete(
-    //        (transactionResponse, throwable) -> {
-    //          if (throwable != null) {
-    //            future.complete(throwable);
-    //          } else {
-    //            future.complete(transactionResponse);
-    //          }
-    //        });
-    //
-    //    if (future.get() instanceof Throwable) {
-    //      System.out.println(future.get());
-    //    } else {
-    //      assertNotNull(
-    //          ((ExecuteTransactionResponse.EffectsCertResponse) future.get())
-    //              .getEffectsCert()
-    //              .getCertificate()
-    //              .getTransactionDigest());
-    //    }
+    assertNotNull(
+        ((ExecuteTransactionResponse.EffectsCertResponse) future.get())
+            .getEffectsCert()
+            .getCertificate()
+            .getTransactionDigest());
   }
 }

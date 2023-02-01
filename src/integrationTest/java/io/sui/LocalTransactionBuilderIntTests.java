@@ -47,19 +47,4 @@ class LocalTransactionBuilderIntTests {
         new OkHttpJsonRpcClientProvider(BASE_URL, jsonHandler);
     transactionBuilder = new LocalTransactionBuilder(new QueryClientImpl(jsonRpcClientProvider));
   }
-
-  //  @Test
-  //  @DisplayName("Test select gas.")
-  //  void selectGas() throws ExecutionException, InterruptedException {
-  //
-  ////    CompletableFuture<SuiObjectRef> future = transactionBuilder.selectGas(
-  ////        "0x0a7421363a1f6a82800f7c9340ac02b5905798cb",
-  ////        "0x0894790d4cebb8f99d10fd4f79be0d28e3cf6374", 500L, new ArrayList<>());
-  ////    System.out.println(future.get());
-  //
-  //    CompletableFuture<SuiObjectRef> future1 = transactionBuilder.selectGas(
-  //        "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
-  //        null, 500L, new ArrayList<>());
-  //    System.out.println(future1.get());
-  //  }
 }
