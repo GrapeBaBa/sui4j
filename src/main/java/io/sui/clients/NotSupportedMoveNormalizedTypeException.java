@@ -16,11 +16,11 @@
 
 package io.sui.clients;
 
-/** The type No supported type tag exception. */
-public class NoSupportedTypeTagException extends RuntimeException {
+/** The type No supported move normalized type exception. */
+public class NotSupportedMoveNormalizedTypeException extends RuntimeException {
 
-  /** Instantiates a new No supported type tag exception. */
-  public NoSupportedTypeTagException() {
-    super("no supported type tag.");
+  /** Instantiates a new No supported move normalized type exception. */
+  public NotSupportedMoveNormalizedTypeException() {
+    super("not supported MOVE normalized type tag.");
   }
 }
