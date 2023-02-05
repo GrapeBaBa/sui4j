@@ -18,9 +18,13 @@ package io.sui;
 
 
 import com.novi.serde.SerializationError;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Consumer;
 import io.sui.bcsgen.Intent;
 import io.sui.bcsgen.TransactionData;
 import io.sui.clients.BcsSerializationException;
+import io.sui.clients.EventClient;
+import io.sui.clients.EventClientImpl;
 import io.sui.clients.ExecutionClient;
 import io.sui.clients.ExecutionClientImpl;
 import io.sui.clients.JsonRpcTransactionBuilder;
@@ -38,6 +42,8 @@ import io.sui.jsonrpc.JsonHandler;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
 import io.sui.models.SuiApiException;
+import io.sui.models.events.EventEnvelope;
+import io.sui.models.events.EventFilter;
 import io.sui.models.events.EventId;
 import io.sui.models.events.EventQuery;
 import io.sui.models.events.PaginatedEvents;
@@ -83,6 +89,8 @@ public class Sui {
 
   private final ExecutionClient executionClient;
 
+  private final EventClient eventClient;
+
   /**
    * Instantiates a new Sui.
    *
@@ -111,6 +119,7 @@ public class Sui {
             ? new LocalTransactionBuilder(this.queryClient)
             : new JsonRpcTransactionBuilder(jsonRpcClientProvider);
     this.executionClient = new ExecutionClientImpl(jsonRpcClientProvider);
+    this.eventClient = new EventClientImpl(jsonRpcClientProvider);
   }
 
   /**
@@ -367,6 +376,19 @@ public class Sui {
     return this.transactionBuilder
         .transferObject(signer, suiObject, recipient, gas, gasBudget)
         .thenCompose(signAndExecuteTransactionFunction(signer, defaultIntent(), requestType));
+  }
+
+  /**
+   * Subscribe event disposable.
+   *
+   * @param eventFilter the event filter
+   * @param onNext the on next
+   * @param onError the on error
+   * @return the disposable
+   */
+  public Disposable subscribeEvent(
+      EventFilter eventFilter, Consumer<EventEnvelope> onNext, Consumer<SuiApiException> onError) {
+    return this.eventClient.subscribeEvent(eventFilter, onNext, onError);
   }
 
   /**
@@ -662,49 +684,6 @@ public class Sui {
     return signAndExecuteTransaction(
         txBytes, intentBytes, requestType, suiKeyPair, publicKey, signatureScheme);
   }
-
-  //  private CompletableFuture<ExecuteTransactionResponse> signAndExecuteTransaction1(
-  //      TransactionData transactionData,
-  //      ExecuteTransactionRequestType requestType,
-  //      SuiKeyPair<?> suiKeyPair,
-  //      byte[] publicKey,
-  //      SignatureScheme signatureScheme) {
-  //    final Intent.Builder intentBuilder = new Intent.Builder();
-  //    intentBuilder.app_id = 0;
-  //    intentBuilder.scope = 0;
-  //    intentBuilder.version = 0;
-  //    final IntentMessage.Builder intentMessageBuilder = new IntentMessage.Builder();
-  //    intentMessageBuilder.intent = intentBuilder.build();
-  //    intentMessageBuilder.value = transactionData;
-  //
-  //    final byte[] signature;
-  //    try {
-  //      signature = suiKeyPair.sign(intentMessageBuilder.build().bcsSerialize());
-  //    } catch (SigningException e) {
-  //      CompletableFuture<ExecuteTransactionResponse> future = new CompletableFuture<>();
-  //      future.completeExceptionally(new SuiApiException(e));
-  //      return future;
-  //    } catch (SerializationError e) {
-  //      CompletableFuture<ExecuteTransactionResponse> future = new CompletableFuture<>();
-  //      future.completeExceptionally(new SuiApiException(new BcsSerializationException(e)));
-  //      return future;
-  //    }
-  //
-  //    final byte[] serializedSignatureBytes = Arrays.concatenate(
-  //        new byte[]{signatureScheme.getScheme()},
-  //        signature, publicKey);
-  //    final String serializedSignature = Base64.toBase64String(serializedSignatureBytes);
-  //
-  //    try {
-  //      return executionClient.executeTransaction(
-  //          Base64.toBase64String(transactionData.bcsSerialize()), serializedSignature,
-  // requestType);
-  //    } catch (SerializationError e) {
-  //      CompletableFuture<ExecuteTransactionResponse> future = new CompletableFuture<>();
-  //      future.completeExceptionally(new SuiApiException(new BcsSerializationException(e)));
-  //      return future;
-  //    }
-  //  }
 
   private CompletableFuture<ExecuteTransactionResponse> signAndExecuteTransaction(
       byte[] transactionData,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -17,7 +17,6 @@
 package io.sui.models.transactions;
 
 
-import io.sui.models.objects.SuiObjectRef;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,7 +28,7 @@ import java.util.Objects;
  */
 public class MoveCall {
 
-  private SuiObjectRef suiPackage;
+  private String suiPackage;
 
   private String module;
 
@@ -44,7 +43,7 @@ public class MoveCall {
    *
    * @return the sui package
    */
-  public SuiObjectRef getSuiPackage() {
+  public String getSuiPackage() {
     return suiPackage;
   }
 
@@ -53,7 +52,7 @@ public class MoveCall {
    *
    * @param suiPackage the sui package
    */
-  public void setSuiPackage(SuiObjectRef suiPackage) {
+  public void setSuiPackage(String suiPackage) {
     this.suiPackage = suiPackage;
   }
 

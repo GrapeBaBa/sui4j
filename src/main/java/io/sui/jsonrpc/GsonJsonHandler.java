@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -30,6 +30,8 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.ToNumberPolicy;
 import com.google.gson.reflect.TypeToken;
+import io.sui.models.events.EventFilter;
+import io.sui.models.events.EventFilter.PackageEventFilter;
 import io.sui.models.events.EventKind;
 import io.sui.models.events.EventQuery;
 import io.sui.models.events.EventQuery.AllQuery;
@@ -76,6 +78,7 @@ import io.sui.models.transactions.TypeTag.VectorType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -241,8 +244,7 @@ public class GsonJsonHandler implements JsonHandler {
               json.getAsJsonObject().get("typeArguments"),
               new com.google.common.reflect.TypeToken<List<String>>() {}.getType());
       moveCall.setTypeArguments(typeArguments);
-      SuiObjectRef suiPackage =
-          gson.fromJson(json.getAsJsonObject().get("package"), SuiObjectRef.class);
+      String suiPackage = json.getAsJsonObject().get("package").getAsString();
       moveCall.setSuiPackage(suiPackage);
       return moveCall;
     }
@@ -392,6 +394,19 @@ public class GsonJsonHandler implements JsonHandler {
       jsonObject.addProperty("package", src.getSuiPackage());
       jsonObject.addProperty("module", src.getModule());
       jsonObject.addProperty("function", src.getFunction());
+      return jsonObject;
+    }
+  }
+
+  /** The type Package event filter serializer. */
+  public static class PackageEventFilterSerializer
+      implements JsonSerializer<EventFilter.PackageEventFilter> {
+
+    @Override
+    public JsonElement serialize(
+        PackageEventFilter src, Type typeOfSrc, JsonSerializationContext context) {
+      JsonObject jsonObject = new JsonObject();
+      jsonObject.addProperty("Package", src.getSuiPackage());
       return jsonObject;
     }
   }
@@ -593,6 +608,22 @@ public class GsonJsonHandler implements JsonHandler {
   public <T> JsonRpc20Response<T> fromJson(String response, Type typeOfT) {
     Type type = TypeToken.getParameterized(JsonRpc20Response.class, typeOfT).getType();
     return this.gson.fromJson(response, type);
+  }
+
+  @Override
+  public JsonRpc20WSResponse fromJson(String response) {
+    return this.gson.fromJson(response, JsonRpc20WSResponse.class);
+  }
+
+  @Override
+  public JsonRpc20Request fromJsonReq(String request) {
+    return this.gson.fromJson(request, JsonRpc20Request.class);
+  }
+
+  @Override
+  public Map<String, Object> fromJsonMap(String json) {
+    return this.gson.fromJson(
+        json, new com.google.common.reflect.TypeToken<Map<String, Object>>() {}.getType());
   }
 
   @Override

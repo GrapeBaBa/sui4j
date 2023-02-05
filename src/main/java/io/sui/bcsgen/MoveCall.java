@@ -2,13 +2,13 @@ package io.sui.bcsgen;
 
 
 public final class MoveCall {
-    public final com.novi.serde.Tuple3<ObjectID, SequenceNumber, ObjectDigest> Package;
+    public final ObjectID Package;
     public final Identifier module;
     public final Identifier function;
     public final java.util.List<TypeTag> type_arguments;
     public final java.util.List<CallArg> arguments;
 
-    public MoveCall(com.novi.serde.Tuple3<ObjectID, SequenceNumber, ObjectDigest> Package, Identifier module, Identifier function, java.util.List<TypeTag> type_arguments, java.util.List<CallArg> arguments) {
+    public MoveCall(ObjectID Package, Identifier module, Identifier function, java.util.List<TypeTag> type_arguments, java.util.List<CallArg> arguments) {
         java.util.Objects.requireNonNull(Package, "Package must not be null");
         java.util.Objects.requireNonNull(module, "module must not be null");
         java.util.Objects.requireNonNull(function, "function must not be null");
@@ -23,7 +23,7 @@ public final class MoveCall {
 
     public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
         serializer.increase_container_depth();
-        TraitHelpers.serialize_tuple3_ObjectID_SequenceNumber_ObjectDigest(Package, serializer);
+        Package.serialize(serializer);
         module.serialize(serializer);
         function.serialize(serializer);
         TraitHelpers.serialize_vector_TypeTag(type_arguments, serializer);
@@ -40,7 +40,7 @@ public final class MoveCall {
     public static MoveCall deserialize(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
         deserializer.increase_container_depth();
         Builder builder = new Builder();
-        builder.Package = TraitHelpers.deserialize_tuple3_ObjectID_SequenceNumber_ObjectDigest(deserializer);
+        builder.Package = ObjectID.deserialize(deserializer);
         builder.module = Identifier.deserialize(deserializer);
         builder.function = Identifier.deserialize(deserializer);
         builder.type_arguments = TraitHelpers.deserialize_vector_TypeTag(deserializer);
@@ -51,12 +51,12 @@ public final class MoveCall {
 
     public static MoveCall bcsDeserialize(byte[] input) throws com.novi.serde.DeserializationError {
         if (input == null) {
-            throw new com.novi.serde.DeserializationError("Cannot deserialize null array");
+             throw new com.novi.serde.DeserializationError("Cannot deserialize null array");
         }
         com.novi.serde.Deserializer deserializer = new com.novi.bcs.BcsDeserializer(input);
         MoveCall value = deserialize(deserializer);
         if (deserializer.get_buffer_offset() < input.length) {
-            throw new com.novi.serde.DeserializationError("Some input bytes were not read");
+             throw new com.novi.serde.DeserializationError("Some input bytes were not read");
         }
         return value;
     }
@@ -85,7 +85,7 @@ public final class MoveCall {
     }
 
     public static final class Builder {
-        public com.novi.serde.Tuple3<ObjectID, SequenceNumber, ObjectDigest> Package;
+        public ObjectID Package;
         public Identifier module;
         public Identifier function;
         public java.util.List<TypeTag> type_arguments;

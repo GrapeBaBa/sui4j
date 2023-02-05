@@ -14,6 +14,7 @@ public abstract class EntryArgumentErrorKind {
             case 3: return ObjectKindMismatch.load(deserializer);
             case 4: return UnsupportedPureArg.load(deserializer);
             case 5: return ArityMismatch.load(deserializer);
+            case 6: return ObjectMutabilityMismatch.load(deserializer);
             default: throw new com.novi.serde.DeserializationError("Unknown variant index for EntryArgumentErrorKind: " + index);
         }
     }
@@ -259,6 +260,44 @@ public abstract class EntryArgumentErrorKind {
         public static final class Builder {
             public ArityMismatch build() {
                 return new ArityMismatch(
+                );
+            }
+        }
+    }
+
+    public static final class ObjectMutabilityMismatch extends EntryArgumentErrorKind {
+        public ObjectMutabilityMismatch() {
+        }
+
+        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+            serializer.increase_container_depth();
+            serializer.serialize_variant_index(6);
+            serializer.decrease_container_depth();
+        }
+
+        static ObjectMutabilityMismatch load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+            deserializer.increase_container_depth();
+            Builder builder = new Builder();
+            deserializer.decrease_container_depth();
+            return builder.build();
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            ObjectMutabilityMismatch other = (ObjectMutabilityMismatch) obj;
+            return true;
+        }
+
+        public int hashCode() {
+            int value = 7;
+            return value;
+        }
+
+        public static final class Builder {
+            public ObjectMutabilityMismatch build() {
+                return new ObjectMutabilityMismatch(
                 );
             }
         }

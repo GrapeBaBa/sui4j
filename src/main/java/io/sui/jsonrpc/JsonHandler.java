@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -18,6 +18,7 @@ package io.sui.jsonrpc;
 
 
 import java.lang.reflect.Type;
+import java.util.Map;
 
 /**
  * The interface Json handler.
@@ -36,6 +37,30 @@ public interface JsonHandler {
    * @return the json rpc 20 response
    */
   <T> JsonRpc20Response<T> fromJson(String response, Type typeT);
+
+  /**
+   * From json json rpc 20 ws response.
+   *
+   * @param response the response
+   * @return the json rpc 20 ws response
+   */
+  JsonRpc20WSResponse fromJson(String response);
+
+  /**
+   * From json general map.
+   *
+   * @param json the json
+   * @return the map
+   */
+  Map<String, Object> fromJsonMap(String json);
+
+  /**
+   * From json json rpc 20 request.
+   *
+   * @param request the request
+   * @return the json rpc 20 request
+   */
+  JsonRpc20Request fromJsonReq(String request);
 
   /**
    * To json string.

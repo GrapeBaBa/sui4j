@@ -51,7 +51,7 @@ public abstract class MoveValue {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(0);
+//            serializer.serialize_variant_index(0);
             serializer.serialize_u8(value);
             serializer.decrease_container_depth();
         }
@@ -100,7 +100,7 @@ public abstract class MoveValue {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(1);
+//            serializer.serialize_variant_index(1);
             serializer.serialize_u64(value);
             serializer.decrease_container_depth();
         }
@@ -149,7 +149,7 @@ public abstract class MoveValue {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(2);
+//            serializer.serialize_variant_index(2);
             serializer.serialize_u128(value);
             serializer.decrease_container_depth();
         }
@@ -198,7 +198,7 @@ public abstract class MoveValue {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(3);
+//            serializer.serialize_variant_index(3);
             serializer.serialize_bool(value);
             serializer.decrease_container_depth();
         }
@@ -247,7 +247,7 @@ public abstract class MoveValue {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(4);
+//            serializer.serialize_variant_index(4);
             value.serialize(serializer);
             serializer.decrease_container_depth();
         }
@@ -296,7 +296,7 @@ public abstract class MoveValue {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(5);
+//            serializer.serialize_variant_index(5);
             TraitHelpers.serialize_vector_MoveValue(value, serializer);
             serializer.decrease_container_depth();
         }
@@ -345,7 +345,7 @@ public abstract class MoveValue {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(6);
+//            serializer.serialize_variant_index(6);
             value.serialize(serializer);
             serializer.decrease_container_depth();
         }
@@ -394,7 +394,7 @@ public abstract class MoveValue {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(7);
+//            serializer.serialize_variant_index(7);
             value.serialize(serializer);
             serializer.decrease_container_depth();
         }
@@ -443,7 +443,7 @@ public abstract class MoveValue {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(8);
+//            serializer.serialize_variant_index(8);
             serializer.serialize_u16(value);
             serializer.decrease_container_depth();
         }
@@ -492,7 +492,7 @@ public abstract class MoveValue {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(9);
+//            serializer.serialize_variant_index(9);
             serializer.serialize_u32(value);
             serializer.decrease_container_depth();
         }
@@ -541,7 +541,7 @@ public abstract class MoveValue {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(10);
+//            serializer.serialize_variant_index(10);
             TraitHelpers.serialize_array32_u8_array(value, serializer);
             serializer.decrease_container_depth();
         }

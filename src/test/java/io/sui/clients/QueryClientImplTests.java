@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -510,7 +510,8 @@ class QueryClientImplTests {
     CompletableFuture<PaginatedEvents> res = client.getEvents(query, null, 1, false);
     System.out.println(res.get());
     assertEquals(1, res.get().getData().size());
-    assertEquals(0, res.get().getNextCursor().getTxSeq());
+    assertEquals(
+        "ov1tDrhdOqRW2uFweTbSSTaQbBbnjHWmrsh675lwb0Q=", res.get().getNextCursor().getTxDigest());
     assertEquals(1, res.get().getNextCursor().getEventSeq());
     assertEquals(
         BigInteger.valueOf(-1062L),

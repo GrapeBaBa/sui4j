@@ -7,11 +7,7 @@
         "transactions": [
           {
             "Call": {
-              "package": {
-                "objectId": "0x0000000000000000000000000000000000000002",
-                "version": 1,
-                "digest": "SNq/9rdmjAwtuFVeNQFNMIdY7qrurGhrBjYln8df6GA="
-              },
+              "package": "0x0000000000000000000000000000000000000002",
               "module": "devnet_nft",
               "function": "mint",
               "arguments": [

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -27,27 +27,9 @@ import java.util.Objects;
  */
 public class EventId {
 
-  private Long txSeq;
+  private String txDigest;
 
   private Long eventSeq;
-
-  /**
-   * Gets tx seq.
-   *
-   * @return the tx seq
-   */
-  public Long getTxSeq() {
-    return txSeq;
-  }
-
-  /**
-   * Sets tx seq.
-   *
-   * @param txSeq the tx seq
-   */
-  public void setTxSeq(Long txSeq) {
-    this.txSeq = txSeq;
-  }
 
   /**
    * Gets event seq.
@@ -67,6 +49,14 @@ public class EventId {
     this.eventSeq = eventSeq;
   }
 
+  public String getTxDigest() {
+    return txDigest;
+  }
+
+  public void setTxDigest(String txDigest) {
+    this.txDigest = txDigest;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -76,16 +66,16 @@ public class EventId {
       return false;
     }
     EventId eventId = (EventId) o;
-    return txSeq.equals(eventId.txSeq) && eventSeq.equals(eventId.eventSeq);
+    return txDigest.equals(eventId.txDigest) && eventSeq.equals(eventId.eventSeq);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(txSeq, eventSeq);
+    return Objects.hash(txDigest, eventSeq);
   }
 
   @Override
   public String toString() {
-    return "EventId{" + "txSeq=" + txSeq + ", eventSeq=" + eventSeq + '}';
+    return "EventId{" + "txDigest=" + txDigest + ", eventSeq=" + eventSeq + '}';
   }
 }

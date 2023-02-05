@@ -19,8 +19,13 @@ package io.sui;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.google.common.collect.Lists;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Consumer;
 import io.sui.crypto.ED25519KeyPair;
 import io.sui.crypto.SECP256K1KeyPair;
+import io.sui.models.events.EventEnvelope;
+import io.sui.models.events.EventFilter.EventTypeEventFilter;
+import io.sui.models.events.EventType;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.ExecuteTransactionRequestType;
 import io.sui.models.transactions.ExecuteTransactionResponse;
@@ -146,9 +151,9 @@ public class SuiIntTests {
         sui.transferSui(
             scep256k1sender,
             coinObjectId1,
-            5000L,
+            1000L,
             ed25519sender,
-            20000L,
+            10000L,
             ExecuteTransactionRequestType.WaitForLocalExecution);
     CompletableFuture<Object> future1 = new CompletableFuture<>();
     res3.whenComplete(
@@ -428,6 +433,7 @@ public class SuiIntTests {
     CompletableFuture<List<SuiObjectInfo>> res = sui.getObjectsOwnedByAddress(sender.get());
     List<SuiObjectInfo> objects = res.get();
     String coinObjectId = objects.get(0).getObjectId();
+    String gasCoinObjectId = objects.get(1).getObjectId();
     CompletableFuture<ExecuteTransactionResponse> res1 =
         sui.splitCoinEqual(
             sender.get(),
@@ -596,6 +602,7 @@ public class SuiIntTests {
                 3000L,
                 ExecuteTransactionRequestType.WaitForLocalExecution);
 
+        System.out.println(res.get());
         assertNotNull(
             ((ExecuteTransactionResponse.EffectsCertResponse) res.get())
                 .getEffectsCert()
@@ -654,5 +661,25 @@ public class SuiIntTests {
             .getEffectsCert()
             .getCertificate()
             .getTransactionDigest());
+  }
+
+  @Test
+  @DisplayName("Test subscribeEvent.")
+  void subscribeEvent() throws ExecutionException, InterruptedException {
+    EventTypeEventFilter eventFilter = new EventTypeEventFilter();
+    eventFilter.setEventType(EventType.CoinBalanceChange);
+    Disposable disposable =
+        sui.subscribeEvent(
+            eventFilter,
+            new Consumer<EventEnvelope>() {
+              @Override
+              public void accept(EventEnvelope eventEnvelope) throws Throwable {
+                System.out.println(eventEnvelope);
+              }
+            },
+            System.out::println);
+    moveCall();
+
+    disposable.dispose();
   }
 }

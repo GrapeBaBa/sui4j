@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -17,7 +17,10 @@
 package io.sui.jsonrpc;
 
 
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Consumer;
 import io.sui.models.SuiApiException;
+import io.sui.models.events.EventEnvelope;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -42,6 +45,9 @@ public abstract class JsonRpcClientProvider {
   private long nextId() {
     return nextId.incrementAndGet();
   }
+
+  public abstract Disposable subscribe(
+      JsonRpc20Request request, Consumer<EventEnvelope> onNext, Consumer<SuiApiException> onError);
 
   /**
    * Call completable future.

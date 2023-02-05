@@ -6,16 +6,19 @@ public final class ChangeEpoch {
     public final @com.novi.serde.Unsigned Long storage_charge;
     public final @com.novi.serde.Unsigned Long computation_charge;
     public final @com.novi.serde.Unsigned Long storage_rebate;
+    public final @com.novi.serde.Unsigned Long epoch_start_timestamp_ms;
 
-    public ChangeEpoch(@com.novi.serde.Unsigned Long epoch, @com.novi.serde.Unsigned Long storage_charge, @com.novi.serde.Unsigned Long computation_charge, @com.novi.serde.Unsigned Long storage_rebate) {
+    public ChangeEpoch(@com.novi.serde.Unsigned Long epoch, @com.novi.serde.Unsigned Long storage_charge, @com.novi.serde.Unsigned Long computation_charge, @com.novi.serde.Unsigned Long storage_rebate, @com.novi.serde.Unsigned Long epoch_start_timestamp_ms) {
         java.util.Objects.requireNonNull(epoch, "epoch must not be null");
         java.util.Objects.requireNonNull(storage_charge, "storage_charge must not be null");
         java.util.Objects.requireNonNull(computation_charge, "computation_charge must not be null");
         java.util.Objects.requireNonNull(storage_rebate, "storage_rebate must not be null");
+        java.util.Objects.requireNonNull(epoch_start_timestamp_ms, "epoch_start_timestamp_ms must not be null");
         this.epoch = epoch;
         this.storage_charge = storage_charge;
         this.computation_charge = computation_charge;
         this.storage_rebate = storage_rebate;
+        this.epoch_start_timestamp_ms = epoch_start_timestamp_ms;
     }
 
     public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
@@ -24,6 +27,7 @@ public final class ChangeEpoch {
         serializer.serialize_u64(storage_charge);
         serializer.serialize_u64(computation_charge);
         serializer.serialize_u64(storage_rebate);
+        serializer.serialize_u64(epoch_start_timestamp_ms);
         serializer.decrease_container_depth();
     }
 
@@ -40,6 +44,7 @@ public final class ChangeEpoch {
         builder.storage_charge = deserializer.deserialize_u64();
         builder.computation_charge = deserializer.deserialize_u64();
         builder.storage_rebate = deserializer.deserialize_u64();
+        builder.epoch_start_timestamp_ms = deserializer.deserialize_u64();
         deserializer.decrease_container_depth();
         return builder.build();
     }
@@ -65,6 +70,7 @@ public final class ChangeEpoch {
         if (!java.util.Objects.equals(this.storage_charge, other.storage_charge)) { return false; }
         if (!java.util.Objects.equals(this.computation_charge, other.computation_charge)) { return false; }
         if (!java.util.Objects.equals(this.storage_rebate, other.storage_rebate)) { return false; }
+        if (!java.util.Objects.equals(this.epoch_start_timestamp_ms, other.epoch_start_timestamp_ms)) { return false; }
         return true;
     }
 
@@ -74,6 +80,7 @@ public final class ChangeEpoch {
         value = 31 * value + (this.storage_charge != null ? this.storage_charge.hashCode() : 0);
         value = 31 * value + (this.computation_charge != null ? this.computation_charge.hashCode() : 0);
         value = 31 * value + (this.storage_rebate != null ? this.storage_rebate.hashCode() : 0);
+        value = 31 * value + (this.epoch_start_timestamp_ms != null ? this.epoch_start_timestamp_ms.hashCode() : 0);
         return value;
     }
 
@@ -82,13 +89,15 @@ public final class ChangeEpoch {
         public @com.novi.serde.Unsigned Long storage_charge;
         public @com.novi.serde.Unsigned Long computation_charge;
         public @com.novi.serde.Unsigned Long storage_rebate;
+        public @com.novi.serde.Unsigned Long epoch_start_timestamp_ms;
 
         public ChangeEpoch build() {
             return new ChangeEpoch(
                 epoch,
                 storage_charge,
                 computation_charge,
-                storage_rebate
+                storage_rebate,
+                epoch_start_timestamp_ms
             );
         }
     }

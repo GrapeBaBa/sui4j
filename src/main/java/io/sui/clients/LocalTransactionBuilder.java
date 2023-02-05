@@ -654,11 +654,6 @@ public class LocalTransactionBuilder implements TransactionBuilder {
                                                             signer, gas, gasBudget, excludeObjects);
                                                     CompletableFuture<Long> refGasPriceFuture =
                                                         queryClient.getReferenceGasPrice();
-                                                    CompletableFuture<SuiObjectRef>
-                                                        packageRefFuture =
-                                                            queryClient.getObjectRef(
-                                                                moveCallParams
-                                                                    .getPackageObjectId());
                                                     return CompletableFuture.allOf(
                                                             gasRefFuture, refGasPriceFuture)
                                                         .thenApply(
@@ -672,8 +667,17 @@ public class LocalTransactionBuilder implements TransactionBuilder {
                                                               functionBuilder.value =
                                                                   moveCallParams.getFunction();
 
-                                                              SuiObjectRef packageRef =
-                                                                  packageRefFuture.join();
+                                                              AccountAddress.Builder
+                                                                  objectAddressBuilder =
+                                                                      new AccountAddress.Builder();
+                                                              objectAddressBuilder.value =
+                                                                  geAddressBytes(
+                                                                      moveCallParams
+                                                                          .getPackageObjectId());
+                                                              ObjectID.Builder objectIdBuilder =
+                                                                  new ObjectID.Builder();
+                                                              objectIdBuilder.value =
+                                                                  objectAddressBuilder.build();
                                                               final MoveCall.Builder
                                                                   moveCallBuilder =
                                                                       new MoveCall.Builder();
@@ -681,7 +685,7 @@ public class LocalTransactionBuilder implements TransactionBuilder {
                                                                   bcsTypeArguments;
                                                               moveCallBuilder.arguments = callArgs;
                                                               moveCallBuilder.Package =
-                                                                  getObjectRef(packageRef);
+                                                                  objectIdBuilder.build();
                                                               moveCallBuilder.module =
                                                                   moduleBuilder.build();
                                                               moveCallBuilder.function =
@@ -896,8 +900,6 @@ public class LocalTransactionBuilder implements TransactionBuilder {
                                     selectGas(signer, gas, gasBudget, excludeObjects);
                                 CompletableFuture<Long> refGasPriceFuture =
                                     queryClient.getReferenceGasPrice();
-                                CompletableFuture<SuiObjectRef> packageRefFuture =
-                                    queryClient.getObjectRef(packageObjectId);
                                 return CompletableFuture.allOf(gasRefFuture, refGasPriceFuture)
                                     .thenApply(
                                         unused1 -> {
@@ -913,12 +915,17 @@ public class LocalTransactionBuilder implements TransactionBuilder {
                                               new Identifier.Builder();
                                           functionBuilder.value = function;
 
-                                          SuiObjectRef packageRef = packageRefFuture.join();
+                                          AccountAddress.Builder objectAddressBuilder =
+                                              new AccountAddress.Builder();
+                                          objectAddressBuilder.value =
+                                              geAddressBytes(packageObjectId);
+                                          ObjectID.Builder objectIdBuilder = new ObjectID.Builder();
+                                          objectIdBuilder.value = objectAddressBuilder.build();
                                           final MoveCall.Builder moveCallBuilder =
                                               new MoveCall.Builder();
                                           moveCallBuilder.type_arguments = bcsTypeArguments;
                                           moveCallBuilder.arguments = callArgs;
-                                          moveCallBuilder.Package = getObjectRef(packageRef);
+                                          moveCallBuilder.Package = objectIdBuilder.build();
                                           moveCallBuilder.module = moduleBuilder.build();
                                           moveCallBuilder.function = functionBuilder.build();
 
@@ -1087,8 +1094,8 @@ public class LocalTransactionBuilder implements TransactionBuilder {
               io.sui.models.transactions.StructTag structTag =
                   new io.sui.models.transactions.StructTag();
               structTag.setAddress(SUI_FRAMEWORK_ADDRESS);
-              structTag.setModule("coin");
-              structTag.setName("Coin");
+              structTag.setModule("sui");
+              structTag.setName("SUI");
               structTag.setTypeParams(Lists.newArrayList());
 
               StructType structType = new StructType();
@@ -1313,7 +1320,7 @@ public class LocalTransactionBuilder implements TransactionBuilder {
 
         MoveValue.Vector.Builder vectorBuilder = new MoveValue.Vector.Builder();
         vectorBuilder.value =
-            Arrays.stream(ArrayUtils.toObject(((String) argVal).getBytes()))
+            Arrays.stream(ArrayUtils.toObject(((String) argVal).getBytes(StandardCharsets.UTF_8)))
                 .map(
                     (Function<Byte, MoveValue>)
                         b -> {
@@ -1331,8 +1338,29 @@ public class LocalTransactionBuilder implements TransactionBuilder {
         throw new CallArgTypeMismatchException(moveNormalizedType, argVal.getClass());
       }
 
-      // ObjVec TYPE will be handled later
-      return Optional.empty();
+      List<?> objects = (List<?>) argVal;
+      List<MoveValue> pureMoveValues =
+          objects.stream()
+              .map(
+                  object ->
+                      toPureMoveValue(
+                          ((MoveNormalizedType.VectorReferenceMoveNormalizedType)
+                                  moveNormalizedType)
+                              .getVector(),
+                          object))
+              .filter(Optional::isPresent)
+              .map(Optional::get)
+              .collect(Collectors.toList());
+
+      if (pureMoveValues.isEmpty()) {
+        // ObjVec TYPE will be handled later
+        return Optional.empty();
+      }
+
+      MoveValue.Vector.Builder moveValueVectorBuilder = new Vector.Builder();
+      moveValueVectorBuilder.value = pureMoveValues;
+
+      return Optional.of(moveValueVectorBuilder.build());
     }
 
     return Optional.empty();
@@ -1370,25 +1398,6 @@ public class LocalTransactionBuilder implements TransactionBuilder {
                   return objVecBuilder.build();
                 });
       }
-
-      List<?> objects = (List<?>) argVal;
-      List<MoveValue> pureMoveValues =
-          objects.stream()
-              .map(
-                  object ->
-                      toPureMoveValue(
-                          ((MoveNormalizedType.VectorReferenceMoveNormalizedType)
-                                  moveNormalizedType)
-                              .getVector(),
-                          object))
-              .filter(Optional::isPresent)
-              .map(Optional::get)
-              .collect(Collectors.toList());
-
-      MoveValue.Vector.Builder moveValueVectorBuilder = new Vector.Builder();
-      moveValueVectorBuilder.value = pureMoveValues;
-      final CallArg.Pure.Builder pureBuilder = getPureBuilder(moveValueVectorBuilder.build());
-      return CompletableFuture.completedFuture(pureBuilder.build());
     }
 
     final Optional<Struct> structOptional =

@@ -6,7 +6,7 @@
         "timestamp": 1668393095928,
         "txDigest": "ov1tDrhdOqRW2uFweTbSSTaQbBbnjHWmrsh675lwb0Q=",
         "id": {
-          "txSeq": 0,
+          "txDigest": "ov1tDrhdOqRW2uFweTbSSTaQbBbnjHWmrsh675lwb0Q=",
           "eventSeq": 0
         },
         "event": {
@@ -27,7 +27,7 @@
       }
     ],
     "nextCursor": {
-      "txSeq": 0,
+      "txDigest": "ov1tDrhdOqRW2uFweTbSSTaQbBbnjHWmrsh675lwb0Q=",
       "eventSeq": 1
     }
   },
