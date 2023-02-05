@@ -100,6 +100,14 @@ public interface QueryClient {
   CompletableFuture<TransactionResponse> getTransaction(String digest);
 
   /**
+   * Return the authority public keys that commits to the authority signature of the transaction.
+   *
+   * @param transactionDigest the digest
+   * @return the Transaction auth signers
+   */
+  CompletableFuture<TransactionResponse> getTransactionAuthSigners(String transactionDigest);
+
+  /**
    * Gets transactions in range.
    *
    * @param start the start
