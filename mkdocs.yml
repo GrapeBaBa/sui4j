@@ -1,7 +1,7 @@
 site_name: "Sui4j"
 site_description: "Document for @MystenLabs/sui blockchain library."
 site_author: "Grapebaba"
-site_dir: "doc-site"
+site_dir: "_site"
 
 repo_name: "GrapeBaBa/sui4j"
 repo_url: "https://github.com/GrapeBaBa/sui4j"
