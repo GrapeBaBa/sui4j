@@ -60,6 +60,7 @@ import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.PaginatedCoins;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.objects.SuiObjectRef;
+import io.sui.models.objects.ValidatorMetadata;
 import io.sui.models.transactions.ExecuteTransactionRequestType;
 import io.sui.models.transactions.ExecuteTransactionResponse;
 import io.sui.models.transactions.PaginatedTransactionDigests;
@@ -463,6 +464,25 @@ public class Sui {
    */
   public CompletableFuture<List<String>> getTransactionsInRange(Long start, Long end) {
     return queryClient.getTransactionsInRange(start, end);
+  }
+
+  /**
+   * get the authority public keys that commits to the authority signature of the transaction.
+   *
+   * @param transactionDigest the digest
+   * @return the Transaction auth signers
+   */
+  public CompletableFuture<TransactionResponse> getTransactionAuthSigners(String transactionDigest) {
+    return queryClient.getTransactionAuthSigners(transactionDigest);
+  }
+
+  /**
+   * get all validators available for stake delegation.
+   *
+   * @return all validators available for stake delegation.
+   */
+  public CompletableFuture<List<ValidatorMetadata>> getValidators() {
+    return queryClient.getValidators();
   }
 
   /**
