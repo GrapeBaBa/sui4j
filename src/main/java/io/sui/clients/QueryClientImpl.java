@@ -124,6 +124,15 @@ public class QueryClientImpl implements QueryClient {
   }
 
   @Override
+  public CompletableFuture<TransactionResponse> getTransactionAuthSigners(String transactionDigest) {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "sui_getTransactionAuthSigners", Lists.newArrayList(transactionDigest));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_getTransactionAuthSigners", request, new TypeToken<TransactionResponse>() {}.getType());
+  }
+
+  @Override
   public CompletableFuture<List<String>> getTransactionsInRange(Long start, Long end) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(

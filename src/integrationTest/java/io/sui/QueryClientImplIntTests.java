@@ -331,6 +331,23 @@ class QueryClientImplIntTests {
     //        "0xb5e91320d3acc77b4d9e66a218031441b2be1bb3", moveEvent.getFields().get("object_id"));
   }
 
+  @Test
+  @DisplayName("Test getTransactionAuthSigners.")
+  void getTransactionAuthSigners() throws ExecutionException, InterruptedException {
+    CompletableFuture<TransactionResponse> res =
+        client.getTransaction("49rpBTf2KUkf4aroydtZGAb5rsLGYoutoEPowNu3962q");
+    CompletableFuture<Object> future = new CompletableFuture<>();
+    res.whenComplete(
+        (transactionResponse, throwable) -> {
+          if (throwable != null) {
+            future.complete(throwable);
+          } else {
+            future.complete(transactionResponse);
+          }
+        });
+    System.out.println(future.get());
+  }
+
   /**
    * Gets transactions in range.
    *
