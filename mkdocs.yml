@@ -1,0 +1,18 @@
+site_name: "Sui4j"
+site_description: "Document for @MystenLabs/sui blockchain library."
+site_author: "Grapebaba"
+
+repo_name: "GrapeBaBa/sui4j"
+repo_url: "https://github.com/GrapeBaBa/sui4j"
+
+copyright: "Copyright &copy; 2022-2023 281165273grape@gmail.com"
+
+theme:
+  name: material
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
