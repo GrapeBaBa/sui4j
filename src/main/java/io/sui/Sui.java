@@ -47,6 +47,9 @@ import io.sui.models.events.EventFilter;
 import io.sui.models.events.EventId;
 import io.sui.models.events.EventQuery;
 import io.sui.models.events.PaginatedEvents;
+import io.sui.models.objects.Balance;
+import io.sui.models.objects.CheckpointContents;
+import io.sui.models.objects.CheckpointSummary;
 import io.sui.models.objects.CoinMetadata;
 import io.sui.models.objects.CommitteeInfoResponse;
 import io.sui.models.objects.MoveFunctionArgType;
@@ -54,6 +57,7 @@ import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectResponse;
+import io.sui.models.objects.PaginatedCoins;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.objects.SuiObjectRef;
 import io.sui.models.transactions.ExecuteTransactionRequestType;
@@ -599,6 +603,92 @@ public class Sui {
    */
   public CompletableFuture<SuiObjectRef> getObjectRef(String id) {
     return queryClient.getObjectRef(id);
+  }
+
+  /**
+   * get all balances by address
+   *
+   * @param address the sui address
+   * @return the completable future
+   */
+  public CompletableFuture<List<Balance>> getAllBalances(String address) {
+    return queryClient.getAllBalances(address);
+  }
+
+  /**
+   * get all coins owned by address
+   *
+   * @param address the sui address
+   * @param cursor the cursor
+   * @param limit the limit
+   * @return the completable future
+   */
+  public CompletableFuture<PaginatedCoins> getAllCoins(String address, String cursor, long limit) {
+    return queryClient.getAllCoins(address, cursor, limit);
+  }
+
+  /**
+   * get all Coin<`coin_type`> objects owned by an address.
+   *
+   * @param address the owner address
+   * @param coinType the coin type
+   * @param cursor the cursor
+   * @param limit the limit
+   * @return the completable future
+   */
+  public CompletableFuture<PaginatedCoins> getCoins(String address, String coinType, String cursor, long limit) {
+    return queryClient.getCoins(address, coinType, cursor, limit);
+  }
+
+  /**
+   * get the total coin balance for one coin type, owned by the address owner.
+   *
+   * @param address the owner address
+   * @param coinType the coin type
+   * @return the completable future
+   */
+  public CompletableFuture<Balance> getBalance(String address, String coinType) {
+    return queryClient.getBalance(address, coinType);
+  }
+
+  /**
+   * get contents of a checkpoint, namely a list of execution digests
+   *
+   * @param seqNum the sequence number
+   * @return the completable future
+   */
+  public CompletableFuture<CheckpointContents> getCheckpointContents(long seqNum) {
+    return queryClient.getCheckpointContents(seqNum);
+  }
+
+  /**
+   * get contents of a checkpoint based on checkpoint content digest
+   *
+   * @param checkpointDigest the checkpoint digest
+   * @return the completable future
+   */
+  public CompletableFuture<CheckpointContents> getCheckpointContentsByDigest(String checkpointDigest) {
+    return queryClient.getCheckpointContentsByDigest(checkpointDigest);
+  }
+
+  /**
+   * get a checkpoint summary based on a checkpoint sequence number
+   *
+   * @param seqNum the checkpoint sequence number
+   * @return the completable future
+   */
+  public CompletableFuture<CheckpointSummary> getCheckpointSummary(Long seqNum) {
+    return queryClient.getCheckpointSummary(seqNum);
+  }
+
+  /**
+   * get a checkpoint summary based on checkpoint digest
+   *
+   * @param checkpointDigest the checkpoint digest
+   * @return the completable future
+   */
+  public CompletableFuture<CheckpointSummary> getCheckpointSummaryByDigest(String checkpointDigest) {
+    return queryClient.getCheckpointSummaryByDigest(checkpointDigest);
   }
 
   /**

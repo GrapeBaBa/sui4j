@@ -17,6 +17,8 @@
 package io.sui;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.sui.clients.QueryClient;
 import io.sui.clients.QueryClientImpl;
@@ -28,6 +30,9 @@ import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
 import io.sui.models.SuiApiException;
 import io.sui.models.events.EventQuery.TransactionEventQuery;
 import io.sui.models.events.PaginatedEvents;
+import io.sui.models.objects.Balance;
+import io.sui.models.objects.CheckpointContents;
+import io.sui.models.objects.CheckpointSummary;
 import io.sui.models.objects.CoinMetadata;
 import io.sui.models.objects.CommitteeInfoResponse;
 import io.sui.models.objects.MoveFunctionArgType;
@@ -35,16 +40,22 @@ import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectResponse;
+import io.sui.models.objects.PaginatedCoins;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.transactions.PaginatedTransactionDigests;
 import io.sui.models.transactions.TransactionQuery;
 import io.sui.models.transactions.TransactionQuery.AllQuery;
 import io.sui.models.transactions.TransactionQuery.FromAddressQuery;
 import io.sui.models.transactions.TransactionResponse;
+
+
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,9 +70,14 @@ class QueryClientImplIntTests {
 
   private static final String BASE_URL = "http://localhost:9000";
 
+  private static final String TEST_KEY_STORE_PATH =
+      System.getProperty("user.home") + "/.sui/sui_config/sui.keystore";
+
   private static final JsonHandler jsonHandler = new GsonJsonHandler();
 
   private static QueryClient client;
+
+  private static Sui sui;
 
   /** Before all. */
   @BeforeAll
@@ -69,6 +85,25 @@ class QueryClientImplIntTests {
     JsonRpcClientProvider jsonRpcClientProvider =
         new OkHttpJsonRpcClientProvider(BASE_URL, jsonHandler);
     client = new QueryClientImpl(jsonRpcClientProvider);
+    sui = new Sui(BASE_URL, TEST_KEY_STORE_PATH, true);
+  }
+
+  static Optional<String> getFirstAddress() {
+    final Optional<String> sender =
+        sui.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return sui.getObjectsOwnedByAddress(s).get().size() > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+    return sender;
   }
 
   /**
@@ -479,4 +514,77 @@ class QueryClientImplIntTests {
     CompletableFuture<CoinMetadata> res = client.getCoinMetadata("0x2::sui::SUI");
     System.out.println(res.get());
   }
+
+  @Test
+  @DisplayName("Test getAllBalances.")
+  void getAllBalances() throws ExecutionException, InterruptedException {
+    Optional<String> address = getFirstAddress();
+    CompletableFuture<List<Balance>> res = client.getAllBalances(address.get());
+    System.out.println(res.get());
+    List<Balance> balances = res.get();
+    assertTrue(balances.size() != 0);
+  }
+
+  @Test
+  @DisplayName("Test getAllCoins.")
+  void getAllCoins() throws ExecutionException, InterruptedException {
+    Optional<String> address = getFirstAddress();
+    CompletableFuture<PaginatedCoins> res = client.getAllCoins(address.get(),null,10);
+    System.out.println(res.get());
+    assertNotNull(res.get());
+  }
+
+  @Test
+  @DisplayName("Test getCoins.")
+  void getCoins() throws ExecutionException, InterruptedException {
+    Optional<String> address = getFirstAddress();
+    CompletableFuture<PaginatedCoins> res = client.getCoins(address.get(),
+        QueryClient.DEFAULT_COIN_TYPE, null, 10);
+    System.out.println(res.get());
+  }
+
+  @Test
+  @DisplayName("Test getBalance.")
+  void getBalance() throws ExecutionException, InterruptedException {
+    Optional<String> address = getFirstAddress();
+    CompletableFuture<Balance> res = client.getBalance(address.get(),QueryClient.DEFAULT_COIN_TYPE);
+    System.out.println(res.get());
+  }
+
+  @Test
+  @DisplayName("Test getCheckpointContents.")
+  void getCheckpointContents() throws ExecutionException, InterruptedException {
+    CompletableFuture<CheckpointSummary> summary = client.getCheckpointSummary(3L);
+    CompletableFuture<CheckpointContents> res = client.getCheckpointContents(summary.get().getSequenceNumber());
+    System.out.println(res.get());
+    assertNotNull(res.get());
+  }
+
+  @Test
+  @DisplayName("Test getCheckpointContentsByDigest.")
+  void getCheckpointContentsByDigest() throws ExecutionException, InterruptedException {
+    CompletableFuture<CheckpointSummary> summary = client.getCheckpointSummary(3L);
+    CompletableFuture<CheckpointContents> res =
+        client.getCheckpointContentsByDigest(summary.get().getContentDigest());
+    System.out.println(res.get());
+    assertNotNull(res.get());
+  }
+
+  @Test
+  @DisplayName("Test getCheckpointSummary.")
+  void getCheckpointSummary() throws ExecutionException, InterruptedException {
+    CompletableFuture<CheckpointSummary> res = client.getCheckpointSummary(3L);
+    System.out.println(res.get());
+    assertNotNull(res.get());
+  }
+
+  @Test
+  @DisplayName("Test getCheckpointSummaryByDigest.")
+  void getCheckpointSummaryByDigest() throws ExecutionException, InterruptedException {
+    CompletableFuture<CheckpointSummary> summary = client.getCheckpointSummary(3L);
+    CompletableFuture<CheckpointSummary> res = client.getCheckpointSummaryByDigest(summary.get().getPreviousDigest());
+    System.out.println(res.get());
+    assertNotNull(res.get());
+  }
+
 }
