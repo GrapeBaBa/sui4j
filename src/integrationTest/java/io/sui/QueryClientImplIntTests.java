@@ -42,6 +42,7 @@ import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.PaginatedCoins;
 import io.sui.models.objects.SuiObjectInfo;
+import io.sui.models.objects.ValidatorMetadata;
 import io.sui.models.transactions.PaginatedTransactionDigests;
 import io.sui.models.transactions.TransactionQuery;
 import io.sui.models.transactions.TransactionQuery.AllQuery;
@@ -365,6 +366,21 @@ class QueryClientImplIntTests {
     //    assertEquals(2, res.get().size());
     //    assertEquals("GN9sW4hBVNFIc83VIfyn/J1n4a9tU9sQVq3+UkfgEKU=", res.get().get(1));
   }
+
+  /**
+   * Gets transactions in range.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getTransactionsInRange.")
+  void getValidators() throws ExecutionException, InterruptedException {
+    CompletableFuture<List<ValidatorMetadata>> res = client.getValidators();
+    System.out.println(res.get());
+  }
+
+
 
   /**
    * Gets events.

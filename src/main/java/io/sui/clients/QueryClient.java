@@ -35,6 +35,7 @@ import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.objects.SuiObjectRef;
+import io.sui.models.objects.ValidatorMetadata;
 import io.sui.models.transactions.PaginatedTransactionDigests;
 import io.sui.models.transactions.TransactionQuery;
 import io.sui.models.transactions.TransactionResponse;
@@ -115,6 +116,13 @@ public interface QueryClient {
    * @return the transactions in range
    */
   CompletableFuture<List<String>> getTransactionsInRange(Long start, Long end);
+
+  /**
+   * Return all validators available for stake delegation.
+   *
+   * @return all validators available for stake delegation.
+   */
+  CompletableFuture<List<ValidatorMetadata>> getValidators();
 
   /**
    * Gets events.
