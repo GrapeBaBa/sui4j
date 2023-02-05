@@ -24,7 +24,11 @@ import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.models.events.EventId;
 import io.sui.models.events.EventQuery;
 import io.sui.models.events.PaginatedEvents;
+import io.sui.models.objects.Balance;
+import io.sui.models.objects.CheckpointContents;
+import io.sui.models.objects.CheckpointSummary;
 import io.sui.models.objects.CoinMetadata;
+import io.sui.models.objects.PaginatedCoins;
 import io.sui.models.objects.CommitteeInfoResponse;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
@@ -36,6 +40,8 @@ import io.sui.models.objects.SuiObjectRef;
 import io.sui.models.transactions.PaginatedTransactionDigests;
 import io.sui.models.transactions.TransactionQuery;
 import io.sui.models.transactions.TransactionResponse;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -242,4 +248,75 @@ public class QueryClientImpl implements QueryClient {
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_getReferenceGasPrice", request, new TypeToken<Long>() {}.getType());
   }
+
+  @Override
+  public CompletableFuture<List<Balance>> getAllBalances(String address) {
+    final JsonRpc20Request request = this.jsonRpcClientProvider.createJsonRpc20Request(
+        "sui_getAllBalances", Lists.newArrayList(address));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_getAllBalances", request, new TypeToken<List<Balance>>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<PaginatedCoins> getAllCoins(String address, String cursor, long limit) {
+    final JsonRpc20Request request = this.jsonRpcClientProvider.createJsonRpc20Request(
+        "sui_getAllCoins", Lists.newArrayList(address, cursor, limit));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_getAllCoins", request, new TypeToken<PaginatedCoins>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<PaginatedCoins> getCoins(String address, String coinType, String cursor, long limit) {
+    if (StringUtils.isEmpty(coinType)) {
+      coinType = DEFAULT_COIN_TYPE;
+    }
+    final JsonRpc20Request request = this.jsonRpcClientProvider.createJsonRpc20Request(
+        "sui_getCoins", Lists.newArrayList(address, coinType, cursor, limit));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_getCoins", request, new TypeToken<PaginatedCoins>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<Balance> getBalance(String address, String coinType) {
+    if (StringUtils.isEmpty(coinType)) {
+      coinType = DEFAULT_COIN_TYPE;
+    }
+    final JsonRpc20Request request = this.jsonRpcClientProvider.createJsonRpc20Request(
+        "sui_getBalance", Lists.newArrayList(address, coinType));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_getBalance", request, new TypeToken<Balance>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<CheckpointContents> getCheckpointContents(long sequenceNumber) {
+    final JsonRpc20Request request = this.jsonRpcClientProvider.createJsonRpc20Request(
+        "sui_getCheckpointContents", Lists.newArrayList(sequenceNumber));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_getCheckpointContents", request, new TypeToken<CheckpointContents>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<CheckpointContents> getCheckpointContentsByDigest(String checkpointDigest) {
+    final JsonRpc20Request request = this.jsonRpcClientProvider.createJsonRpc20Request(
+        "sui_getCheckpointContentsByDigest", Lists.newArrayList(checkpointDigest));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_getCheckpointContentsByDigest", request, new TypeToken<CheckpointContents>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<CheckpointSummary> getCheckpointSummary(Long seqNum) {
+    final JsonRpc20Request request = this.jsonRpcClientProvider.createJsonRpc20Request(
+        "sui_getCheckpointSummary", Lists.newArrayList(seqNum));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_getCheckpointSummary", request, new TypeToken<CheckpointSummary>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<CheckpointSummary> getCheckpointSummaryByDigest(String checkpointDigest) {
+    final JsonRpc20Request request = this.jsonRpcClientProvider.createJsonRpc20Request(
+        "sui_getCheckpointSummaryByDigest", Lists.newArrayList(checkpointDigest));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_getCheckpointSummaryByDigest", request, new TypeToken<CheckpointSummary>() {}.getType());
+  }
+
 }
