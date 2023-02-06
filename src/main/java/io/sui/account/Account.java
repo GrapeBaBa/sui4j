@@ -1,8 +1,5 @@
 package io.sui.account;
 
-// 助记词生成 512 位的 seed
-// seed 会被 BIP32 用来生成确定性钱包
-
 import io.sui.crypto.SECP256K1KeyPair;
 import io.sui.crypto.SuiKeyPair;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +14,9 @@ import java.util.List;
 // https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki
 // https://github.com/anytypeio/go-slip10
 // https://github.com/MystenLabs/sui
+// https://github.com/satoshilabs/slips/blob/master/slip-0044.md
+
+
 public class Account {
 
     private final String suiChainPath = "m/44'/784'/0'/0'/0'";
