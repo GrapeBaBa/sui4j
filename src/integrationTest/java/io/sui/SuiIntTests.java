@@ -671,12 +671,7 @@ public class SuiIntTests {
     Disposable disposable =
         sui.subscribeEvent(
             eventFilter,
-            new Consumer<EventEnvelope>() {
-              @Override
-              public void accept(EventEnvelope eventEnvelope) throws Throwable {
-                System.out.println(eventEnvelope);
-              }
-            },
+            System.out::println,
             System.out::println);
     moveCall();
 

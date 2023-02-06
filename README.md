@@ -49,7 +49,7 @@ $ ./gradlew build
 ## Javadoc
 
 For the latest javadocs for the `main` branch, run `./gradlew javadoc` and open
-the [javadoc](build/docs/javadoc/index.html) in your browser.
+the document under the `build/docs/javadoc/index.html` in your browser.
 
 ## Testing
 
@@ -82,15 +82,28 @@ cd sui/target/release
 ./gradlew integrationTest
 ```
 
-## Supported APIs
+## Supported APIs (sui SDK 0.25.0)
 
 - [x] sui_batchTransaction
+- [ ] sui_devInspectTransaction
 - [x] sui_dryRunTransaction
 - [x] sui_executeTransaction
+- [x] sui_executeTransactionSerializedSig(same with sui_executeTransaction)
+- [ ] sui_getAllBalances
+- [ ] sui_getAllCoins
+- [ ] sui_getBalance
+- [ ] sui_getCheckpointContents
+- [ ] sui_getCheckpointContentsByDigest
+- [ ] sui_getCheckpointSummary
+- [ ] sui_getCheckpointSummaryByDigest
 - [x] sui_getCoinMetadata
-- [ ] sui_executeTransactionSerializedSig
+- [ ] sui_getCoins
 - [x] sui_getCommitteeInfo
+- [ ] sui_getDelegatedStakes
+- [ ] sui_getDynamicFieldObject
+- [ ] sui_getDynamicFields
 - [x] sui_getEvents
+- [ ] sui_getLatestCheckpointSequenceNumber
 - [x] sui_getMoveFunctionArgTypes
 - [x] sui_getNormalizedMoveFunction
 - [x] sui_getNormalizedMoveModule
@@ -100,24 +113,32 @@ cd sui/target/release
 - [x] sui_getObjectsOwnedByAddress
 - [x] sui_getObjectsOwnedByObject
 - [x] sui_getRawObject
+- [x] sui_getReferenceGasPrice
+- [ ] sui_getSuiSystemState
+- [ ] sui_getTotalSupply
 - [x] sui_getTotalTransactionNumber
 - [x] sui_getTransaction
+- [ ] sui_getTransactionAuthSigners
 - [x] sui_getTransactions
 - [x] sui_getTransactionsInRange
+- [ ] sui_getValidators
 - [x] sui_mergeCoins
 - [x] sui_moveCall
 - [x] sui_pay
 - [x] sui_payAllSui
 - [x] sui_paySui
 - [x] sui_publish
+- [ ] sui_requestAddDelegation
+- [ ] sui_requestSwitchDelegation
+- [ ] sui_requestWithdrawDelegation
 - [x] sui_splitCoin
 - [x] sui_splitCoinEqual
-- [ ] sui_subscribeEvent
+- [x] sui_subscribeEvent
+- [ ] sui_tblsSignRandomnessObject
 - [x] sui_transferObject
 - [x] sui_transferSui
 - [x] sui_tryGetPastObject
-- [ ] sui_getTransactionAuthSigners
-- [ ] sui_getSuiSystemState
+
 
 ## Examples
 
