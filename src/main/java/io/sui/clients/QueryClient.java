@@ -258,7 +258,7 @@ public interface QueryClient {
   CompletableFuture<PaginatedCoins> getAllCoins(String address, String cursor, long limit);
 
   /**
-   * Return all Coin<`coin_type`> objects owned by an address.
+   * Return all Coin with coin_type objects owned by an address.
    *
    * @param address the owner address
    * @param coinType the coin type

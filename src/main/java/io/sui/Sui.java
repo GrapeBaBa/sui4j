@@ -648,7 +648,7 @@ public class Sui {
   }
 
   /**
-   * get all Coin<`coin_type`> objects owned by an address.
+   * get all Coin with coin_type objects owned by an address.
    *
    * @param address the owner address
    * @param coinType the coin type
