@@ -4,7 +4,8 @@ site_author: "Grapebaba"
 site_dir: "_site"
 
 repo_name: "GrapeBaBa/sui4j"
-repo_url: "https://github.com/GrapeBaBa/sui4j"
+repo_url: https://github.com/GrapeBaBa/sui4j
+edit_uri: blob/main/docs/
 
 copyright: "Copyright &copy; 2022-2023 281165273grape@gmail.com"
 
