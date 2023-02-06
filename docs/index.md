@@ -2,7 +2,7 @@ Sui4j
 =====
 
 Sui4j is a robust, reactive, type safe Java library for working with Smart Contracts on the
-@MystenLabs/sui network.
+[@MystenLabs/sui](https://docs.sui.io/) network.
 
 This allows you to work with the [@MystenLabs/sui](https://docs.sui.io/) blockchain, without the
 additional overhead of having to write your own integration code for the platform in JVM ecosystem.
@@ -12,6 +12,7 @@ Features
 
 - Complete implementation of @MystenLabs/sui's [JSON-RPC](https://docs.sui.io/sui-jsonrpc) client
   API over HTTP
+- [BCS](https://github.com/diem/bcs) serialisation/deserialization support
 - Native reactive and asynchronous style API
 - Easy to use with utility class
 - Comprehensive integration tests and unit tests to guarantee high quality

@@ -3,18 +3,22 @@
 ![Coverage](.github/badges/jacoco.svg)
 ![Branches](.github/badges/branches.svg)
 
-# Sui Java SDK
+# Sui4j
 
-This is the Sui Java SDK built on the
-Sui [JSON RPC API](https://github.com/MystenLabs/sui/blob/main/doc/src/build/json-rpc.md). It
-provides utility classes and functions for applications to sign transactions and interact with the
-Sui network.
+Sui4j is a robust, reactive, type safe Java library for working with Smart Contracts on the
+[@MystenLabs/sui](https://docs.sui.io/) network.
 
-WARNING: Note that we are still iterating on the RPC and SDK API before TestNet, therefore please
+This allows you to work with the [@MystenLabs/sui](https://docs.sui.io/) blockchain, without the
+additional overhead of having to write your own integration code for the platform in JVM ecosystem.
+
+
+>**WARNING**: Note that we are still iterating on the RPC and SDK API before TestNet, therefore please
 expect frequent breaking changes in the short-term. We expect the API to stabilize after the
 upcoming TestNet launch.
 
 ## Using
+
+The latest 0.4.0 version tested with sui devnet-0.24.0 version.
 
 ### Maven
 
@@ -23,7 +27,7 @@ upcoming TestNet launch.
 <dependency>
 <groupId>me.grapebaba</groupId>
 <artifactId>sui4j</artifactId>
-<version>0.3.1</version>
+<version>0.4.0</version>
 </dependency>
 ```
 
@@ -31,7 +35,7 @@ upcoming TestNet launch.
 
 ```groovy
 // https://mvnrepository.com/artifact/me.grapebaba/sui4j
-implementation 'me.grapebaba:sui4j:0.3.1'
+implementation 'me.grapebaba:sui4j:0.4.0'
 ```
 
 ## Building Locally
@@ -115,25 +119,23 @@ cd sui/target/release
 - [ ] sui_getTransactionAuthSigners
 - [ ] sui_getSuiSystemState
 
-> Note: Event subscribe API and KeyPair generation will be supported soon.
-
 ## Examples
 
 ```java
-String BASE_URL="http://localhost:9000";
-// It must be a absolute path
+	String BASE_URL="http://localhost:9000";
+	// It must be a absolute path
 	String TEST_KEY_STORE_PATH=
 	System.getProperty("user.home")+"/.sui/sui_config/sui.keystore";
 	Sui sui=new Sui(BASE_URL,TEST_KEY_STORE_PATH);
 
-// query objects
+	// query objects
 	CompletableFuture<List<SuiObjectInfo>>res=
 	sui.getObjectsOwnedByAddress("0xea79464d86786b7a7a63e3f13f798f29f5e65947");
 	List<SuiObjectInfo> objects=res.get();
 	String coinObjectId=objects.get(0).getObjectId();
 	List<String> addresses=new ArrayList<>(sui.addresses());
 
-// Transfer sui
+	// Transfer sui
 	CompletableFuture<ExecuteTransactionResponse> res1=
 	sui.transferSui(
 	"0xea79464d86786b7a7a63e3f13f798f29f5e65947",
@@ -160,10 +162,6 @@ String BASE_URL="http://localhost:9000";
 ```
 
 For more examples, you can see [SuiIntTests](src/integrationTest/java/io/sui/SuiIntTests.java)
-
-## Further
-
-Will add [BCS](https://github.com/diem/bcs) to implement local transaction serialization soon.
 
 ## Contribution
 To help sui4j grow, follow [Contributing to sui4j](CONTRIBUTING.md).
