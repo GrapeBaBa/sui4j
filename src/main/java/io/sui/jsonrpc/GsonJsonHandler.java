@@ -601,6 +601,8 @@ public class GsonJsonHandler implements JsonHandler {
             .registerTypeAdapter(StructType.class, new TypeTagSerializer())
             .registerTypeAdapter(VectorType.class, new TypeTagSerializer())
             .registerTypeAdapter(TypeTag.class, new TypeTagSerializer())
+            .registerTypeAdapter(
+                EventFilter.PackageEventFilter.class, new PackageEventFilterSerializer())
             .create();
   }
 
