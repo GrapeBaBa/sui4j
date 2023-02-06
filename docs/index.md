@@ -7,6 +7,8 @@ Sui4j is a robust, reactive, type safe Java library for working with Smart Contr
 This allows you to work with the [@MystenLabs/sui](https://docs.sui.io/) blockchain, without the
 additional overhead of having to write your own integration code for the platform in JVM ecosystem.
 
+The vision of sui4j is inspired by [Web3j](https://docs.web3j.io/), expect to accelerate JVM and Android ecosystem to integrate [@MystenLabs/sui](https://docs.sui.io/) network easily.
+
 Features
 ========
 
