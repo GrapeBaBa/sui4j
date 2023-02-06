@@ -37,6 +37,7 @@ import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.objects.SuiObjectRef;
+import io.sui.models.objects.SuiSystemState;
 import io.sui.models.objects.ValidatorMetadata;
 import io.sui.models.transactions.PaginatedTransactionDigests;
 import io.sui.models.transactions.TransactionQuery;
@@ -141,6 +142,15 @@ public class QueryClientImpl implements QueryClient {
             "sui_getTransactionsInRange", Lists.newArrayList(start, end));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_getTransactionsInRange", request, new TypeToken<List<String>>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<SuiSystemState> getSuiSystemState() {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "sui_getSuiSystemState", Lists.newArrayList());
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_getSuiSystemState", request, new TypeToken<SuiSystemState>() {}.getType());
   }
 
   @Override

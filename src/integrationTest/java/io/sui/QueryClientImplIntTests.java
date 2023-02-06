@@ -42,6 +42,7 @@ import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.PaginatedCoins;
 import io.sui.models.objects.SuiObjectInfo;
+import io.sui.models.objects.SuiSystemState;
 import io.sui.models.objects.ValidatorMetadata;
 import io.sui.models.transactions.PaginatedTransactionDigests;
 import io.sui.models.transactions.TransactionQuery;
@@ -365,6 +366,19 @@ class QueryClientImplIntTests {
     System.out.println(res.get());
     //    assertEquals(2, res.get().size());
     //    assertEquals("GN9sW4hBVNFIc83VIfyn/J1n4a9tU9sQVq3+UkfgEKU=", res.get().get(1));
+  }
+
+  /**
+   * Gets SuiSystemState
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getSuiSystemState.")
+  void getSuiSystemState() throws ExecutionException, InterruptedException {
+    CompletableFuture<SuiSystemState> res = client.getSuiSystemState();
+    System.out.println(res.get());
   }
 
   /**

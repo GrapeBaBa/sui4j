@@ -60,6 +60,7 @@ import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.PaginatedCoins;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.objects.SuiObjectRef;
+import io.sui.models.objects.SuiSystemState;
 import io.sui.models.objects.ValidatorMetadata;
 import io.sui.models.transactions.ExecuteTransactionRequestType;
 import io.sui.models.transactions.ExecuteTransactionResponse;
@@ -483,6 +484,10 @@ public class Sui {
    */
   public CompletableFuture<List<ValidatorMetadata>> getValidators() {
     return queryClient.getValidators();
+  }
+
+  public CompletableFuture<SuiSystemState> getSuiSystemState() {
+    return queryClient.getSuiSystemState();
   }
 
   /**
