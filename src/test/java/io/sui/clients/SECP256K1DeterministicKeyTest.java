@@ -1,9 +1,7 @@
-package io.sui.Account;
+package io.sui.clients;
 
 import com.google.common.io.BaseEncoding;
-import io.sui.account.ED25519DeterministicKey;
-import io.sui.account.SECP256K1DeterministicKey;
-import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
+import io.sui.crypto.SECP256K1DeterministicKey;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
