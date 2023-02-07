@@ -2,13 +2,11 @@ package io.sui.crypto;
 
 import com.google.common.io.BaseEncoding;
 import io.sui.account.Account;
-import io.sui.account.ED25519;
-import io.sui.account.Node;
-import org.apache.commons.lang3.StringUtils;
+import io.sui.account.ED25519DeterministicKey;
+import io.sui.account.SECP256K1DeterministicKey;
 import org.bitcoinj.crypto.*;
 import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
 import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
-import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -45,58 +43,70 @@ public class MnemonicTest {
     @Test
     void hex() throws Exception {
 
-//        HDPath path = HDPath.parsePath("m/44'/784'/0'/0'/0'");
-//        System.out.println(path.get(0));
         byte[] seed = BaseEncoding.base16().decode(seedString.toUpperCase());
-        ED25519 master = new ED25519(seed);
-        Ed25519PrivateKeyParameters privateKeyParameters = new Ed25519PrivateKeyParameters(master.masterKey.getKey());
-        Ed25519PublicKeyParameters publicKeyParameters = privateKeyParameters.generatePublicKey();
-        ED25519KeyPair keyPair = new ED25519KeyPair(privateKeyParameters, publicKeyParameters);
-        System.out.println(keyPair.publicKeyBytes().length);
-        System.out.println(m_pub.length());
-        assertEquals(m_pub.toUpperCase().substring(2),BaseEncoding.base16().encode(keyPair.publicKeyBytes()));
-        assertEquals(m_priv.toUpperCase(), BaseEncoding.base16().encode(master.masterKey.getKey()));
-        assertEquals(m_chain.toUpperCase(), BaseEncoding.base16().encode(master.masterKey.getChaincode()));
-
-        Node m0 = master.derive(master.masterKey, 0);
-        Ed25519PrivateKeyParameters moKey = new Ed25519PrivateKeyParameters(m0.getKey());
-        ED25519KeyPair m0keyPair = new ED25519KeyPair(moKey, moKey.generatePublicKey());
-        assertEquals(BaseEncoding.base16().encode(m0.getKey()), m_0_priv.toUpperCase());
-        assertEquals(BaseEncoding.base16().encode(m0.getChaincode()), m_0_chain.toUpperCase());
-        assertEquals(m_0_pub.toUpperCase().substring(2),BaseEncoding.base16().encode(m0keyPair.publicKeyBytes()));
-
-        Node m01 = master.derive(m0, 1);
-        assertEquals(BaseEncoding.base16().encode(m01.getKey()), m_0_1_priv.toUpperCase());
-        assertEquals(BaseEncoding.base16().encode(m01.getChaincode()), m_0_1_chain.toUpperCase());
-
-        Node m012 = master.derive(m01, 2);
-        assertEquals(BaseEncoding.base16().encode(m012.getKey()), m_0_1_2_priv.toUpperCase());
-        assertEquals(BaseEncoding.base16().encode(m012.getChaincode()), m_0_1_2_chain.toUpperCase());
-
-        Node m0122 = master.derive(m012, 2);
-        assertEquals(BaseEncoding.base16().encode(m0122.getKey()), m_0_1_2_2_priv.toUpperCase());
-        assertEquals(BaseEncoding.base16().encode(m0122.getChaincode()), m_0_1_2_2_chain.toUpperCase());
-
-        Node m01221000000000 = master.derive(m0122, 1000000000);
-        assertEquals(BaseEncoding.base16().encode(m01221000000000.getKey()), m_0_1_2_2_1000000000_priv.toUpperCase());
-        assertEquals(BaseEncoding.base16().encode(m01221000000000.getChaincode()), m_0_1_2_2_1000000000_chain.toUpperCase());
-
+//        ED25519 master = new ED25519(seed);
+//        Ed25519PrivateKeyParameters privateKeyParameters = new Ed25519PrivateKeyParameters(master.masterKey.getKey());
+//        Ed25519PublicKeyParameters publicKeyParameters = privateKeyParameters.generatePublicKey();
+//        ED25519KeyPair keyPair = new ED25519KeyPair(privateKeyParameters, publicKeyParameters);
+//        System.out.println(keyPair.publicKeyBytes().length);
+//        System.out.println(m_pub.length());
+//        assertEquals(m_pub.toUpperCase().substring(2),BaseEncoding.base16().encode(keyPair.publicKeyBytes()));
+//        assertEquals(m_priv.toUpperCase(), BaseEncoding.base16().encode(master.masterKey.getKey()));
+//        assertEquals(m_chain.toUpperCase(), BaseEncoding.base16().encode(master.masterKey.getChaincode()));
+//
+//        Node m0 = master.derive(master.masterKey, 0);
+//        Ed25519PrivateKeyParameters moKey = new Ed25519PrivateKeyParameters(m0.getKey());
+//        ED25519KeyPair m0keyPair = new ED25519KeyPair(moKey, moKey.generatePublicKey());
+//        assertEquals(BaseEncoding.base16().encode(m0.getKey()), m_0_priv.toUpperCase());
+//        assertEquals(BaseEncoding.base16().encode(m0.getChaincode()), m_0_chain.toUpperCase());
+//        assertEquals(m_0_pub.toUpperCase().substring(2),BaseEncoding.base16().encode(m0keyPair.publicKeyBytes()));
+//
+//        Node m01 = master.derive(m0, 1);
+//        assertEquals(BaseEncoding.base16().encode(m01.getKey()), m_0_1_priv.toUpperCase());
+//        assertEquals(BaseEncoding.base16().encode(m01.getChaincode()), m_0_1_chain.toUpperCase());
+//
+//        Node m012 = master.derive(m01, 2);
+//        assertEquals(BaseEncoding.base16().encode(m012.getKey()), m_0_1_2_priv.toUpperCase());
+//        assertEquals(BaseEncoding.base16().encode(m012.getChaincode()), m_0_1_2_chain.toUpperCase());
+//
+//        Node m0122 = master.derive(m012, 2);
+//        assertEquals(BaseEncoding.base16().encode(m0122.getKey()), m_0_1_2_2_priv.toUpperCase());
+//        assertEquals(BaseEncoding.base16().encode(m0122.getChaincode()), m_0_1_2_2_chain.toUpperCase());
+//
+//        Node m01221000000000 = master.derive(m0122, 1000000000);
+//        assertEquals(BaseEncoding.base16().encode(m01221000000000.getKey()), m_0_1_2_2_1000000000_priv.toUpperCase());
+//        assertEquals(BaseEncoding.base16().encode(m01221000000000.getChaincode()), m_0_1_2_2_1000000000_chain.toUpperCase());
+//
     }
 
     // ED25519  0x4e0cc5c559ee61c36d61d0624c924cc43348b764
     // "feel acid liar execute insane midnight oval oyster slot uncle bitter person"
     //  m/44'/784'/0'/0'/0'
 
+
     @Test
-    void testEd25519() throws Exception {
+    void testEd25519Derive() throws Exception {
+        int HARDENED_BIT = 0x80000000;
         String mnemonic = "feel acid liar execute insane midnight oval oyster slot uncle bitter person";
         byte[] seed = Account.toSeed(mnemonic, "");
-        ED25519 master = new ED25519(seed);
-        Node m44 = master.derive(master.masterKey, 44);
-        Node m784 = master.derive(m44, 784);
-        Node m7840 = master.derive(m784, 0);
-        Node m78400 = master.derive(m7840, 0);
-        Node m784000 = master.derive(m78400, 0);
+        ED25519DeterministicKey master = ED25519DeterministicKey.createMasterKey(seed);
+        ED25519DeterministicKey m44 = master.derive(44 | HARDENED_BIT);
+        ED25519DeterministicKey m784 = m44.derive(784 | HARDENED_BIT);
+        ED25519DeterministicKey m7840 = m784.derive(HARDENED_BIT);
+        ED25519DeterministicKey m78400 = m7840.derive(HARDENED_BIT);
+        ED25519DeterministicKey m784000 = m78400.derive(HARDENED_BIT);
+        Ed25519PrivateKeyParameters privateKeyParameters = new Ed25519PrivateKeyParameters(m784000.getKey());
+        Ed25519PublicKeyParameters publicKeyParameters = privateKeyParameters.generatePublicKey();
+        ED25519KeyPair keyPair = new ED25519KeyPair(privateKeyParameters, publicKeyParameters);
+        assertEquals("0x4e0cc5c559ee61c36d61d0624c924cc43348b764", keyPair.address());
+    }
+
+    @Test
+    void testEd25519Path() throws Exception {
+        String mnemonic = "feel acid liar execute insane midnight oval oyster slot uncle bitter person";
+        byte[] seed = Account.toSeed(mnemonic, "");
+        ED25519DeterministicKey master = ED25519DeterministicKey.createMasterKey(seed);
+        ED25519DeterministicKey m784000 = master.deriveFromPath("m/44H/784H/0H/0H/0H");
         Ed25519PrivateKeyParameters privateKeyParameters = new Ed25519PrivateKeyParameters(m784000.getKey());
         Ed25519PublicKeyParameters publicKeyParameters = privateKeyParameters.generatePublicKey();
         ED25519KeyPair keyPair = new ED25519KeyPair(privateKeyParameters, publicKeyParameters);
@@ -107,23 +117,33 @@ public class MnemonicTest {
     // heart position turkey bus virtual host panther pioneer ready lesson fence what
     // m/54'/784'/0'/0/0
     @Test
-    void testSecp256k1() {
+    void testSecp256k1() throws Exception{
+        int HARDENED_BIT = 0x80000000;
         String mnemonic = "heart position turkey bus virtual host panther pioneer ready lesson fence what";
         byte[] seed = MnemonicCode.toSeed(Arrays.asList(mnemonic.split(" ")), "");
-        DeterministicKey deterministicKey = HDKeyDerivation.createMasterPrivateKey(seed);
 
-        DeterministicKey key1 = HDKeyDerivation
-                .deriveChildKey(deterministicKey, new ChildNumber(54, true));
-        DeterministicKey key2 = HDKeyDerivation
-                .deriveChildKey(key1, new ChildNumber(784, true));
-        DeterministicKey key3 = HDKeyDerivation
-                .deriveChildKey(key2, new ChildNumber(0, true));
-        DeterministicKey key4 = HDKeyDerivation
-                .deriveChildKey(key3, new ChildNumber(0, false));
-        DeterministicKey key5 = HDKeyDerivation
-                .deriveChildKey(key4, new ChildNumber(0, false));
+        SECP256K1DeterministicKey master = SECP256K1DeterministicKey.createMasterKey(seed);
+        SECP256K1DeterministicKey m54 = master.derive(54 | HARDENED_BIT);
+        SECP256K1DeterministicKey m784 = m54.derive(784 | HARDENED_BIT);
+        SECP256K1DeterministicKey m7840 = m784.derive(HARDENED_BIT);
+        SECP256K1DeterministicKey m78400 = m7840.derive(0);
+        SECP256K1DeterministicKey m784000 = m78400.derive(0);
 
-        SECP256K1KeyPair keyPair = new SECP256K1KeyPair(key5.getPrivKey().toByteArray());
-        System.out.println(keyPair.address());
+
+        SECP256K1KeyPair keyPair = new SECP256K1KeyPair(m784000.getKey());
+        assertEquals("0x6604964784bd9792e53dca3750d29ab39fb053e5", keyPair.address());
+    }
+
+    @Test
+    void testSecp256k1Path() throws Exception{
+        int HARDENED_BIT = 0x80000000;
+        String mnemonic = "heart position turkey bus virtual host panther pioneer ready lesson fence what";
+        byte[] seed = MnemonicCode.toSeed(Arrays.asList(mnemonic.split(" ")), "");
+
+        SECP256K1DeterministicKey master = SECP256K1DeterministicKey.createMasterKey(seed);
+        SECP256K1DeterministicKey m784000 = master.deriveFromPath("");
+
+        SECP256K1KeyPair keyPair = new SECP256K1KeyPair(m784000.getKey());
+        assertEquals("0x6604964784bd9792e53dca3750d29ab39fb053e5", keyPair.address());
     }
 }
