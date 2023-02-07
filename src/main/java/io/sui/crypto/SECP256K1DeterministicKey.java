@@ -1,12 +1,9 @@
-package io.sui.account;
+package io.sui.crypto;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bitcoinj.crypto.*;
 
-import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.Iterator;
 
 
@@ -47,7 +44,7 @@ public class SECP256K1DeterministicKey {
         this.parent = parent;
     }
 
-    public SECP256K1DeterministicKey derive(int index) throws Exception {
+    public SECP256K1DeterministicKey derive(int index) {
         boolean isHardened = hasHardenedBit(index);
         if (isHardened) {
             index = index & (~ChildNumber.HARDENED_BIT);
@@ -62,7 +59,7 @@ public class SECP256K1DeterministicKey {
                 childKey.getPath(), childKey.getParent());
     }
 
-    public SECP256K1DeterministicKey deriveFromPath(String path) throws Exception {
+    public SECP256K1DeterministicKey deriveFromPath(String path) {
         if (StringUtils.isAnyBlank(path)) {
             path = defaultDerivePath;
         }

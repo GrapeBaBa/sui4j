@@ -1,16 +1,8 @@
-package io.sui.account;
+package io.sui.crypto;
 
-import io.sui.crypto.ED25519KeyPair;
-import io.sui.crypto.SECP256K1KeyPair;
-import io.sui.crypto.SignatureSchemeNotSupportedException;
-import io.sui.crypto.SuiKeyPair;
-import org.apache.commons.lang3.StringUtils;
-import org.bitcoinj.crypto.*;
 import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
 import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
 
-import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -26,27 +18,27 @@ public class Account {
     private List<String> wordList;
     private String mnemonic;
     private byte[] seed;
+
     private SuiKeyPair<?> keyPair;
 
-    private AccountType accountType;
+    private SignatureScheme accountType;
 
-    public Account(AccountType accountType) {
+    public Account(SignatureScheme accountType) throws SignatureSchemeNotSupportedException {
         this.accountType = accountType;
         this.wordList = Mnemonic.generateMnemonic();
         this.mnemonic = String.join(" ", wordList);
         this.seed = Mnemonic.toSeed(wordList, "");
+        this.keyPair = this.genKeyPair();
     }
 
-
-    private SuiKeyPair<?> genKeyPair() {
+    private SuiKeyPair<?> genKeyPair() throws SignatureSchemeNotSupportedException {
         switch (this.accountType) {
             case ED25519:
                 return genED25519KeyPair();
             case Secp256k1:
                 return genSECP256K1KeyPair();
             default:
-                return null;
-//                throw new SignatureSchemeNotSupportedException();
+                throw new SignatureSchemeNotSupportedException();
         }
     }
 
@@ -68,6 +60,15 @@ public class Account {
         return keyPair;
     }
 
+    public String getMnemonic() {
+        return mnemonic;
+    }
 
+    public String address() {
+        return this.keyPair.address();
+    }
 
+    public SuiKeyPair<?> getKeyPair() {
+        return keyPair;
+    }
 }

@@ -1,14 +1,8 @@
-package io.sui.Account;
+package io.sui.clients;
 
 import com.google.common.io.BaseEncoding;
-import com.google.common.primitives.Ints;
-import io.sui.account.ED25519DeterministicKey;
-import io.sui.account.SECP256K1DeterministicKey;
+import io.sui.crypto.ED25519DeterministicKey;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
