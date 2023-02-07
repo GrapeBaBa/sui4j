@@ -3,6 +3,8 @@ package io.sui.models.objects;
 import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Arrays;
+
 public class ValidatorMetadata {
 
   @SerializedName(value = "address", alternate = "sui_address")
@@ -183,17 +185,17 @@ public class ValidatorMetadata {
   public String toString() {
     return "ValidatorMetadata{" +
         "address='" + address + '\'' +
-        ", pubkeyBytes='" + pubkeyBytes + '\'' +
-        ", networkPubkeyBytes='" + networkPubkeyBytes + '\'' +
-        ", workerPubkeyBytes='" + workerPubkeyBytes + '\'' +
-        ", proofOfPossessionBytes='" + proofOfPossessionBytes + '\'' +
-        ", name='" + name + '\'' +
-        ", description='" + description + '\'' +
-        ", imageUrl='" + imageUrl + '\'' +
-        ", projectUrl='" + projectUrl + '\'' +
-        ", netAddress='" + netAddress + '\'' +
-        ", consensusAddress='" + consensusAddress + '\'' +
-        ", workerAddress='" + workerAddress + '\'' +
+        ", pubkeyBytes='" + Arrays.toString(pubkeyBytes) + '\'' +
+        ", networkPubkeyBytes='" + Arrays.toString(networkPubkeyBytes) + '\'' +
+        ", workerPubkeyBytes='" + Arrays.toString(workerPubkeyBytes) + '\'' +
+        ", proofOfPossessionBytes='" + Arrays.toString(proofOfPossessionBytes) + '\'' +
+        ", name='" + Arrays.toString(name) + '\'' +
+        ", description='" + Arrays.toString(description) + '\'' +
+        ", imageUrl='" + Arrays.toString(imageUrl) + '\'' +
+        ", projectUrl='" + Arrays.toString(projectUrl) + '\'' +
+        ", netAddress='" + Arrays.toString(netAddress) + '\'' +
+        ", consensusAddress='" + Arrays.toString(consensusAddress) + '\'' +
+        ", workerAddress='" + Arrays.toString(workerAddress) + '\'' +
         ", nextEpochStake=" + nextEpochStake +
         ", nextEpochDelegation=" + nextEpochDelegation +
         ", next_epoch_gas_price=" + next_epoch_gas_price +

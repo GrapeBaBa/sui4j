@@ -9,7 +9,7 @@ public class PaginatedCoins {
 
   private List<Coin> data;
 
-  private ObjectID objectID;
+  private String objectID;
 
   public List<Coin> getData() {
     return data;
@@ -19,11 +19,11 @@ public class PaginatedCoins {
     this.data = data;
   }
 
-  public ObjectID getObjectID() {
+  public String getObjectID() {
     return objectID;
   }
 
-  public void setObjectID(ObjectID objectID) {
+  public void setObjectID(String objectID) {
     this.objectID = objectID;
   }
 
