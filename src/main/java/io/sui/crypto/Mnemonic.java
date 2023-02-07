@@ -1,4 +1,4 @@
-package io.sui.account;
+package io.sui.crypto;
 
 import org.bitcoinj.crypto.MnemonicCode;
 import org.bitcoinj.crypto.MnemonicException;

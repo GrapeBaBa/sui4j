@@ -1,12 +1,13 @@
-package io.sui.account;
+package io.sui.crypto;
 
+import com.google.common.primitives.Bytes;
 import org.apache.commons.lang3.StringUtils;
 import org.bitcoinj.crypto.ChildNumber;
 import org.bitcoinj.crypto.HDPath;
 import org.bitcoinj.crypto.HDUtils;
 
 import java.io.ByteArrayOutputStream;
-import java.math.BigInteger;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -33,7 +34,7 @@ public class ED25519DeterministicKey {
         this.chaincode = chaincode;
     }
 
-    public ED25519DeterministicKey derive(int index) throws Exception {
+    public ED25519DeterministicKey derive(int index) {
         if (!hasHardenedBit(index)) {
 
         }
@@ -41,16 +42,15 @@ public class ED25519DeterministicKey {
         byte[] indexBytes = new byte[4];
         ByteBuffer.wrap(indexBytes).putInt(index);
 
-        byte[] a = new byte[]{0x00};
+//        byte[] a = new byte[]{0x00};
+//
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        outputStream.write(a);
+//        outputStream.write(this.key);
+//        outputStream.write(indexBytes);
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        outputStream.write(a);
-        outputStream.write(this.key);
-        outputStream.write(indexBytes);
+        byte[] data = Bytes.concat(new byte[]{0x00}, this.key, indexBytes);
 
-        byte[] data = outputStream.toByteArray();
-
-        outputStream.write(a);
         byte[] i = HDUtils.hmacSha512(this.chaincode, data);
         byte[] il = Arrays.copyOfRange(i, 0, 32);
         byte[] ir = Arrays.copyOfRange(i, 32, 64);
