@@ -1,9 +1,13 @@
 package io.sui.account;
 
+import io.sui.crypto.ED25519KeyPair;
 import io.sui.crypto.SECP256K1KeyPair;
+import io.sui.crypto.SignatureSchemeNotSupportedException;
 import io.sui.crypto.SuiKeyPair;
 import org.apache.commons.lang3.StringUtils;
 import org.bitcoinj.crypto.*;
+import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
+import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -19,56 +23,51 @@ import java.util.List;
 
 public class Account {
 
-    private final String suiChainPath = "m/44'/784'/0'/0'/0'";
-
     private List<String> wordList;
+    private String mnemonic;
     private byte[] seed;
-    private SECP256K1KeyPair keyPair;
+    private SuiKeyPair<?> keyPair;
+
+    private AccountType accountType;
+
+    public Account(AccountType accountType) {
+        this.accountType = accountType;
+        this.wordList = Mnemonic.generateMnemonic();
+        this.mnemonic = String.join(" ", wordList);
+        this.seed = Mnemonic.toSeed(wordList, "");
+    }
 
 
-    public Account() {
-        try {
-            this.wordList = generateMnemonic();
-            this.seed = MnemonicCode.toSeed(this.wordList, "");
-            DeterministicKey deterministicKey = HDKeyDerivation.createMasterPrivateKey(seed);
-            HDPath path = HDPath.parsePath("m/44'/784'/0'/0'/0'");
-            DeterministicKey suiChainKey = new DeterministicKey(path, deterministicKey.getChainCode(), deterministicKey.getPrivKey(), deterministicKey);
-            SECP256K1KeyPair secKeyPair = new SECP256K1KeyPair(suiChainKey.getPrivKey().toByteArray());
-            this.keyPair = secKeyPair;
-        } catch (Exception e) {
-
+    private SuiKeyPair<?> genKeyPair() {
+        switch (this.accountType) {
+            case ED25519:
+                return genED25519KeyPair();
+            case Secp256k1:
+                return genSECP256K1KeyPair();
+            default:
+                return null;
+//                throw new SignatureSchemeNotSupportedException();
         }
-
     }
 
-    public Account(Words word, String pwd) {
+    private ED25519KeyPair genED25519KeyPair() {
+       ED25519DeterministicKey key = ED25519DeterministicKey.createKeyByDefaultPath(this.seed);
+       Ed25519PrivateKeyParameters parameters = new Ed25519PrivateKeyParameters(key.getKey());
+       Ed25519PublicKeyParameters publicKeyParameters = parameters.generatePublicKey();
 
+       ED25519KeyPair keyPair = new ED25519KeyPair(parameters, publicKeyParameters);
+       this.keyPair = keyPair;
+       return keyPair;
     }
 
-    public static List<String> generateMnemonic() throws MnemonicException.MnemonicLengthException {
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] entropy = new byte[256];
-        secureRandom.nextBytes(entropy);
-        return MnemonicCode.INSTANCE.toMnemonic(entropy);
+    private SECP256K1KeyPair genSECP256K1KeyPair() {
+        SECP256K1DeterministicKey key = SECP256K1DeterministicKey.createKeyByDefaultPath(this.seed);
+
+        SECP256K1KeyPair keyPair = new SECP256K1KeyPair(key.getKey());
+        this.keyPair = keyPair;
+        return keyPair;
     }
 
-    public static byte[] toSeed(String mnemonic, String password) {
-        return MnemonicCode.toSeed(Arrays.asList(mnemonic.split(" ")), password);
-    }
 
-//    public Account() throws Exception {
-//        HDPath path = HDPath.parsePath("m/44'/784'/0'/0'/0'");
-//
-//        List<String> wordList = generateMnemonic();
-//        byte[] seed = toSeed(StringUtils.join(wordList, " "), "password");
-//
-//        DeterministicKey deterministicKey = HDKeyDerivation.createMasterPrivateKey(seed);
-//        deterministicKey.getPrivKey();
-//        deterministicKey.getPubKey();
-//        deterministicKey.getChainCode();
-//
-//        DeterministicKey suiChainKey = new DeterministicKey(path, deterministicKey.getChainCode(), deterministicKey.getPrivKey(), deterministicKey);
-//
-//        suiChainKey.
-//    }
+
 }
