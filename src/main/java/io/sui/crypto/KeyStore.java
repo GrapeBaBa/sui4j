@@ -43,10 +43,10 @@ public interface KeyStore {
   NavigableSet<String> addresses();
 
   /**
-   * Gets by address.
+   * add by address.
    *
    * @param address the address
-   * @return the by address
+   * @param keyPair the keyPair
    */
   void addKey(String address, SuiKeyPair<?> keyPair);
 }
