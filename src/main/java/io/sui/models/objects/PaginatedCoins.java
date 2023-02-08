@@ -30,7 +30,7 @@ public class PaginatedCoins {
 
   private List<Coin> data;
 
-  private String objectID;
+  private String nextCursor;
 
   public List<Coin> getData() {
     return data;
@@ -40,12 +40,12 @@ public class PaginatedCoins {
     this.data = data;
   }
 
-  public String getObjectID() {
-    return objectID;
+  public String getNextCursor() {
+    return nextCursor;
   }
 
-  public void setObjectID(String objectID) {
-    this.objectID = objectID;
+  public void getNextCursor(String nextCursor) {
+    this.nextCursor = nextCursor;
   }
 
   @Override
@@ -57,16 +57,16 @@ public class PaginatedCoins {
       return false;
     }
     PaginatedCoins that = (PaginatedCoins) o;
-    return Objects.equal(data, that.data) && Objects.equal(objectID, that.objectID);
+    return Objects.equal(data, that.data) && Objects.equal(nextCursor, that.nextCursor);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(data, objectID);
+    return Objects.hashCode(data, nextCursor);
   }
 
   @Override
   public String toString() {
-    return "PaginatedCoins{" + "data=" + data + ", objectID=" + objectID + '}';
+    return "PaginatedCoins{" + "data=" + data + ", nextCursor=" + nextCursor + '}';
   }
 }
