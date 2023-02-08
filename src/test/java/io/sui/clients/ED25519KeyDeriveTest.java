@@ -14,15 +14,15 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.crypto;
+package io.sui.clients;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.io.BaseEncoding;
-import io.sui.account.ED25519DeterministicKey;
+import io.sui.crypto.ED25519KeyDerive;
 import org.junit.jupiter.api.Test;
 
-public class ED25519DeterministicKeyTest {
+public class ED25519KeyDeriveTest {
 
   public static final int HARDENED_BIT = 0x80000000;
 
@@ -61,14 +61,14 @@ public class ED25519DeterministicKeyTest {
   void TestKeyDerive() throws Exception {
     byte[] seed = BaseEncoding.base16().decode(seedString.toUpperCase());
 
-    ED25519DeterministicKey master = ED25519DeterministicKey.createMasterKey(seed);
+    ED25519KeyDerive master = ED25519KeyDerive.createMasterKey(seed);
     assertEquals(m_priv.toUpperCase(), BaseEncoding.base16().encode(master.getKey()));
     assertEquals(m_chain.toUpperCase(), BaseEncoding.base16().encode(master.getChaincode()));
 
-    ED25519DeterministicKey current = master;
+    ED25519KeyDerive current = master;
 
     for (int i = 0; i < path.length; i++) {
-      ED25519DeterministicKey next = current.derive(path[i]);
+      ED25519KeyDerive next = current.derive(path[i]);
 
       assertEquals(privs[i].toUpperCase(), BaseEncoding.base16().encode(next.getKey()));
       assertEquals(chains[i].toUpperCase(), BaseEncoding.base16().encode(next.getChaincode()));
@@ -80,10 +80,10 @@ public class ED25519DeterministicKeyTest {
   void TestKeyDerivePath() throws Exception {
     byte[] seed = BaseEncoding.base16().decode(seedString.toUpperCase());
 
-    ED25519DeterministicKey master = ED25519DeterministicKey.createMasterKey(seed);
+    ED25519KeyDerive master = ED25519KeyDerive.createMasterKey(seed);
 
     String path = "m/0H/1H/2H/2H/1000000000H";
-    ED25519DeterministicKey last = master.deriveFromPath(path);
+    ED25519KeyDerive last = master.deriveFromPath(path);
 
     assertEquals(
         privs[privs.length - 1].toUpperCase(), BaseEncoding.base16().encode(last.getKey()));

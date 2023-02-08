@@ -31,12 +31,14 @@ import org.junit.jupiter.api.Test;
  */
 class FileBasedKeyStoreTest {
 
+  private String filePath = "src/test/resources/config/sui.keystore";
+
   /** Gets path. */
   @Test
   void getPath() {
     FileBasedKeyStore fileBasedKeyStore =
         new FileBasedKeyStore(
-            Paths.get("src/test/resources/config/sui.keystore").toAbsolutePath().toString());
+            Paths.get(filePath).toAbsolutePath().toString());
     System.out.println(fileBasedKeyStore.getPath());
     assertTrue(StringUtils.endsWith(fileBasedKeyStore.getPath(), "config/sui.keystore"));
   }
@@ -46,7 +48,7 @@ class FileBasedKeyStoreTest {
   void initKeyPairs() {
     FileBasedKeyStore fileBasedKeyStore =
         new FileBasedKeyStore(
-            Paths.get("src/test/resources/config/sui.keystore").toAbsolutePath().toString());
+            Paths.get(filePath).toAbsolutePath().toString());
 
     assertEquals(7, fileBasedKeyStore.keys.size());
     String expected =
@@ -62,5 +64,42 @@ class FileBasedKeyStoreTest {
       actual.append(key).append("\n");
     }
     assertEquals(expected, actual.toString());
+  }
+
+  @Test
+  void addKeyTest() {
+
+  }
+
+  // ED25519  0x4e0cc5c559ee61c36d61d0624c924cc43348b764
+  // "feel acid liar execute insane midnight oval oyster slot uncle bitter person"
+  //  m/44'/784'/0'/0'/0'
+
+  // Secp256k1  0x6604964784bd9792e53dca3750d29ab39fb053e5
+  // heart position turkey bus virtual host panther pioneer ready lesson fence what
+  // m/54'/784'/0'/0/0
+  @Test
+  void importFromMnemonicTest() throws Exception{
+
+    FileBasedKeyStore fileBasedKeyStore =
+            new FileBasedKeyStore(
+                    Paths.get(filePath).toAbsolutePath().toString());
+    // test data from sui client
+    String[] mnemonics = new String[]{
+            "feel acid liar execute insane midnight oval oyster slot uncle bitter person",
+            "heart position turkey bus virtual host panther pioneer ready lesson fence what",
+    };
+
+    String[] addresses = new String[] {
+            "0x4e0cc5c559ee61c36d61d0624c924cc43348b764",
+            "0x6604964784bd9792e53dca3750d29ab39fb053e5",
+    };
+
+    String addr = fileBasedKeyStore.importFromMnemonic(mnemonics[0], SignatureScheme.ED25519);
+    assertEquals(addresses[0], addr);
+
+    addr = fileBasedKeyStore.importFromMnemonic(mnemonics[1], SignatureScheme.Secp256k1);
+    assertEquals(addresses[1], addr);
+
   }
 }

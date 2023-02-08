@@ -41,4 +41,12 @@ public interface KeyStore {
    * @return the navigable set
    */
   NavigableSet<String> addresses();
+
+  /**
+   * Gets by address.
+   *
+   * @param address the address
+   * @return the by address
+   */
+  void addKey(String address, SuiKeyPair<?> keyPair);
 }
