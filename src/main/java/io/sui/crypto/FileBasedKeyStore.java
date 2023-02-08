@@ -83,7 +83,8 @@ public class FileBasedKeyStore extends AbstractKeyStore {
   }
 
   private void save() {
-    List<String> address = FileBasedKeyStore.super.keys.values().stream().map(item -> item.address()).collect(Collectors.toList());
+    List<String> address = FileBasedKeyStore.super.keys.values().stream()
+            .map(item -> item.getKeyPair() + "\n").collect(Collectors.toList());
     Type listType = new TypeToken<List<String>>() {}.getType();
 
     Gson gson = new Gson();
