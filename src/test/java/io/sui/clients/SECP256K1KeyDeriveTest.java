@@ -14,16 +14,16 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.crypto;
+package io.sui.clients;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.io.BaseEncoding;
-import io.sui.account.SECP256K1DeterministicKey;
+import io.sui.crypto.SECP256K1KeyDerive;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
-public class SECP256K1DeterministicKeyTest {
+public class SECP256K1KeyDeriveTest {
 
   public static final int HARDENED_BIT = 0x80000000;
   // test case from https://github.com/satoshilabs/slips/blob/master/slip-0010.md
@@ -56,14 +56,14 @@ public class SECP256K1DeterministicKeyTest {
   void TestKeyDerive() throws Exception {
     byte[] seed = BaseEncoding.base16().decode(seedString.toUpperCase());
 
-    SECP256K1DeterministicKey master = SECP256K1DeterministicKey.createMasterKey(seed);
+    SECP256K1KeyDerive master = SECP256K1KeyDerive.createMasterKey(seed);
     assertEquals(m_priv.toUpperCase(), BaseEncoding.base16().encode(getPriv(master)));
     assertEquals(m_chain.toUpperCase(), BaseEncoding.base16().encode(master.getChaincode()));
 
-    SECP256K1DeterministicKey current = master;
+    SECP256K1KeyDerive current = master;
 
     for (int i = 0; i < path.length; i++) {
-      SECP256K1DeterministicKey next = current.derive(path[i]);
+      SECP256K1KeyDerive next = current.derive(path[i]);
       assertEquals(privs[i].toUpperCase(), BaseEncoding.base16().encode(getPriv(next)));
       assertEquals(chains[i].toUpperCase(), BaseEncoding.base16().encode(next.getChaincode()));
       current = next;
@@ -74,10 +74,10 @@ public class SECP256K1DeterministicKeyTest {
   void TestKeyDerivePath() throws Exception {
     byte[] seed = BaseEncoding.base16().decode(seedString.toUpperCase());
 
-    SECP256K1DeterministicKey master = SECP256K1DeterministicKey.createMasterKey(seed);
+    SECP256K1KeyDerive master = SECP256K1KeyDerive.createMasterKey(seed);
 
     String path = "m/0H/1/2H/2/1000000000";
-    SECP256K1DeterministicKey last = master.deriveFromPath(path);
+    SECP256K1KeyDerive last = master.deriveFromPath(path);
 
     assertEquals(
         privs[privs.length - 1].toUpperCase(), BaseEncoding.base16().encode(getPriv(last)));
@@ -86,7 +86,7 @@ public class SECP256K1DeterministicKeyTest {
         chains[chains.length - 1].toUpperCase(), BaseEncoding.base16().encode(last.getChaincode()));
   }
 
-  public byte[] getPriv(SECP256K1DeterministicKey key) {
+  public byte[] getPriv(SECP256K1KeyDerive key) {
     byte[] privKey = key.getKey();
     if (privKey.length == 33) {
       return Arrays.copyOfRange(privKey, 1, privKey.length);

@@ -30,29 +30,29 @@ import org.bitcoinj.crypto.HDUtils;
  * @author fearlessfe
  * @since 2023.02
  */
-public class ED25519DeterministicKey {
+public class ED25519KeyDerive {
 
   private final String defaultDerivePath = "m/44H/784H/0H/0H/0H";
   private byte[] key;
   private byte[] chaincode;
 
-  public static ED25519DeterministicKey createKeyByDefaultPath(byte[] seed) {
+  public static ED25519KeyDerive createKeyByDefaultPath(byte[] seed) {
     return createMasterKey(seed).deriveFromPath("");
   }
 
-  public static ED25519DeterministicKey createMasterKey(byte[] seed) {
+  public static ED25519KeyDerive createMasterKey(byte[] seed) {
     byte[] i = HDUtils.hmacSha512("ed25519 seed".getBytes(), seed);
     byte[] il = Arrays.copyOfRange(i, 0, 32);
     byte[] ir = Arrays.copyOfRange(i, 32, 64);
-    return new ED25519DeterministicKey(il, ir);
+    return new ED25519KeyDerive(il, ir);
   }
 
-  public ED25519DeterministicKey(byte[] key, byte[] chaincode) {
+  public ED25519KeyDerive(byte[] key, byte[] chaincode) {
     this.key = key;
     this.chaincode = chaincode;
   }
 
-  public ED25519DeterministicKey derive(int index) {
+  public ED25519KeyDerive derive(int index) {
     if (!hasHardenedBit(index)) {}
 
     byte[] indexBytes = new byte[4];
@@ -71,16 +71,16 @@ public class ED25519DeterministicKey {
     byte[] il = Arrays.copyOfRange(i, 0, 32);
     byte[] ir = Arrays.copyOfRange(i, 32, 64);
 
-    return new ED25519DeterministicKey(il, ir);
+    return new ED25519KeyDerive(il, ir);
   }
 
-  public ED25519DeterministicKey deriveFromPath(String path) {
+  public ED25519KeyDerive deriveFromPath(String path) {
     if (StringUtils.isAnyBlank(path)) {
       path = defaultDerivePath;
     }
     HDPath hdPath = HDPath.parsePath(path);
     Iterator<ChildNumber> it = hdPath.iterator();
-    ED25519DeterministicKey current = this;
+    ED25519KeyDerive current = this;
     while (it.hasNext()) {
       current = current.derive(it.next().getI());
     }
