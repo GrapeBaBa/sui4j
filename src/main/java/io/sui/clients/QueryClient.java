@@ -20,9 +20,6 @@ package io.sui.clients;
 import io.sui.models.events.EventId;
 import io.sui.models.events.EventQuery;
 import io.sui.models.events.PaginatedEvents;
-import io.sui.models.objects.Balance;
-import io.sui.models.objects.CheckpointContents;
-import io.sui.models.objects.CheckpointSummary;
 import io.sui.models.objects.CoinMetadata;
 import io.sui.models.objects.CommitteeInfoResponse;
 import io.sui.models.objects.MoveFunctionArgType;
@@ -30,7 +27,6 @@ import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectResponse;
-import io.sui.models.objects.PaginatedCoins;
 import io.sui.models.objects.SuiObjectInfo;
 import io.sui.models.objects.SuiObjectRef;
 import io.sui.models.transactions.PaginatedTransactionDigests;
@@ -47,8 +43,6 @@ import java.util.concurrent.CompletableFuture;
  * @since 2022.11
  */
 public interface QueryClient {
-
-  String DEFAULT_COIN_TYPE = "0x2::sui::SUI";
 
   /**
    * Gets object.
@@ -220,75 +214,4 @@ public interface QueryClient {
    * @return the object ref
    */
   CompletableFuture<SuiObjectRef> getObjectRef(String id);
-
-  /**
-   * Return the total coin balance for all coin type, owned by the address owner.
-   *
-   * @param address the owner address
-   * @return the total coin balance for all coin type, owned by the address owner.
-   */
-  CompletableFuture<List<Balance>> getAllBalances(String address);
-
-  /**
-   * Return all Coin objects owned by an address.
-   *
-   * @param address the owner address
-   * @param cursor the cursor
-   * @param limit the limit
-   * @return all Coin objects owned by the address.
-   */
-  CompletableFuture<PaginatedCoins> getAllCoins(String address, String cursor, long limit);
-
-  /**
-   * Return all Coin with coin_type objects owned by an address.
-   *
-   * @param address the owner address
-   * @param coinType the coin type
-   * @param cursor the cursor
-   * @param limit the limit
-   * @return all Coin objects owned by the address.
-   */
-  CompletableFuture<PaginatedCoins> getCoins(
-      String address, String coinType, String cursor, long limit);
-
-  /**
-   * Return the total coin balance for one coin type, owned by the address owner.
-   *
-   * @param address the owner address
-   * @param coinType the coin type
-   * @return the balance for the coin type, owned by the address owner
-   */
-  CompletableFuture<Balance> getBalance(String address, String coinType);
-
-  /**
-   * Return contents of a checkpoint, namely a list of execution digests.
-   *
-   * @param seqNum the sequence number
-   * @return the contents of a checkpoint
-   */
-  CompletableFuture<CheckpointContents> getCheckpointContents(long seqNum);
-
-  /**
-   * Return contents of a checkpoint based on checkpoint content digest.
-   *
-   * @param checkpointDigest the checkpoint digest
-   * @return the contents of a checkpoint
-   */
-  CompletableFuture<CheckpointContents> getCheckpointContentsByDigest(String checkpointDigest);
-
-  /**
-   * Return a checkpoint summary based on a checkpoint sequence number.
-   *
-   * @param seqNum the checkpoint sequence number
-   * @return the checkpoint summary based on the checkpoint sequence number
-   */
-  CompletableFuture<CheckpointSummary> getCheckpointSummary(Long seqNum);
-
-  /**
-   * Return a checkpoint summary based on checkpoint digest.
-   *
-   * @param checkpointDigest the checkpoint digest
-   * @return the checkpoint summary based on the checkpoint digest
-   */
-  CompletableFuture<CheckpointSummary> getCheckpointSummaryByDigest(String checkpointDigest);
 }
