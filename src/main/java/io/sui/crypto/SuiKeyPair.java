@@ -128,4 +128,11 @@ public abstract class SuiKeyPair<T> {
         throw new SignatureSchemeNotSupportedException();
     }
   }
+
+  /**
+   * encode base64 sui key.
+   *
+   * @return the sui key
+   */
+  public abstract String encodePrivateKey();
 }

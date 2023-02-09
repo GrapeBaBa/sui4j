@@ -19,6 +19,8 @@ package io.sui.crypto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -62,5 +64,59 @@ class FileBasedKeyStoreTest {
       actual.append(key).append("\n");
     }
     assertEquals(expected, actual.toString());
+  }
+
+  // ED25519  0x4e0cc5c559ee61c36d61d0624c924cc43348b764
+  // "feel acid liar execute insane midnight oval oyster slot uncle bitter person"
+
+  // Secp256k1  0x6604964784bd9792e53dca3750d29ab39fb053e5
+  // heart position turkey bus virtual host panther pioneer ready lesson fence what
+  @Test
+  void importFromMnemonicTest() throws Exception {
+
+    Path filePath = Paths.get("src/test/resources/config/sui1.keystore");
+    FileBasedKeyStore fileBasedKeyStore =
+        new FileBasedKeyStore(filePath.toAbsolutePath().toString());
+    // test data from sui client
+    String[] mnemonics =
+        new String[] {
+          "feel acid liar execute insane midnight oval oyster slot uncle bitter person",
+          "heart position turkey bus virtual host panther pioneer ready lesson fence what",
+        };
+
+    String[] addresses =
+        new String[] {
+          "0x4e0cc5c559ee61c36d61d0624c924cc43348b764",
+          "0x6604964784bd9792e53dca3750d29ab39fb053e5",
+        };
+
+    String addr = fileBasedKeyStore.importFromMnemonic(mnemonics[0], SignatureScheme.ED25519);
+    assertEquals(addresses[0], addr);
+
+    addr = fileBasedKeyStore.importFromMnemonic(mnemonics[1], SignatureScheme.Secp256k1);
+    assertEquals(addresses[1], addr);
+
+    FileBasedKeyStore instance2 = new FileBasedKeyStore(filePath.toAbsolutePath().toString());
+
+    assertTrue(instance2.addresses().toString().contains(addresses[0]));
+    assertTrue(instance2.addresses().toString().contains(addresses[1]));
+
+    Files.delete(filePath);
+  }
+
+  @Test
+  void geneNewKey() throws Exception {
+    Path filePath = Paths.get("src/test/resources/config/sui1.keystore");
+    FileBasedKeyStore fileBasedKeyStore =
+        new FileBasedKeyStore(filePath.toAbsolutePath().toString());
+    KeyResponse res = fileBasedKeyStore.generateNewKey(SignatureScheme.ED25519);
+
+    assertTrue(res.getMnemonic().length() > 0);
+    assertTrue(res.getAddress().length() > 0);
+
+    FileBasedKeyStore instance2 = new FileBasedKeyStore(filePath.toAbsolutePath().toString());
+
+    assertTrue(instance2.addresses().contains(res.getAddress()));
+    Files.delete(filePath);
   }
 }

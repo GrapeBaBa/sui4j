@@ -17,6 +17,7 @@
 package io.sui.crypto;
 
 
+import com.google.common.primitives.Bytes;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CryptoException;
@@ -26,6 +27,7 @@ import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
 import org.bouncycastle.crypto.signers.Ed25519Signer;
 import org.bouncycastle.jcajce.provider.digest.SHA3.Digest256;
 import org.bouncycastle.util.Arrays;
+import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 
 /**
@@ -93,4 +95,15 @@ public class ED25519KeyPair extends SuiKeyPair<AsymmetricCipherKeyPair> {
     Ed25519PublicKeyParameters publicKeyParameters = privateKeyParameters.generatePublicKey();
     return new ED25519KeyPair(privateKeyParameters, publicKeyParameters);
   }
+
+  /**
+   * Encode base 64 sui key.
+   *
+   * @return the sui key
+   */
+  public String encodePrivateKey() {
+    Ed25519PrivateKeyParameters pair = (Ed25519PrivateKeyParameters) this.keyPair.getPrivate();
+    byte[] data = Bytes.concat(new byte[] {SignatureScheme.ED25519.getScheme()}, pair.getEncoded());
+    return Base64.toBase64String(data);
+  };
 }
