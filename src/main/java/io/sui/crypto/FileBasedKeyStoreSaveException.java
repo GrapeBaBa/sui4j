@@ -17,6 +17,8 @@
 package io.sui.crypto;
 
 /**
+ * The type File based key store save exception.
+ *
  * @author fearlessfe
  * @since 2023 02
  */

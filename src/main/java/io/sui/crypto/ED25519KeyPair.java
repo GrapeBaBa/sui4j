@@ -105,5 +105,5 @@ public class ED25519KeyPair extends SuiKeyPair<AsymmetricCipherKeyPair> {
     Ed25519PrivateKeyParameters pair = (Ed25519PrivateKeyParameters) this.keyPair.getPrivate();
     byte[] data = Bytes.concat(new byte[] {SignatureScheme.ED25519.getScheme()}, pair.getEncoded());
     return Base64.toBase64String(data);
-  };
+  }
 }

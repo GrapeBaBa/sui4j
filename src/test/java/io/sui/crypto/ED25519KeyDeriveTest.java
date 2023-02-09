@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -21,16 +21,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.google.common.io.BaseEncoding;
 import org.junit.jupiter.api.Test;
 
+/** The type Ed25519 key derive test. */
+@SuppressWarnings("checkstyle:AbbreviationAsWordInName")
 public class ED25519KeyDeriveTest {
 
+  /** The constant HARDENED_BIT. */
   public static final int HARDENED_BIT = 0x80000000;
 
-  private String seedString = "000102030405060708090a0b0c0d0e0f";
+  private static final String SEED = "000102030405060708090a0b0c0d0e0f";
 
-  private String m_priv = "2b4be7f19ee27bbf30c667b642d5f4aa69fd169872f8fc3059c08ebae2eb19e7";
-  private String m_chain = "90046a93de5380a72b5e45010748567d5ea02bbf6522f979e05c0d8d8ca9fffb";
+  private static final String M_PRIV =
+      "2b4be7f19ee27bbf30c667b642d5f4aa69fd169872f8fc3059c08ebae2eb19e7";
+  private static final String M_CHAIN =
+      "90046a93de5380a72b5e45010748567d5ea02bbf6522f979e05c0d8d8ca9fffb";
 
-  private int[] path =
+  private static final int[] PATH =
       new int[] {
         0 | HARDENED_BIT,
         1 | HARDENED_BIT,
@@ -38,7 +43,7 @@ public class ED25519KeyDeriveTest {
         2 | HARDENED_BIT,
         1000000000 | HARDENED_BIT
       };
-  private String[] chains =
+  private static final String[] CHAINS =
       new String[] {
         "8b59aa11380b624e81507a27fedda59fea6d0b779a778918a2fd3590e16e9c69",
         "a320425f77d1b5c2505a6b1b27382b37368ee640e3557c315416801243552f14",
@@ -47,7 +52,7 @@ public class ED25519KeyDeriveTest {
         "68789923a0cac2cd5a29172a475fe9e0fb14cd6adb5ad98a3fa70333e7afa230"
       };
 
-  private String[] privs =
+  private static final String[] PRIVS =
       new String[] {
         "68e0fe46dfb67e368c75379acec591dad19df3cde26e63b93a8e704f1dade7a3",
         "b1d0bad404bf35da785a64ca1ac54b2617211d2777696fbffaf208f746ae84f2",
@@ -56,28 +61,30 @@ public class ED25519KeyDeriveTest {
         "8f94d394a8e8fd6b1bc2f3f49f5c47e385281d5c17e65324b0f62483e37e8793"
       };
 
+  /** Test key derive. */
   @Test
-  void TestKeyDerive() throws Exception {
-    byte[] seed = BaseEncoding.base16().decode(seedString.toUpperCase());
+  void testKeyDerive() {
+    byte[] seed = BaseEncoding.base16().decode(ED25519KeyDeriveTest.SEED.toUpperCase());
 
     ED25519KeyDerive master = ED25519KeyDerive.createMasterKey(seed);
-    assertEquals(m_priv.toUpperCase(), BaseEncoding.base16().encode(master.getKey()));
-    assertEquals(m_chain.toUpperCase(), BaseEncoding.base16().encode(master.getChaincode()));
+    assertEquals(M_PRIV.toUpperCase(), BaseEncoding.base16().encode(master.getKey()));
+    assertEquals(M_CHAIN.toUpperCase(), BaseEncoding.base16().encode(master.getChaincode()));
 
     ED25519KeyDerive current = master;
 
-    for (int i = 0; i < path.length; i++) {
-      ED25519KeyDerive next = current.derive(path[i]);
+    for (int i = 0; i < PATH.length; i++) {
+      ED25519KeyDerive next = current.derive(PATH[i]);
 
-      assertEquals(privs[i].toUpperCase(), BaseEncoding.base16().encode(next.getKey()));
-      assertEquals(chains[i].toUpperCase(), BaseEncoding.base16().encode(next.getChaincode()));
+      assertEquals(PRIVS[i].toUpperCase(), BaseEncoding.base16().encode(next.getKey()));
+      assertEquals(CHAINS[i].toUpperCase(), BaseEncoding.base16().encode(next.getChaincode()));
       current = next;
     }
   }
 
+  /** Test key derive path. */
   @Test
-  void TestKeyDerivePath() throws Exception {
-    byte[] seed = BaseEncoding.base16().decode(seedString.toUpperCase());
+  void testKeyDerivePath() {
+    byte[] seed = BaseEncoding.base16().decode(ED25519KeyDeriveTest.SEED.toUpperCase());
 
     ED25519KeyDerive master = ED25519KeyDerive.createMasterKey(seed);
 
@@ -85,8 +92,8 @@ public class ED25519KeyDeriveTest {
     ED25519KeyDerive last = master.deriveFromPath(path);
 
     assertEquals(
-        privs[privs.length - 1].toUpperCase(), BaseEncoding.base16().encode(last.getKey()));
+        PRIVS[PRIVS.length - 1].toUpperCase(), BaseEncoding.base16().encode(last.getKey()));
     assertEquals(
-        chains[chains.length - 1].toUpperCase(), BaseEncoding.base16().encode(last.getChaincode()));
+        CHAINS[CHAINS.length - 1].toUpperCase(), BaseEncoding.base16().encode(last.getChaincode()));
   }
 }

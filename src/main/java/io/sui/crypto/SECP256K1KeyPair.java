@@ -115,5 +115,5 @@ public class SECP256K1KeyPair extends SuiKeyPair<ECKey> {
             new byte[] {SignatureScheme.Secp256k1.getScheme()}, this.keyPair.getPrivKeyBytes());
 
     return Base64.toBase64String(data);
-  };
+  }
 }

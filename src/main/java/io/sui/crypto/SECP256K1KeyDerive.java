@@ -20,43 +20,82 @@ package io.sui.crypto;
 import java.math.BigInteger;
 import java.util.Iterator;
 import org.apache.commons.lang3.StringUtils;
-import org.bitcoinj.crypto.*;
+import org.bitcoinj.crypto.ChildNumber;
+import org.bitcoinj.crypto.DeterministicKey;
+import org.bitcoinj.crypto.HDKeyDerivation;
+import org.bitcoinj.crypto.HDPath;
 
 /**
+ * The type Secp 256 k 1 key derive.
+ *
  * @author fearlessfe
  * @since 2023.02
  */
+@SuppressWarnings("checkstyle:AbbreviationAsWordInName")
 public class SECP256K1KeyDerive {
 
-  private final String defaultDerivePath = "m/54H/784H/0H/0/0";
-  private byte[] key;
-  private byte[] chaincode;
+  private static final String DEFAULT_DERIVE_PATH = "m/54H/784H/0H/0/0";
+  private final byte[] key;
+  private final byte[] chaincode;
 
   private DeterministicKey parent;
 
   private HDPath childPath;
 
+  /**
+   * Create key by default path secp 256 k 1 key derive.
+   *
+   * @param seed the seed
+   * @return the secp 256 k 1 key derive
+   */
   public static SECP256K1KeyDerive createKeyByDefaultPath(byte[] seed) {
     return createMasterKey(seed).deriveFromPath("");
   }
 
+  /**
+   * Create master key secp 256 k 1 key derive.
+   *
+   * @param seed the seed
+   * @return the secp 256 k 1 key derive
+   */
   public static SECP256K1KeyDerive createMasterKey(byte[] seed) {
     DeterministicKey master = HDKeyDerivation.createMasterPrivateKey(seed);
     return new SECP256K1KeyDerive(
         master.getPrivKey().toByteArray(), master.getChainCode(), master.getPath());
   }
 
+  /**
+   * Instantiates a new Secp 256 k 1 key derive.
+   *
+   * @param key the key
+   * @param chaincode the chaincode
+   */
   public SECP256K1KeyDerive(byte[] key, byte[] chaincode) {
     this.key = key;
     this.chaincode = chaincode;
   }
 
+  /**
+   * Instantiates a new Secp 256 k 1 key derive.
+   *
+   * @param key the key
+   * @param chaincode the chaincode
+   * @param path the path
+   */
   public SECP256K1KeyDerive(byte[] key, byte[] chaincode, HDPath path) {
     this.key = key;
     this.chaincode = chaincode;
     this.childPath = path;
   }
 
+  /**
+   * Instantiates a new Secp 256 k 1 key derive.
+   *
+   * @param key the key
+   * @param chaincode the chaincode
+   * @param path the path
+   * @param parent the parent
+   */
   public SECP256K1KeyDerive(byte[] key, byte[] chaincode, HDPath path, DeterministicKey parent) {
     this.key = key;
     this.chaincode = chaincode;
@@ -64,6 +103,12 @@ public class SECP256K1KeyDerive {
     this.parent = parent;
   }
 
+  /**
+   * Derive secp 256 k 1 key derive.
+   *
+   * @param index the index
+   * @return the secp 256 k 1 key derive
+   */
   public SECP256K1KeyDerive derive(int index) {
     boolean isHardened = hasHardenedBit(index);
     if (isHardened) {
@@ -83,9 +128,15 @@ public class SECP256K1KeyDerive {
         childKey.getParent());
   }
 
+  /**
+   * Derive from path secp 256 k 1 key derive.
+   *
+   * @param path the path
+   * @return the secp 256 k 1 key derive
+   */
   public SECP256K1KeyDerive deriveFromPath(String path) {
     if (StringUtils.isAnyBlank(path)) {
-      path = defaultDerivePath;
+      path = DEFAULT_DERIVE_PATH;
     }
     HDPath hdPath = HDPath.parsePath(path);
     Iterator<ChildNumber> it = hdPath.iterator();
@@ -100,10 +151,20 @@ public class SECP256K1KeyDerive {
     return (a & ChildNumber.HARDENED_BIT) != 0;
   }
 
+  /**
+   * Get key byte [ ].
+   *
+   * @return the byte [ ]
+   */
   public byte[] getKey() {
     return key;
   }
 
+  /**
+   * Get chaincode byte [ ].
+   *
+   * @return the byte [ ]
+   */
   public byte[] getChaincode() {
     return chaincode;
   }

@@ -52,6 +52,13 @@ public abstract class AbstractKeyStore implements KeyStore {
   @Override
   public abstract void addKey(String address, SuiKeyPair<?> keyPair);
 
+  /**
+   * Generate new key key response.
+   *
+   * @param schema the schema
+   * @return the key response
+   * @throws SignatureSchemeNotSupportedException the signature scheme not supported exception
+   */
   public KeyResponse generateNewKey(SignatureScheme schema)
       throws SignatureSchemeNotSupportedException {
 
@@ -67,25 +74,33 @@ public abstract class AbstractKeyStore implements KeyStore {
     }
 
     byte[] seed = MnemonicCode.toSeed(mnemonic, "");
-    SuiKeyPair keyPair = genSuiKeyPair(seed, schema);
+    SuiKeyPair<?> keyPair = genSuiKeyPair(seed, schema);
 
     this.addKey(keyPair.address(), keyPair);
     return new KeyResponse(StringUtils.join(mnemonic, " "), keyPair.address());
   }
 
+  /**
+   * Import from mnemonic string.
+   *
+   * @param mnemonic the mnemonic
+   * @param schema the schema
+   * @return the string
+   * @throws SignatureSchemeNotSupportedException the signature scheme not supported exception
+   */
   public String importFromMnemonic(String mnemonic, SignatureScheme schema)
       throws SignatureSchemeNotSupportedException {
     // todo check mnemonic
 
     byte[] seed = MnemonicCode.toSeed(Arrays.asList(mnemonic.split(" ")), "");
 
-    SuiKeyPair keyPair = genSuiKeyPair(seed, schema);
+    SuiKeyPair<?> keyPair = genSuiKeyPair(seed, schema);
 
     this.addKey(keyPair.address(), keyPair);
     return keyPair.address();
   }
 
-  private SuiKeyPair genSuiKeyPair(byte[] seed, SignatureScheme schema)
+  private SuiKeyPair<?> genSuiKeyPair(byte[] seed, SignatureScheme schema)
       throws SignatureSchemeNotSupportedException {
     switch (schema) {
       case ED25519:
@@ -97,19 +112,19 @@ public abstract class AbstractKeyStore implements KeyStore {
     }
   }
 
+  @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
   private ED25519KeyPair genED25519KeyPair(byte[] seed) {
     ED25519KeyDerive key = ED25519KeyDerive.createKeyByDefaultPath(seed);
     Ed25519PrivateKeyParameters parameters = new Ed25519PrivateKeyParameters(key.getKey());
     Ed25519PublicKeyParameters publicKeyParameters = parameters.generatePublicKey();
 
-    ED25519KeyPair keyPair = new ED25519KeyPair(parameters, publicKeyParameters);
-    return keyPair;
+    return new ED25519KeyPair(parameters, publicKeyParameters);
   }
 
+  @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
   private SECP256K1KeyPair genSECP256K1KeyPair(byte[] seed) {
     SECP256K1KeyDerive key = SECP256K1KeyDerive.createKeyByDefaultPath(seed);
 
-    SECP256K1KeyPair keyPair = new SECP256K1KeyPair(key.getKey());
-    return keyPair;
+    return new SECP256K1KeyPair(key.getKey());
   }
 }

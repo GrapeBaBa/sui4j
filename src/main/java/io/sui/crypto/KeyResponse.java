@@ -17,22 +17,41 @@
 package io.sui.crypto;
 
 /**
+ * The type Key response.
+ *
  * @author fearlessfe
  * @since 2023 02
  */
 public class KeyResponse {
-  private String mnemonic;
-  private String address;
 
+  private final String mnemonic;
+  private final String address;
+
+  /**
+   * Instantiates a new Key response.
+   *
+   * @param mnemonic the mnemonic
+   * @param address the address
+   */
   public KeyResponse(String mnemonic, String address) {
     this.mnemonic = mnemonic;
     this.address = address;
   }
 
+  /**
+   * Gets mnemonic.
+   *
+   * @return the mnemonic
+   */
   public String getMnemonic() {
     return mnemonic;
   }
 
+  /**
+   * Gets address.
+   *
+   * @return the address
+   */
   public String getAddress() {
     return address;
   }

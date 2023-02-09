@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -22,14 +22,21 @@ import com.google.common.io.BaseEncoding;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
+/**
+ * The type Secp256k1 key derive test.
+ *
+ * @author f
+ */
+@SuppressWarnings("checkstyle:AbbreviationAsWordInName")
 public class SECP256K1KeyDeriveTest {
 
+  /** The constant HARDENED_BIT. */
   public static final int HARDENED_BIT = 0x80000000;
   // test case from https://github.com/satoshilabs/slips/blob/master/slip-0010.md
-  private String seedString = "000102030405060708090a0b0c0d0e0f";
+  private final String seedString = "000102030405060708090a0b0c0d0e0f";
 
-  private int[] path = new int[] {0 | HARDENED_BIT, 1, 2 | HARDENED_BIT, 2, 1000000000};
-  private String[] chains =
+  private final int[] path = new int[] {0 | HARDENED_BIT, 1, 2 | HARDENED_BIT, 2, 1000000000};
+  private final String[] chains =
       new String[] {
         "47fdacbd0f1097043b78c63c20c34ef4ed9a111d980047ad16282c7ae6236141",
         "2a7857631386ba23dacac34180dd1983734e444fdbf774041578e9b6adb37c19",
@@ -38,7 +45,7 @@ public class SECP256K1KeyDeriveTest {
         "c783e67b921d2beb8f6b389cc646d7263b4145701dadd2161548a8b078e65e9e"
       };
 
-  private String[] privs =
+  private final String[] privs =
       new String[] {
         "edb2e14f9ee77d26dd93b4ecede8d16ed408ce149b6cd80b0715a2d911a0afea",
         "3c6cb8d0f6a264c91ea8b5030fadaa8e538b020f0a387421a12de9319dc93368",
@@ -48,11 +55,19 @@ public class SECP256K1KeyDeriveTest {
       };
 
   // private is 32 bytes, left padding with 00 to 33 bytes
-  private String m_priv = "e8f32e723decf4051aefac8e2c93c9c5b214313817cdb01a1494b917c8436b35";
-  private String m_chain = "873dff81c02f525623fd1fe5167eac3a55a049de3d314bb42ee227ffed37d508";
+  @SuppressWarnings("checkstyle:MemberName")
+  private final String m_priv = "e8f32e723decf4051aefac8e2c93c9c5b214313817cdb01a1494b917c8436b35";
 
+  @SuppressWarnings("checkstyle:MemberName")
+  private final String m_chain = "873dff81c02f525623fd1fe5167eac3a55a049de3d314bb42ee227ffed37d508";
+
+  /**
+   * Test key derive.
+   *
+   * @throws Exception the exception
+   */
   @Test
-  void TestKeyDerive() throws Exception {
+  void testKeyDerive() throws Exception {
     byte[] seed = BaseEncoding.base16().decode(seedString.toUpperCase());
 
     SECP256K1KeyDerive master = SECP256K1KeyDerive.createMasterKey(seed);
@@ -69,8 +84,13 @@ public class SECP256K1KeyDeriveTest {
     }
   }
 
+  /**
+   * Test key derive path.
+   *
+   * @throws Exception the exception
+   */
   @Test
-  void TestKeyDerivePath() throws Exception {
+  void testKeyDerivePath() throws Exception {
     byte[] seed = BaseEncoding.base16().decode(seedString.toUpperCase());
 
     SECP256K1KeyDerive master = SECP256K1KeyDerive.createMasterKey(seed);
@@ -80,12 +100,11 @@ public class SECP256K1KeyDeriveTest {
 
     assertEquals(
         privs[privs.length - 1].toUpperCase(), BaseEncoding.base16().encode(getPriv(last)));
-    //            System.out.println(BaseEncoding.base16().encode(next.getKey()));
     assertEquals(
         chains[chains.length - 1].toUpperCase(), BaseEncoding.base16().encode(last.getChaincode()));
   }
 
-  public byte[] getPriv(SECP256K1KeyDerive key) {
+  private byte[] getPriv(SECP256K1KeyDerive key) {
     byte[] privKey = key.getKey();
     if (privKey.length == 33) {
       return Arrays.copyOfRange(privKey, 1, privKey.length);
