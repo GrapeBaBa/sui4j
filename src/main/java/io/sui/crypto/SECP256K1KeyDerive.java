@@ -57,8 +57,7 @@ public class SECP256K1KeyDerive {
     this.childPath = path;
   }
 
-  public SECP256K1KeyDerive(
-      byte[] key, byte[] chaincode, HDPath path, DeterministicKey parent) {
+  public SECP256K1KeyDerive(byte[] key, byte[] chaincode, HDPath path, DeterministicKey parent) {
     this.key = key;
     this.chaincode = chaincode;
     this.childPath = path;

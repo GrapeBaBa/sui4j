@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -17,17 +17,16 @@
 package io.sui.crypto;
 
 
-import org.apache.commons.lang3.StringUtils;
-import org.bitcoinj.crypto.MnemonicCode;
-import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
-import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
-
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NavigableSet;
 import java.util.concurrent.ConcurrentSkipListMap;
+import org.apache.commons.lang3.StringUtils;
+import org.bitcoinj.crypto.MnemonicCode;
+import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
+import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
 
 /**
  * The type Abstract key store.
@@ -53,46 +52,49 @@ public abstract class AbstractKeyStore implements KeyStore {
   @Override
   public abstract void addKey(String address, SuiKeyPair<?> keyPair);
 
-  public KeyResponse generateNewKey(SignatureScheme schema) throws SignatureSchemeNotSupportedException {
+  public KeyResponse generateNewKey(SignatureScheme schema)
+      throws SignatureSchemeNotSupportedException {
 
-      SecureRandom secureRandom = new SecureRandom();
-      byte[] entropy = new byte[16];
-      secureRandom.nextBytes(entropy);
-      List<String> mnemonic = new ArrayList<>();
+    SecureRandom secureRandom = new SecureRandom();
+    byte[] entropy = new byte[16];
+    secureRandom.nextBytes(entropy);
+    List<String> mnemonic = new ArrayList<>();
 
-      try {
-        mnemonic = MnemonicCode.INSTANCE.toMnemonic(entropy);
-      } catch (Exception e) {
-        // MnemonicLengthException won't happen
-      }
+    try {
+      mnemonic = MnemonicCode.INSTANCE.toMnemonic(entropy);
+    } catch (Exception e) {
+      // MnemonicLengthException won't happen
+    }
 
-      byte[] seed = MnemonicCode.toSeed(mnemonic, "");
-      SuiKeyPair keyPair = genSuiKeyPair(seed, schema);
+    byte[] seed = MnemonicCode.toSeed(mnemonic, "");
+    SuiKeyPair keyPair = genSuiKeyPair(seed, schema);
 
-      this.addKey(keyPair.address(), keyPair);
-      return new KeyResponse(StringUtils.join(mnemonic, " "), keyPair.address());
+    this.addKey(keyPair.address(), keyPair);
+    return new KeyResponse(StringUtils.join(mnemonic, " "), keyPair.address());
   }
 
-  public String importFromMnemonic(String mnemonic, SignatureScheme schema) throws SignatureSchemeNotSupportedException {
-      // todo check mnemonic
+  public String importFromMnemonic(String mnemonic, SignatureScheme schema)
+      throws SignatureSchemeNotSupportedException {
+    // todo check mnemonic
 
-      byte[] seed = MnemonicCode.toSeed(Arrays.asList(mnemonic.split(" ")), "");
+    byte[] seed = MnemonicCode.toSeed(Arrays.asList(mnemonic.split(" ")), "");
 
-      SuiKeyPair keyPair = genSuiKeyPair(seed, schema);
+    SuiKeyPair keyPair = genSuiKeyPair(seed, schema);
 
-      this.addKey(keyPair.address(), keyPair);
-      return keyPair.address();
+    this.addKey(keyPair.address(), keyPair);
+    return keyPair.address();
   }
 
-  private SuiKeyPair genSuiKeyPair(byte[] seed,SignatureScheme schema) throws SignatureSchemeNotSupportedException{
-      switch (schema) {
-          case ED25519:
-              return genED25519KeyPair(seed);
-          case Secp256k1:
-              return genSECP256K1KeyPair(seed);
-          default:
-              throw new SignatureSchemeNotSupportedException();
-      }
+  private SuiKeyPair genSuiKeyPair(byte[] seed, SignatureScheme schema)
+      throws SignatureSchemeNotSupportedException {
+    switch (schema) {
+      case ED25519:
+        return genED25519KeyPair(seed);
+      case Secp256k1:
+        return genSECP256K1KeyPair(seed);
+      default:
+        throw new SignatureSchemeNotSupportedException();
+    }
   }
 
   private ED25519KeyPair genED25519KeyPair(byte[] seed) {

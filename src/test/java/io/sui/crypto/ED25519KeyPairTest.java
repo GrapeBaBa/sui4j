@@ -65,4 +65,12 @@ class ED25519KeyPairTest {
     verifier.update(encodedHash, 0, encodedHash.length);
     assertTrue(verifier.verifySignature(signature));
   }
+
+  @Test
+  void encodePrivateKey() {
+    final String base64 = "ADfbVnAT2QLG7W+bM+1ENzEKAxnoUx10+WfGg5zx8VRm";
+    final ED25519KeyPair ed25519KeyPair = ED25519KeyPair.decodeBase64(Base64.decode(base64));
+    String res = ed25519KeyPair.encodePrivateKey();
+    assertEquals(res, base64);
+  }
 }

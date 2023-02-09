@@ -52,4 +52,12 @@ class SECP256K1KeyPairTest {
     final ECDSASignature signature = secp256K1KeyPair.keyPair.sign(Sha256Hash.of(msg.getBytes()));
     assertTrue(secp256K1KeyPair.keyPair.verify(Sha256Hash.of(msg.getBytes()), signature));
   }
+
+  @Test
+  void encodePrivateKey() {
+    final String base64 = "ABw1fhWdG+Ni9eFfyLdfdmsiMWyirHCV/UVC9jcloBm8";
+    final SuiKeyPair<ECKey> secp256K1KeyPair = SECP256K1KeyPair.decodeBase64(Base64.decode(base64));
+    String res = secp256K1KeyPair.encodePrivateKey();
+    assertEquals(base64, res);
+  }
 }

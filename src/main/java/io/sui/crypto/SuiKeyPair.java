@@ -128,4 +128,6 @@ public abstract class SuiKeyPair<T> {
         throw new SignatureSchemeNotSupportedException();
     }
   }
+
+  public abstract String encodePrivateKey();
 }
