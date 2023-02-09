@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -20,7 +20,7 @@ package io.sui.models.objects;
 import com.google.common.base.Objects;
 
 /**
- * the move linked table type, only use it in sui system state.
+ * The move linked table type, only use it in sui system state.
  *
  * @param <T> the parameter type
  * @author thinkAfCod
@@ -70,8 +70,12 @@ public class SuiLinkedTable<T> {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     SuiLinkedTable<?> that = (SuiLinkedTable<?>) o;
     return Objects.equal(id, that.id)
         && Objects.equal(size, that.size)

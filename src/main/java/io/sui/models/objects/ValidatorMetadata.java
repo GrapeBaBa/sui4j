@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -21,11 +21,12 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * the validator metadata.
+ * The validator metadata.
  *
  * @author thinkAfCod
  * @since 2023.2
  */
+@SuppressWarnings({"checkstyle:MemberName", "checkstyle:ParameterName"})
 public class ValidatorMetadata {
 
   private String sui_address;
@@ -190,8 +191,12 @@ public class ValidatorMetadata {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     ValidatorMetadata that = (ValidatorMetadata) o;
     return sui_address.equals(that.sui_address)
         && Arrays.equals(pubkey_bytes, that.pubkey_bytes)

@@ -87,6 +87,11 @@ class QueryClientImplIntTests {
     sui = new Sui(BASE_URL, TEST_KEY_STORE_PATH, true);
   }
 
+  /**
+   * Gets first address.
+   *
+   * @return the first address
+   */
   static Optional<String> getFirstAddress() {
     final Optional<String> sender =
         sui.addresses().stream()
@@ -333,6 +338,12 @@ class QueryClientImplIntTests {
     //        "0xb5e91320d3acc77b4d9e66a218031441b2be1bb3", moveEvent.getFields().get("object_id"));
   }
 
+  /**
+   * Gets transaction auth signers.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
   @Test
   @DisplayName("Test getTransactionAuthSigners.")
   void getTransactionAuthSigners() throws ExecutionException, InterruptedException {
@@ -366,7 +377,7 @@ class QueryClientImplIntTests {
   }
 
   /**
-   * Gets SuiSystemState
+   * Gets sui system state.
    *
    * @throws ExecutionException the execution exception
    * @throws InterruptedException the interrupted exception
@@ -557,6 +568,12 @@ class QueryClientImplIntTests {
     System.out.println(res.get());
   }
 
+  /**
+   * Gets all balances.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
   @Test
   @DisplayName("Test getAllBalances.")
   void getAllBalances() throws ExecutionException, InterruptedException {
@@ -567,6 +584,12 @@ class QueryClientImplIntTests {
     assertTrue(balances.size() != 0);
   }
 
+  /**
+   * Gets all coins.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
   @Test
   @DisplayName("Test getAllCoins.")
   void getAllCoins() throws ExecutionException, InterruptedException {
@@ -576,6 +599,12 @@ class QueryClientImplIntTests {
     assertNotNull(res.get());
   }
 
+  /**
+   * Gets coins.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
   @Test
   @DisplayName("Test getCoins.")
   void getCoins() throws ExecutionException, InterruptedException {
@@ -585,6 +614,12 @@ class QueryClientImplIntTests {
     System.out.println(res.get());
   }
 
+  /**
+   * Gets balance.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
   @Test
   @DisplayName("Test getBalance.")
   void getBalance() throws ExecutionException, InterruptedException {
@@ -594,6 +629,12 @@ class QueryClientImplIntTests {
     System.out.println(res.get());
   }
 
+  /**
+   * Gets checkpoint contents.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
   @Test
   @DisplayName("Test getCheckpointContents.")
   void getCheckpointContents() throws ExecutionException, InterruptedException {
@@ -604,6 +645,12 @@ class QueryClientImplIntTests {
     assertNotNull(res.get());
   }
 
+  /**
+   * Gets checkpoint contents by digest.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
   @Test
   @DisplayName("Test getCheckpointContentsByDigest.")
   void getCheckpointContentsByDigest() throws ExecutionException, InterruptedException {
@@ -614,6 +661,12 @@ class QueryClientImplIntTests {
     assertNotNull(res.get());
   }
 
+  /**
+   * Gets checkpoint summary.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
   @Test
   @DisplayName("Test getCheckpointSummary.")
   void getCheckpointSummary() throws ExecutionException, InterruptedException {
@@ -622,6 +675,12 @@ class QueryClientImplIntTests {
     assertNotNull(res.get());
   }
 
+  /**
+   * Gets checkpoint summary by digest.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
   @Test
   @DisplayName("Test getCheckpointSummaryByDigest.")
   void getCheckpointSummaryByDigest() throws ExecutionException, InterruptedException {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -22,11 +22,12 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * the checkpoint summary.
+ * The checkpoint summary.
  *
  * @author thinkAfCod
  * @since 2023.2
  */
+@SuppressWarnings({"checkstyle:MemberName", "checkstyle:ParameterName"})
 public class CheckpointSummary {
 
   private Long epoch;

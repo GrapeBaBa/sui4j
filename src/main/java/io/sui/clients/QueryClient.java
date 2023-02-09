@@ -50,6 +50,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface QueryClient {
 
+  /** The constant DEFAULT_COIN_TYPE. */
   String DEFAULT_COIN_TYPE = "0x2::sui::SUI";
 
   /**
@@ -117,9 +118,9 @@ public interface QueryClient {
   CompletableFuture<List<String>> getTransactionsInRange(Long start, Long end);
 
   /**
-   * Return SuiSystemState
+   * Gets sui system state.
    *
-   * @return the SuiSystemState
+   * @return the sui system state
    */
   CompletableFuture<SuiSystemState> getSuiSystemState();
 

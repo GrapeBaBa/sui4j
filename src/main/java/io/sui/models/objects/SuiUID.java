@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -20,11 +20,16 @@ package io.sui.models.objects;
 import com.google.common.base.Objects;
 
 /**
- * the move sui object info type.
+ * The move sui object info type.
  *
  * @author thinkAfCod
  * @since 2023.2
  */
+@SuppressWarnings({
+  "checkstyle:AbbreviationAsWordInName",
+  "checkstyle:MemberName",
+  "checkstyle:ParameterName"
+})
 public class SuiUID {
 
   private String id;
@@ -39,8 +44,12 @@ public class SuiUID {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     SuiUID suiUID = (SuiUID) o;
     return Objects.equal(id, suiUID.id);
   }

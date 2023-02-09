@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -20,11 +20,12 @@ package io.sui.models.objects;
 import java.util.Objects;
 
 /**
- * the move system parameters type.
+ * The move system parameters type.
  *
  * @author thinkAfCod
  * @since 2023.2
  */
+@SuppressWarnings({"checkstyle:MemberName", "checkstyle:ParameterName"})
 public class SuiSystemParameters {
 
   private Long min_validator_stake;
@@ -49,8 +50,12 @@ public class SuiSystemParameters {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     SuiSystemParameters that = (SuiSystemParameters) o;
     return min_validator_stake.equals(that.min_validator_stake)
         && max_validator_candidate_count.equals(that.max_validator_candidate_count);

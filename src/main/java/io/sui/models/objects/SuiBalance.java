@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -20,7 +20,7 @@ package io.sui.models.objects;
 import com.google.common.base.Objects;
 
 /**
- * the balance value holder.
+ * The balance value holder.
  *
  * @author thinkAfCod
  * @since 2023.2
@@ -39,8 +39,12 @@ public class SuiBalance {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     SuiBalance that = (SuiBalance) o;
     return Objects.equal(value, that.value);
   }

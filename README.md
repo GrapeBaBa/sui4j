@@ -18,7 +18,7 @@ upcoming TestNet launch.
 
 ## Using
 
-The latest 0.4.0 version tested with sui devnet-0.24.0 version.
+The latest 0.4.1 version tested with sui devnet-0.24.0 version.
 
 ### Maven
 
@@ -27,7 +27,7 @@ The latest 0.4.0 version tested with sui devnet-0.24.0 version.
 <dependency>
 <groupId>me.grapebaba</groupId>
 <artifactId>sui4j</artifactId>
-<version>0.4.0</version>
+<version>0.4.1</version>
 </dependency>
 ```
 
@@ -35,7 +35,7 @@ The latest 0.4.0 version tested with sui devnet-0.24.0 version.
 
 ```groovy
 // https://mvnrepository.com/artifact/me.grapebaba/sui4j
-implementation 'me.grapebaba:sui4j:0.4.0'
+implementation 'me.grapebaba:sui4j:0.4.1'
 ```
 
 ## Building Locally
@@ -89,15 +89,15 @@ cd sui/target/release
 - [x] sui_dryRunTransaction
 - [x] sui_executeTransaction
 - [x] sui_executeTransactionSerializedSig(same with sui_executeTransaction)
-- [ ] sui_getAllBalances
-- [ ] sui_getAllCoins
-- [ ] sui_getBalance
-- [ ] sui_getCheckpointContents
-- [ ] sui_getCheckpointContentsByDigest
-- [ ] sui_getCheckpointSummary
-- [ ] sui_getCheckpointSummaryByDigest
+- [x] sui_getAllBalances
+- [x] sui_getAllCoins
+- [x] sui_getBalance
+- [x] sui_getCheckpointContents
+- [x] sui_getCheckpointContentsByDigest
+- [x] sui_getCheckpointSummary
+- [x] sui_getCheckpointSummaryByDigest
 - [x] sui_getCoinMetadata
-- [ ] sui_getCoins
+- [x] sui_getCoins
 - [x] sui_getCommitteeInfo
 - [ ] sui_getDelegatedStakes
 - [ ] sui_getDynamicFieldObject
@@ -114,7 +114,7 @@ cd sui/target/release
 - [x] sui_getObjectsOwnedByObject
 - [x] sui_getRawObject
 - [x] sui_getReferenceGasPrice
-- [ ] sui_getSuiSystemState
+- [x] sui_getSuiSystemState
 - [ ] sui_getTotalSupply
 - [x] sui_getTotalTransactionNumber
 - [x] sui_getTransaction

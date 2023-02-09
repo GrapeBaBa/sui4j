@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -22,7 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * the move sui vec map type.
+ * The move sui vec map type.
  *
  * @author thinkAfCod
  * @since 2023.2
@@ -41,8 +41,12 @@ public class SuiVecMap<K, V> {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     SuiVecMap<?, ?> suiVecMap = (SuiVecMap<?, ?>) o;
     return Objects.equal(contents, suiVecMap.contents);
   }

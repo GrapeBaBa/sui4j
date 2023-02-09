@@ -21,7 +21,7 @@ import com.google.common.base.Objects;
 import java.util.List;
 
 /**
- * the move option type.
+ * The move option type.
  *
  * @param <T> the parameter type
  * @author thinkAfCod
@@ -41,8 +41,12 @@ public class MoveOption<T> {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     MoveOption<?> that = (MoveOption<?>) o;
     return Objects.equal(vec, that.vec);
   }

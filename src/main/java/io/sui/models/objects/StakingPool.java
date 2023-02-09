@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -20,11 +20,12 @@ package io.sui.models.objects;
 import java.util.Objects;
 
 /**
- * the move staking pool type.
+ * The move staking pool type.
  *
  * @author thinkAfCod
  * @since 2023.2
  */
+@SuppressWarnings({"checkstyle:MemberName", "checkstyle:ParameterName"})
 public class StakingPool {
 
   private String validator_address;
@@ -99,8 +100,12 @@ public class StakingPool {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     StakingPool that = (StakingPool) o;
     return validator_address.equals(that.validator_address)
         && starting_epoch.equals(that.starting_epoch)

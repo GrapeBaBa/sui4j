@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -26,6 +26,7 @@ import java.util.Objects;
  * @author thinkAfCod
  * @since 2023.2
  */
+@SuppressWarnings({"checkstyle:MemberName", "checkstyle:ParameterName"})
 public class ValidatorSet {
 
   private Long validator_stake;
@@ -101,8 +102,12 @@ public class ValidatorSet {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     ValidatorSet that = (ValidatorSet) o;
     return validator_stake.equals(that.validator_stake)
         && delegation_stake.equals(that.delegation_stake)

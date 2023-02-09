@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -22,11 +22,12 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * the move sui system state type.
+ * The move sui system state type.
  *
  * @author thinkAfCod
  * @since 2023.2
  */
+@SuppressWarnings({"checkstyle:MemberName", "checkstyle:ParameterName"})
 public class SuiSystemState {
 
   private SuiUID info;
@@ -142,8 +143,12 @@ public class SuiSystemState {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     SuiSystemState that = (SuiSystemState) o;
     return info.equals(that.info)
         && epoch.equals(that.epoch)
