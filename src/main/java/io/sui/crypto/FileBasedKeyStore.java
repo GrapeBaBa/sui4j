@@ -22,6 +22,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -90,7 +91,7 @@ public class FileBasedKeyStore extends AbstractKeyStore {
     Gson gson = new Gson();
     String content = gson.toJson(address, listType);
     try {
-      Files.write(Paths.get(this.path), content.getBytes());
+      Files.write(Paths.get(this.path), content.getBytes(Charset.defaultCharset()));
     } catch (IOException e) {
       throw new FileBasedKeyStoreSaveException(e);
     }

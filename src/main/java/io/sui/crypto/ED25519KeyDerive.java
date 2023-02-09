@@ -19,6 +19,7 @@ package io.sui.crypto;
 
 import com.google.common.primitives.Bytes;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Iterator;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +28,8 @@ import org.bitcoinj.crypto.HDPath;
 import org.bitcoinj.crypto.HDUtils;
 
 /**
+ * Derive ed25519 key from path.
+ *
  * @author fearlessfe
  * @since 2023.02
  */
@@ -41,7 +44,7 @@ public class ED25519KeyDerive {
   }
 
   public static ED25519KeyDerive createMasterKey(byte[] seed) {
-    byte[] i = HDUtils.hmacSha512("ed25519 seed".getBytes(), seed);
+    byte[] i = HDUtils.hmacSha512("ed25519 seed".getBytes(Charset.defaultCharset()), seed);
     byte[] il = Arrays.copyOfRange(i, 0, 32);
     byte[] ir = Arrays.copyOfRange(i, 32, 64);
     return new ED25519KeyDerive(il, ir);
