@@ -18,6 +18,7 @@ package io.sui.crypto;
 
 import static org.bouncycastle.util.Arrays.prepend;
 
+import com.google.common.primitives.Bytes;
 import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 import org.bitcoinj.core.ECKey;
@@ -25,6 +26,7 @@ import org.bitcoinj.core.ECKey.ECDSASignature;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.Utils;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
+import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 
 /**
@@ -101,4 +103,17 @@ public class SECP256K1KeyPair extends SuiKeyPair<ECKey> {
     }
     return recId;
   }
+
+  /**
+   * Encode base 64 sui key.
+   *
+   * @return the sui key
+   */
+  public String encodePrivateKey() {
+    byte[] data =
+        Bytes.concat(
+            new byte[] {SignatureScheme.Secp256k1.getScheme()}, this.keyPair.getPrivKeyBytes());
+
+    return Base64.toBase64String(data);
+  };
 }

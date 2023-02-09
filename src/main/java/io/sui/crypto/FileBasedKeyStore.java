@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -19,9 +19,14 @@ package io.sui.crypto;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The type File based key store.
@@ -68,5 +73,27 @@ public class FileBasedKeyStore extends AbstractKeyStore {
    */
   public String getPath() {
     return path;
+  }
+
+  @Override
+  public void addKey(String address, SuiKeyPair<?> keyPair) {
+    FileBasedKeyStore.super.keys.put(address, keyPair);
+    save();
+  }
+
+  private void save() {
+    List<String> address =
+        FileBasedKeyStore.super.keys.values().stream()
+            .map(item -> item.encodePrivateKey())
+            .collect(Collectors.toList());
+    Type listType = new TypeToken<List<String>>() {}.getType();
+
+    Gson gson = new Gson();
+    String content = gson.toJson(address, listType);
+    try {
+      Files.write(Paths.get(this.path), content.getBytes(Charset.defaultCharset()));
+    } catch (IOException e) {
+      throw new FileBasedKeyStoreSaveException(e);
+    }
   }
 }

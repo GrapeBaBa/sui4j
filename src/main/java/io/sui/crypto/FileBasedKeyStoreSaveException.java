@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 281165273grape@gmail.com
+ * Copyright 2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -16,37 +16,18 @@
 
 package io.sui.crypto;
 
-
-import java.util.NavigableSet;
-
 /**
- * The interface Key store.
- *
- * @author grapebaba
- * @since 2022.11
+ * @author fearlessfe
+ * @since 2023 02
  */
-public interface KeyStore {
+public class FileBasedKeyStoreSaveException extends RuntimeException {
 
   /**
-   * Gets by address.
+   * Instantiates a new File based key store save exception.
    *
-   * @param address the address
-   * @return the by address
+   * @param cause the cause
    */
-  SuiKeyPair<?> getByAddress(String address);
-
-  /**
-   * Addresses navigable set.
-   *
-   * @return the navigable set
-   */
-  NavigableSet<String> addresses();
-
-  /**
-   * Add by address.
-   *
-   * @param address the address
-   * @param keyPair the keyPair
-   */
-  void addKey(String address, SuiKeyPair<?> keyPair);
+  public FileBasedKeyStoreSaveException(Throwable cause) {
+    super(cause);
+  }
 }

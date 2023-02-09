@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 281165273grape@gmail.com
+ * Copyright 2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -16,37 +16,24 @@
 
 package io.sui.crypto;
 
-
-import java.util.NavigableSet;
-
 /**
- * The interface Key store.
- *
- * @author grapebaba
- * @since 2022.11
+ * @author fearlessfe
+ * @since 2023 02
  */
-public interface KeyStore {
+public class KeyResponse {
+  private String mnemonic;
+  private String address;
 
-  /**
-   * Gets by address.
-   *
-   * @param address the address
-   * @return the by address
-   */
-  SuiKeyPair<?> getByAddress(String address);
+  public KeyResponse(String mnemonic, String address) {
+    this.mnemonic = mnemonic;
+    this.address = address;
+  }
 
-  /**
-   * Addresses navigable set.
-   *
-   * @return the navigable set
-   */
-  NavigableSet<String> addresses();
+  public String getMnemonic() {
+    return mnemonic;
+  }
 
-  /**
-   * Add by address.
-   *
-   * @param address the address
-   * @param keyPair the keyPair
-   */
-  void addKey(String address, SuiKeyPair<?> keyPair);
+  public String getAddress() {
+    return address;
+  }
 }
