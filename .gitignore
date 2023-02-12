@@ -4,3 +4,5 @@ build
 site
 _site
 bin
+.vscode
+*.DS_Store
