@@ -1,18 +1,18 @@
 package io.sui.bcsgen;
 
 
-public abstract class TransactionKind {
+public abstract class MoveObjectType {
 
     abstract public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError;
 
-    public static TransactionKind deserialize(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+    public static MoveObjectType deserialize(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
         int index = deserializer.deserialize_variant_index();
         switch (index) {
-            case 0: return ProgrammableTransaction.load(deserializer);
-            case 1: return ChangeEpoch.load(deserializer);
-            case 2: return Genesis.load(deserializer);
-            case 3: return ConsensusCommitPrologue.load(deserializer);
-            default: throw new com.novi.serde.DeserializationError("Unknown variant index for TransactionKind: " + index);
+            case 0: return Other.load(deserializer);
+            case 1: return GasCoin.load(deserializer);
+            case 2: return StakedSui.load(deserializer);
+            case 3: return Coin.load(deserializer);
+            default: throw new com.novi.serde.DeserializationError("Unknown variant index for MoveObjectType: " + index);
         }
     }
 
@@ -22,22 +22,22 @@ public abstract class TransactionKind {
         return serializer.get_bytes();
     }
 
-    public static TransactionKind bcsDeserialize(byte[] input) throws com.novi.serde.DeserializationError {
+    public static MoveObjectType bcsDeserialize(byte[] input) throws com.novi.serde.DeserializationError {
         if (input == null) {
              throw new com.novi.serde.DeserializationError("Cannot deserialize null array");
         }
         com.novi.serde.Deserializer deserializer = new com.novi.bcs.BcsDeserializer(input);
-        TransactionKind value = deserialize(deserializer);
+        MoveObjectType value = deserialize(deserializer);
         if (deserializer.get_buffer_offset() < input.length) {
              throw new com.novi.serde.DeserializationError("Some input bytes were not read");
         }
         return value;
     }
 
-    public static final class ProgrammableTransaction extends TransactionKind {
-        public final io.sui.bcsgen.ProgrammableTransaction value;
+    public static final class Other extends MoveObjectType {
+        public final StructTag value;
 
-        public ProgrammableTransaction(io.sui.bcsgen.ProgrammableTransaction value) {
+        public Other(StructTag value) {
             java.util.Objects.requireNonNull(value, "value must not be null");
             this.value = value;
         }
@@ -49,10 +49,10 @@ public abstract class TransactionKind {
             serializer.decrease_container_depth();
         }
 
-        static ProgrammableTransaction load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        static Other load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
             deserializer.increase_container_depth();
             Builder builder = new Builder();
-            builder.value = io.sui.bcsgen.ProgrammableTransaction.deserialize(deserializer);
+            builder.value = StructTag.deserialize(deserializer);
             deserializer.decrease_container_depth();
             return builder.build();
         }
@@ -61,7 +61,7 @@ public abstract class TransactionKind {
             if (this == obj) return true;
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
-            ProgrammableTransaction other = (ProgrammableTransaction) obj;
+            Other other = (Other) obj;
             if (!java.util.Objects.equals(this.value, other.value)) { return false; }
             return true;
         }
@@ -73,35 +73,29 @@ public abstract class TransactionKind {
         }
 
         public static final class Builder {
-            public io.sui.bcsgen.ProgrammableTransaction value;
+            public StructTag value;
 
-            public ProgrammableTransaction build() {
-                return new ProgrammableTransaction(
+            public Other build() {
+                return new Other(
                     value
                 );
             }
         }
     }
 
-    public static final class ChangeEpoch extends TransactionKind {
-        public final io.sui.bcsgen.ChangeEpoch value;
-
-        public ChangeEpoch(io.sui.bcsgen.ChangeEpoch value) {
-            java.util.Objects.requireNonNull(value, "value must not be null");
-            this.value = value;
+    public static final class GasCoin extends MoveObjectType {
+        public GasCoin() {
         }
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
             serializer.serialize_variant_index(1);
-            value.serialize(serializer);
             serializer.decrease_container_depth();
         }
 
-        static ChangeEpoch load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        static GasCoin load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
             deserializer.increase_container_depth();
             Builder builder = new Builder();
-            builder.value = io.sui.bcsgen.ChangeEpoch.deserialize(deserializer);
             deserializer.decrease_container_depth();
             return builder.build();
         }
@@ -110,47 +104,36 @@ public abstract class TransactionKind {
             if (this == obj) return true;
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
-            ChangeEpoch other = (ChangeEpoch) obj;
-            if (!java.util.Objects.equals(this.value, other.value)) { return false; }
+            GasCoin other = (GasCoin) obj;
             return true;
         }
 
         public int hashCode() {
             int value = 7;
-            value = 31 * value + (this.value != null ? this.value.hashCode() : 0);
             return value;
         }
 
         public static final class Builder {
-            public io.sui.bcsgen.ChangeEpoch value;
-
-            public ChangeEpoch build() {
-                return new ChangeEpoch(
-                    value
+            public GasCoin build() {
+                return new GasCoin(
                 );
             }
         }
     }
 
-    public static final class Genesis extends TransactionKind {
-        public final GenesisTransaction value;
-
-        public Genesis(GenesisTransaction value) {
-            java.util.Objects.requireNonNull(value, "value must not be null");
-            this.value = value;
+    public static final class StakedSui extends MoveObjectType {
+        public StakedSui() {
         }
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
             serializer.serialize_variant_index(2);
-            value.serialize(serializer);
             serializer.decrease_container_depth();
         }
 
-        static Genesis load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        static StakedSui load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
             deserializer.increase_container_depth();
             Builder builder = new Builder();
-            builder.value = GenesisTransaction.deserialize(deserializer);
             deserializer.decrease_container_depth();
             return builder.build();
         }
@@ -159,32 +142,27 @@ public abstract class TransactionKind {
             if (this == obj) return true;
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
-            Genesis other = (Genesis) obj;
-            if (!java.util.Objects.equals(this.value, other.value)) { return false; }
+            StakedSui other = (StakedSui) obj;
             return true;
         }
 
         public int hashCode() {
             int value = 7;
-            value = 31 * value + (this.value != null ? this.value.hashCode() : 0);
             return value;
         }
 
         public static final class Builder {
-            public GenesisTransaction value;
-
-            public Genesis build() {
-                return new Genesis(
-                    value
+            public StakedSui build() {
+                return new StakedSui(
                 );
             }
         }
     }
 
-    public static final class ConsensusCommitPrologue extends TransactionKind {
-        public final io.sui.bcsgen.ConsensusCommitPrologue value;
+    public static final class Coin extends MoveObjectType {
+        public final TypeTag value;
 
-        public ConsensusCommitPrologue(io.sui.bcsgen.ConsensusCommitPrologue value) {
+        public Coin(TypeTag value) {
             java.util.Objects.requireNonNull(value, "value must not be null");
             this.value = value;
         }
@@ -196,10 +174,10 @@ public abstract class TransactionKind {
             serializer.decrease_container_depth();
         }
 
-        static ConsensusCommitPrologue load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        static Coin load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
             deserializer.increase_container_depth();
             Builder builder = new Builder();
-            builder.value = io.sui.bcsgen.ConsensusCommitPrologue.deserialize(deserializer);
+            builder.value = TypeTag.deserialize(deserializer);
             deserializer.decrease_container_depth();
             return builder.build();
         }
@@ -208,7 +186,7 @@ public abstract class TransactionKind {
             if (this == obj) return true;
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
-            ConsensusCommitPrologue other = (ConsensusCommitPrologue) obj;
+            Coin other = (Coin) obj;
             if (!java.util.Objects.equals(this.value, other.value)) { return false; }
             return true;
         }
@@ -220,10 +198,10 @@ public abstract class TransactionKind {
         }
 
         public static final class Builder {
-            public io.sui.bcsgen.ConsensusCommitPrologue value;
+            public TypeTag value;
 
-            public ConsensusCommitPrologue build() {
-                return new ConsensusCommitPrologue(
+            public Coin build() {
+                return new Coin(
                     value
                 );
             }

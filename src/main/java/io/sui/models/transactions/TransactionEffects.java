@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -17,7 +17,6 @@
 package io.sui.models.transactions;
 
 
-import io.sui.models.events.EventKind;
 import io.sui.models.objects.SuiObjectRef;
 import io.sui.models.objects.SuiOwnerObjectRef;
 import java.util.List;
@@ -31,7 +30,11 @@ import java.util.Objects;
  */
 public class TransactionEffects {
 
+  private String messageVersion = "v1";
+
   private ExecutionStatus status;
+
+  private Long executedEpoch;
 
   private GasCostSummary gasUsed;
 
@@ -49,11 +52,32 @@ public class TransactionEffects {
 
   private List<SuiObjectRef> wrapped;
 
+  @SuppressWarnings("checkstyle:MemberName")
+  private List<SuiObjectRef> unwrapped_then_deleted;
+
   private SuiOwnerObjectRef gasObject;
 
-  private List<EventKind> events;
+  private String eventsDigest;
 
   private List<String> dependencies;
+
+  /**
+   * Gets message version.
+   *
+   * @return the message version
+   */
+  public String getMessageVersion() {
+    return messageVersion;
+  }
+
+  /**
+   * Sets message version.
+   *
+   * @param messageVersion the message version
+   */
+  public void setMessageVersion(String messageVersion) {
+    this.messageVersion = messageVersion;
+  }
 
   /**
    * Gets status.
@@ -71,6 +95,24 @@ public class TransactionEffects {
    */
   public void setStatus(ExecutionStatus status) {
     this.status = status;
+  }
+
+  /**
+   * Gets executed epoch.
+   *
+   * @return the executed epoch
+   */
+  public Long getExecutedEpoch() {
+    return executedEpoch;
+  }
+
+  /**
+   * Sets executed epoch.
+   *
+   * @param executedEpoch the executed epoch
+   */
+  public void setExecutedEpoch(Long executedEpoch) {
+    this.executedEpoch = executedEpoch;
   }
 
   /**
@@ -218,6 +260,25 @@ public class TransactionEffects {
   }
 
   /**
+   * Gets unwrapped then deleted.
+   *
+   * @return the unwrapped then deleted
+   */
+  public List<SuiObjectRef> getUnwrapped_then_deleted() {
+    return unwrapped_then_deleted;
+  }
+
+  /**
+   * Sets unwrapped then deleted.
+   *
+   * @param unwrapped_then_deleted the unwrapped then deleted
+   */
+  @SuppressWarnings("checkstyle:ParameterName")
+  public void setUnwrapped_then_deleted(List<SuiObjectRef> unwrapped_then_deleted) {
+    this.unwrapped_then_deleted = unwrapped_then_deleted;
+  }
+
+  /**
    * Gets gas object.
    *
    * @return the gas object
@@ -236,21 +297,21 @@ public class TransactionEffects {
   }
 
   /**
-   * Gets events.
+   * Gets events digest.
    *
-   * @return the events
+   * @return the events digest
    */
-  public List<EventKind> getEvents() {
-    return events;
+  public String getEventsDigest() {
+    return eventsDigest;
   }
 
   /**
-   * Sets events.
+   * Sets events digest.
    *
-   * @param events the events
+   * @param eventsDigest the events digest
    */
-  public void setEvents(List<EventKind> events) {
-    this.events = events;
+  public void setEventsDigest(String eventsDigest) {
+    this.eventsDigest = eventsDigest;
   }
 
   /**
@@ -276,11 +337,13 @@ public class TransactionEffects {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (!(o instanceof TransactionEffects)) {
       return false;
     }
     TransactionEffects that = (TransactionEffects) o;
-    return status.equals(that.status)
+    return messageVersion.equals(that.messageVersion)
+        && status.equals(that.status)
+        && executedEpoch.equals(that.executedEpoch)
         && gasUsed.equals(that.gasUsed)
         && sharedObjects.equals(that.sharedObjects)
         && transactionDigest.equals(that.transactionDigest)
@@ -289,15 +352,18 @@ public class TransactionEffects {
         && unwrapped.equals(that.unwrapped)
         && deleted.equals(that.deleted)
         && wrapped.equals(that.wrapped)
+        && unwrapped_then_deleted.equals(that.unwrapped_then_deleted)
         && gasObject.equals(that.gasObject)
-        && events.equals(that.events)
+        && eventsDigest.equals(that.eventsDigest)
         && dependencies.equals(that.dependencies);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(
+        messageVersion,
         status,
+        executedEpoch,
         gasUsed,
         sharedObjects,
         transactionDigest,
@@ -306,16 +372,22 @@ public class TransactionEffects {
         unwrapped,
         deleted,
         wrapped,
+        unwrapped_then_deleted,
         gasObject,
-        events,
+        eventsDigest,
         dependencies);
   }
 
   @Override
   public String toString() {
     return "TransactionEffects{"
-        + "status="
+        + "messageVersion='"
+        + messageVersion
+        + '\''
+        + ", status="
         + status
+        + ", executedEpoch="
+        + executedEpoch
         + ", gasUsed="
         + gasUsed
         + ", sharedObjects="
@@ -333,10 +405,13 @@ public class TransactionEffects {
         + deleted
         + ", wrapped="
         + wrapped
+        + ", unwrapped_then_deleted="
+        + unwrapped_then_deleted
         + ", gasObject="
         + gasObject
-        + ", events="
-        + events
+        + ", eventsDigest='"
+        + eventsDigest
+        + '\''
         + ", dependencies="
         + dependencies
         + '}';

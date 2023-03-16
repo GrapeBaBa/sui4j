@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -17,6 +17,9 @@
 package io.sui.models.transactions;
 
 
+import io.sui.models.events.SuiEvent;
+import io.sui.models.objects.ObjectChange;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -27,32 +30,59 @@ import java.util.Objects;
  */
 public class TransactionResponse {
 
-  private CertifiedTransaction certificate;
+  private String digest;
+
+  private Transaction transaction;
 
   private TransactionEffects effects;
 
-  @SuppressWarnings("checkstyle:MemberName")
-  private Long timestamp_ms;
+  private List<SuiEvent> events;
 
   @SuppressWarnings("checkstyle:MemberName")
-  private ParsedTransactionResponseKind parsed_data;
+  private Long timestampMs;
+
+  private Long checkpoint;
+
+  private boolean confirmedLocalExecution;
+
+  private List<ObjectChange> objectChanges;
+
+  private List<String> errors;
 
   /**
-   * Gets certificate.
+   * Gets digest.
    *
-   * @return the certificate
+   * @return the digest
    */
-  public CertifiedTransaction getCertificate() {
-    return certificate;
+  public String getDigest() {
+    return digest;
   }
 
   /**
-   * Sets certificate.
+   * Sets digest.
    *
-   * @param certificate the certificate
+   * @param digest the digest
    */
-  public void setCertificate(CertifiedTransaction certificate) {
-    this.certificate = certificate;
+  public void setDigest(String digest) {
+    this.digest = digest;
+  }
+
+  /**
+   * Gets transaction.
+   *
+   * @return the transaction
+   */
+  public Transaction getTransaction() {
+    return transaction;
+  }
+
+  /**
+   * Sets transaction.
+   *
+   * @param transaction the transaction
+   */
+  public void setTransaction(Transaction transaction) {
+    this.transaction = transaction;
   }
 
   /**
@@ -74,41 +104,111 @@ public class TransactionResponse {
   }
 
   /**
+   * Gets events.
+   *
+   * @return the events
+   */
+  public List<SuiEvent> getEvents() {
+    return events;
+  }
+
+  /**
+   * Sets events.
+   *
+   * @param events the events
+   */
+  public void setEvents(List<SuiEvent> events) {
+    this.events = events;
+  }
+
+  /**
    * Gets timestamp ms.
    *
    * @return the timestamp ms
    */
-  public long getTimestamp_ms() {
-    return timestamp_ms;
+  public Long getTimestampMs() {
+    return timestampMs;
   }
 
   /**
    * Sets timestamp ms.
    *
-   * @param timestamp_ms the timestamp ms
+   * @param timestampMs the timestamp ms
    */
-  @SuppressWarnings("checkstyle:ParameterName")
-  public void setTimestamp_ms(long timestamp_ms) {
-    this.timestamp_ms = timestamp_ms;
+  public void setTimestampMs(Long timestampMs) {
+    this.timestampMs = timestampMs;
   }
 
   /**
-   * Gets parsed data.
+   * Gets checkpoint.
    *
-   * @return the parsed data
+   * @return the checkpoint
    */
-  public ParsedTransactionResponseKind getParsed_data() {
-    return parsed_data;
+  public Long getCheckpoint() {
+    return checkpoint;
   }
 
   /**
-   * Sets parsed data.
+   * Sets checkpoint.
    *
-   * @param parsed_data the parsed data
+   * @param checkpoint the checkpoint
    */
-  @SuppressWarnings("checkstyle:ParameterName")
-  public void setParsed_data(ParsedTransactionResponseKind parsed_data) {
-    this.parsed_data = parsed_data;
+  public void setCheckpoint(Long checkpoint) {
+    this.checkpoint = checkpoint;
+  }
+
+  /**
+   * Is confirmed local execution boolean.
+   *
+   * @return the boolean
+   */
+  public boolean isConfirmedLocalExecution() {
+    return confirmedLocalExecution;
+  }
+
+  /**
+   * Sets confirmed local execution.
+   *
+   * @param confirmedLocalExecution the confirmed local execution
+   */
+  public void setConfirmedLocalExecution(boolean confirmedLocalExecution) {
+    this.confirmedLocalExecution = confirmedLocalExecution;
+  }
+
+  /**
+   * Gets object changes.
+   *
+   * @return the object changes
+   */
+  public List<ObjectChange> getObjectChanges() {
+    return objectChanges;
+  }
+
+  /**
+   * Sets object changes.
+   *
+   * @param objectChanges the object changes
+   */
+  public void setObjectChanges(List<ObjectChange> objectChanges) {
+    this.objectChanges = objectChanges;
+  }
+
+  /**
+   * Gets errors.
+   *
+   * @return the errors
+   */
+  public List<String> getErrors() {
+    return errors;
+  }
+
+  /**
+   * Sets errors.
+   *
+   * @param errors the errors
+   */
+  public void setErrors(List<String> errors) {
+    this.errors = errors;
   }
 
   @Override
@@ -120,28 +220,53 @@ public class TransactionResponse {
       return false;
     }
     TransactionResponse that = (TransactionResponse) o;
-    return certificate.equals(that.certificate)
+    return confirmedLocalExecution == that.confirmedLocalExecution
+        && digest.equals(that.digest)
+        && transaction.equals(that.transaction)
         && effects.equals(that.effects)
-        && timestamp_ms.equals(that.timestamp_ms)
-        && parsed_data.equals(that.parsed_data);
+        && events.equals(that.events)
+        && timestampMs.equals(that.timestampMs)
+        && checkpoint.equals(that.checkpoint)
+        && objectChanges.equals(that.objectChanges)
+        && errors.equals(that.errors);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(certificate, effects, timestamp_ms, parsed_data);
+    return Objects.hash(
+        digest,
+        transaction,
+        effects,
+        events,
+        timestampMs,
+        checkpoint,
+        confirmedLocalExecution,
+        objectChanges,
+        errors);
   }
 
   @Override
   public String toString() {
     return "TransactionResponse{"
-        + "certificate="
-        + certificate
+        + "digest='"
+        + digest
+        + '\''
+        + ", transaction="
+        + transaction
         + ", effects="
         + effects
-        + ", timestamp_ms="
-        + timestamp_ms
-        + ", parsed_data="
-        + parsed_data
+        + ", events="
+        + events
+        + ", timestampMs="
+        + timestampMs
+        + ", checkpoint="
+        + checkpoint
+        + ", confirmedLocalExecution="
+        + confirmedLocalExecution
+        + ", objectChanges="
+        + objectChanges
+        + ", errors="
+        + errors
         + '}';
   }
 }

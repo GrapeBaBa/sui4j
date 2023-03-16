@@ -17,8 +17,6 @@
 package io.sui;
 
 
-import io.sui.clients.LocalTransactionBuilder;
-import io.sui.clients.QueryClientImpl;
 import io.sui.jsonrpc.GsonJsonHandler;
 import io.sui.jsonrpc.JsonHandler;
 import io.sui.jsonrpc.JsonRpcClientProvider;
@@ -38,13 +36,14 @@ class LocalTransactionBuilderIntTests {
 
   private static final JsonHandler jsonHandler = new GsonJsonHandler();
 
-  private static LocalTransactionBuilder transactionBuilder;
+  //  private static LocalTransactionBuilder transactionBuilder;
 
   /** Before all. */
   @BeforeAll
   static void beforeAll() {
     JsonRpcClientProvider jsonRpcClientProvider =
         new OkHttpJsonRpcClientProvider(BASE_URL, jsonHandler);
-    transactionBuilder = new LocalTransactionBuilder(new QueryClientImpl(jsonRpcClientProvider));
+    //    transactionBuilder = new LocalTransactionBuilder(new
+    // QueryClientImpl(jsonRpcClientProvider));
   }
 }

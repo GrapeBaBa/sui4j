@@ -84,12 +84,15 @@ public abstract class ObjectArg {
     public static final class SharedObject extends ObjectArg {
         public final ObjectID id;
         public final SequenceNumber initial_shared_version;
+        public final Boolean mutable;
 
-        public SharedObject(ObjectID id, SequenceNumber initial_shared_version) {
+        public SharedObject(ObjectID id, SequenceNumber initial_shared_version, Boolean mutable) {
             java.util.Objects.requireNonNull(id, "id must not be null");
             java.util.Objects.requireNonNull(initial_shared_version, "initial_shared_version must not be null");
+            java.util.Objects.requireNonNull(mutable, "mutable must not be null");
             this.id = id;
             this.initial_shared_version = initial_shared_version;
+            this.mutable = mutable;
         }
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
@@ -97,6 +100,7 @@ public abstract class ObjectArg {
             serializer.serialize_variant_index(1);
             id.serialize(serializer);
             initial_shared_version.serialize(serializer);
+            serializer.serialize_bool(mutable);
             serializer.decrease_container_depth();
         }
 
@@ -105,6 +109,7 @@ public abstract class ObjectArg {
             Builder builder = new Builder();
             builder.id = ObjectID.deserialize(deserializer);
             builder.initial_shared_version = SequenceNumber.deserialize(deserializer);
+            builder.mutable = deserializer.deserialize_bool();
             deserializer.decrease_container_depth();
             return builder.build();
         }
@@ -116,6 +121,7 @@ public abstract class ObjectArg {
             SharedObject other = (SharedObject) obj;
             if (!java.util.Objects.equals(this.id, other.id)) { return false; }
             if (!java.util.Objects.equals(this.initial_shared_version, other.initial_shared_version)) { return false; }
+            if (!java.util.Objects.equals(this.mutable, other.mutable)) { return false; }
             return true;
         }
 
@@ -123,17 +129,20 @@ public abstract class ObjectArg {
             int value = 7;
             value = 31 * value + (this.id != null ? this.id.hashCode() : 0);
             value = 31 * value + (this.initial_shared_version != null ? this.initial_shared_version.hashCode() : 0);
+            value = 31 * value + (this.mutable != null ? this.mutable.hashCode() : 0);
             return value;
         }
 
         public static final class Builder {
             public ObjectID id;
             public SequenceNumber initial_shared_version;
+            public Boolean mutable;
 
             public SharedObject build() {
                 return new SharedObject(
                     id,
-                    initial_shared_version
+                    initial_shared_version,
+                    mutable
                 );
             }
         }

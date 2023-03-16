@@ -72,16 +72,20 @@ public abstract class ExecutionStatus {
 
     public static final class Failure extends ExecutionStatus {
         public final ExecutionFailureStatus error;
+        public final java.util.Optional<@com.novi.serde.Unsigned Long> command;
 
-        public Failure(ExecutionFailureStatus error) {
+        public Failure(ExecutionFailureStatus error, java.util.Optional<@com.novi.serde.Unsigned Long> command) {
             java.util.Objects.requireNonNull(error, "error must not be null");
+            java.util.Objects.requireNonNull(command, "command must not be null");
             this.error = error;
+            this.command = command;
         }
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
             serializer.serialize_variant_index(1);
             error.serialize(serializer);
+            TraitHelpers.serialize_option_u64(command, serializer);
             serializer.decrease_container_depth();
         }
 
@@ -89,6 +93,7 @@ public abstract class ExecutionStatus {
             deserializer.increase_container_depth();
             Builder builder = new Builder();
             builder.error = ExecutionFailureStatus.deserialize(deserializer);
+            builder.command = TraitHelpers.deserialize_option_u64(deserializer);
             deserializer.decrease_container_depth();
             return builder.build();
         }
@@ -99,21 +104,25 @@ public abstract class ExecutionStatus {
             if (getClass() != obj.getClass()) return false;
             Failure other = (Failure) obj;
             if (!java.util.Objects.equals(this.error, other.error)) { return false; }
+            if (!java.util.Objects.equals(this.command, other.command)) { return false; }
             return true;
         }
 
         public int hashCode() {
             int value = 7;
             value = 31 * value + (this.error != null ? this.error.hashCode() : 0);
+            value = 31 * value + (this.command != null ? this.command.hashCode() : 0);
             return value;
         }
 
         public static final class Builder {
             public ExecutionFailureStatus error;
+            public java.util.Optional<@com.novi.serde.Unsigned Long> command;
 
             public Failure build() {
                 return new Failure(
-                    error
+                    error,
+                    command
                 );
             }
         }

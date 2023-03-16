@@ -49,6 +49,7 @@ import io.sui.models.transactions.TransactionQuery;
 import io.sui.models.transactions.TransactionQuery.AllQuery;
 import io.sui.models.transactions.TransactionQuery.FromAddressQuery;
 import io.sui.models.transactions.TransactionResponse;
+import io.sui.models.transactions.TransactionResponseOptions;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -267,18 +268,15 @@ class QueryClientImplIntTests {
   @Test
   @DisplayName("Test getTransaction.")
   void getTransaction() throws ExecutionException, InterruptedException {
+    TransactionResponseOptions options = new TransactionResponseOptions();
+    options.setShowEffects(true);
+    options.setShowEvents(true);
+    options.setShowObjectChanges(true);
+    options.setShowInput(true);
     CompletableFuture<TransactionResponse> res =
-        client.getTransaction("3Dda4/74LXf6GmOxMxp3qdbW/WdQ6/8EHobZ1LvSyYk=");
-    CompletableFuture<Object> future = new CompletableFuture<>();
-    res.whenComplete(
-        (transactionResponse, throwable) -> {
-          if (throwable != null) {
-            future.complete(throwable);
-          } else {
-            future.complete(transactionResponse);
-          }
-        });
-    System.out.println(future.get());
+        client.getTransaction("2zcrJHVMnqjQ47iauQsSqdDzpJVKzTrrohu4mYcGr2JG", options);
+    TransactionResponse transactionResponse = res.get();
+    System.out.println(transactionResponse);
     //    TransactionResponse transactionResponse = res.get();
     //    System.out.println(transactionResponse);
     //    assertEquals(1,
@@ -347,8 +345,13 @@ class QueryClientImplIntTests {
   @Test
   @DisplayName("Test getTransactionAuthSigners.")
   void getTransactionAuthSigners() throws ExecutionException, InterruptedException {
+    TransactionResponseOptions options = new TransactionResponseOptions();
+    options.setShowEffects(true);
+    options.setShowEvents(true);
+    options.setShowObjectChanges(true);
+    options.setShowInput(true);
     CompletableFuture<TransactionResponse> res =
-        client.getTransaction("49rpBTf2KUkf4aroydtZGAb5rsLGYoutoEPowNu3962q");
+        client.getTransaction("49rpBTf2KUkf4aroydtZGAb5rsLGYoutoEPowNu3962q", options);
     CompletableFuture<Object> future = new CompletableFuture<>();
     res.whenComplete(
         (transactionResponse, throwable) -> {

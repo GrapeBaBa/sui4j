@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -17,8 +17,8 @@
 package io.sui.models.transactions;
 
 
-import io.sui.models.objects.SuiObjectRef;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The type Transaction data.
@@ -28,93 +28,74 @@ import java.util.List;
  */
 public class TransactionData {
 
-  private Long gasBudget;
+  private String messageVersion = "v1";
 
-  private SuiObjectRef gasPayment;
+  private GasData gasData;
 
   private String sender;
 
   private List<TransactionKind> transactions;
 
-  /**
-   * Gets gas budget.
-   *
-   * @return the gas budget
-   */
-  public Long getGasBudget() {
-    return gasBudget;
+  public String getMessageVersion() {
+    return messageVersion;
   }
 
-  /**
-   * Sets gas budget.
-   *
-   * @param gasBudget the gas budget
-   */
-  public void setGasBudget(Long gasBudget) {
-    this.gasBudget = gasBudget;
+  public void setMessageVersion(String messageVersion) {
+    this.messageVersion = messageVersion;
   }
 
-  /**
-   * Gets gas payment.
-   *
-   * @return the gas payment
-   */
-  public SuiObjectRef getGasPayment() {
-    return gasPayment;
+  public GasData getGasData() {
+    return gasData;
   }
 
-  /**
-   * Sets gas payment.
-   *
-   * @param gasPayment the gas payment
-   */
-  public void setGasPayment(SuiObjectRef gasPayment) {
-    this.gasPayment = gasPayment;
+  public void setGasData(GasData gasData) {
+    this.gasData = gasData;
   }
 
-  /**
-   * Gets sender.
-   *
-   * @return the sender
-   */
   public String getSender() {
     return sender;
   }
 
-  /**
-   * Sets sender.
-   *
-   * @param sender the sender
-   */
   public void setSender(String sender) {
     this.sender = sender;
   }
 
-  /**
-   * Gets transactions.
-   *
-   * @return the transactions
-   */
   public List<TransactionKind> getTransactions() {
     return transactions;
   }
 
-  /**
-   * Sets transactions.
-   *
-   * @param transactions the transactions
-   */
   public void setTransactions(List<TransactionKind> transactions) {
     this.transactions = transactions;
   }
 
   @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof TransactionData)) {
+      return false;
+    }
+    TransactionData that = (TransactionData) o;
+    return messageVersion.equals(that.messageVersion)
+        && gasData.equals(that.gasData)
+        && sender.equals(that.sender)
+        && transactions.equals(that.transactions);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(messageVersion, gasData, sender, transactions);
+  }
+
+  @Override
   public String toString() {
     return "TransactionData{"
-        + "gasBudget="
-        + gasBudget
-        + ", gasPayment="
-        + gasPayment
+        + "messageVersion='"
+        + messageVersion
+        + '\''
+        + ", gasData="
+        + gasData
         + ", sender='"
         + sender
         + '\''

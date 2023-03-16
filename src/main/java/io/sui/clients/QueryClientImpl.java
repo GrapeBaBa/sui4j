@@ -42,6 +42,7 @@ import io.sui.models.objects.ValidatorMetadata;
 import io.sui.models.transactions.PaginatedTransactionDigests;
 import io.sui.models.transactions.TransactionQuery;
 import io.sui.models.transactions.TransactionResponse;
+import io.sui.models.transactions.TransactionResponseOptions;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -117,10 +118,11 @@ public class QueryClientImpl implements QueryClient {
   }
 
   @Override
-  public CompletableFuture<TransactionResponse> getTransaction(String digest) {
+  public CompletableFuture<TransactionResponse> getTransaction(
+      String digest, TransactionResponseOptions options) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_getTransaction", Lists.newArrayList(digest));
+            "sui_getTransaction", Lists.newArrayList(digest, options));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/sui_getTransaction", request, new TypeToken<TransactionResponse>() {}.getType());
   }

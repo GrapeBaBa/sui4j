@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -17,6 +17,7 @@
 package io.sui.models.transactions;
 
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -26,335 +27,6 @@ import java.util.Objects;
  * @since 2022.11
  */
 public abstract class TransactionKind {
-
-  /** The type Transfer object transaction kind. */
-  public static class TransferObjectTransactionKind extends TransactionKind {
-
-    @SuppressWarnings("checkstyle:MemberName")
-    private TransferObject TransferObject;
-
-    /**
-     * Gets transfer object.
-     *
-     * @return the transfer object
-     */
-    public TransferObject getTransferObject() {
-      return TransferObject;
-    }
-
-    /**
-     * Sets transfer object.
-     *
-     * @param transferObject the transfer object
-     */
-    public void setTransferObject(TransferObject transferObject) {
-      TransferObject = transferObject;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (!(o instanceof TransferObjectTransactionKind)) {
-        return false;
-      }
-      TransferObjectTransactionKind that = (TransferObjectTransactionKind) o;
-      return TransferObject.equals(that.TransferObject);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(TransferObject);
-    }
-
-    @Override
-    public String toString() {
-      return "TransferObjectTransactionKind{" + "TransferObject=" + TransferObject + '}';
-    }
-  }
-
-  /** The type Publish transaction kind. */
-  public static class PublishTransactionKind extends TransactionKind {
-
-    @SuppressWarnings("checkstyle:MemberName")
-    private MovePackage Publish;
-
-    /**
-     * Gets publish.
-     *
-     * @return the publish
-     */
-    public MovePackage getPublish() {
-      return Publish;
-    }
-
-    /**
-     * Sets publish.
-     *
-     * @param publish the publish
-     */
-    public void setPublish(MovePackage publish) {
-      Publish = publish;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (!(o instanceof PublishTransactionKind)) {
-        return false;
-      }
-      PublishTransactionKind that = (PublishTransactionKind) o;
-      return Publish.equals(that.Publish);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(Publish);
-    }
-
-    @Override
-    public String toString() {
-      return "PublishTransactionKind{" + "Publish=" + Publish + '}';
-    }
-  }
-
-  /** The type Call transaction kind. */
-  public static class CallTransactionKind extends TransactionKind {
-
-    @SuppressWarnings("checkstyle:MemberName")
-    private MoveCall Call;
-
-    /**
-     * Gets call.
-     *
-     * @return the call
-     */
-    public MoveCall getCall() {
-      return Call;
-    }
-
-    /**
-     * Sets call.
-     *
-     * @param call the call
-     */
-    public void setCall(MoveCall call) {
-      Call = call;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (!(o instanceof CallTransactionKind)) {
-        return false;
-      }
-      CallTransactionKind that = (CallTransactionKind) o;
-      return Call.equals(that.Call);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(Call);
-    }
-
-    @Override
-    public String toString() {
-      return "CallTransactionKind{" + "Call=" + Call + '}';
-    }
-  }
-
-  /** The type Transfer sui transaction kind. */
-  public static class TransferSuiTransactionKind extends TransactionKind {
-
-    @SuppressWarnings("checkstyle:MemberName")
-    private TransferSui TransferSui;
-
-    /**
-     * Gets transfer sui.
-     *
-     * @return the transfer sui
-     */
-    public TransferSui getTransferSui() {
-      return TransferSui;
-    }
-
-    /**
-     * Sets transfer sui.
-     *
-     * @param transferSui the transfer sui
-     */
-    public void setTransferSui(TransferSui transferSui) {
-      TransferSui = transferSui;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (!(o instanceof TransferSuiTransactionKind)) {
-        return false;
-      }
-      TransferSuiTransactionKind that = (TransferSuiTransactionKind) o;
-      return TransferSui.equals(that.TransferSui);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(TransferSui);
-    }
-
-    @Override
-    public String toString() {
-      return "TransferSuiTransactionKind{" + "TransferSui=" + TransferSui + '}';
-    }
-  }
-
-  /** The type Pay transaction kind. */
-  public static class PayTransactionKind extends TransactionKind {
-
-    @SuppressWarnings("checkstyle:MemberName")
-    private Pay Pay;
-
-    /**
-     * Gets pay.
-     *
-     * @return the pay
-     */
-    public Pay getPay() {
-      return Pay;
-    }
-
-    /**
-     * Sets pay.
-     *
-     * @param pay the pay
-     */
-    public void setPay(Pay pay) {
-      Pay = pay;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (!(o instanceof PayTransactionKind)) {
-        return false;
-      }
-      PayTransactionKind that = (PayTransactionKind) o;
-      return Pay.equals(that.Pay);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(Pay);
-    }
-
-    @Override
-    public String toString() {
-      return "PayTransactionKind{" + "Pay=" + Pay + '}';
-    }
-  }
-
-  /** The type Pay sui transaction kind. */
-  public static class PaySuiTransactionKind extends TransactionKind {
-
-    @SuppressWarnings("checkstyle:MemberName")
-    private Pay PaySui;
-
-    /**
-     * Gets pay sui.
-     *
-     * @return the pay sui
-     */
-    public Pay getPaySui() {
-      return PaySui;
-    }
-
-    /**
-     * Sets pay sui.
-     *
-     * @param paySui the pay sui
-     */
-    public void setPaySui(Pay paySui) {
-      PaySui = paySui;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (!(o instanceof PaySuiTransactionKind)) {
-        return false;
-      }
-      PaySuiTransactionKind that = (PaySuiTransactionKind) o;
-      return PaySui.equals(that.PaySui);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(PaySui);
-    }
-
-    @Override
-    public String toString() {
-      return "PaySuiTransactionKind{" + "PaySui=" + PaySui + '}';
-    }
-  }
-
-  /** The type Pay all sui transaction kind. */
-  public static class PayAllSuiTransactionKind extends TransactionKind {
-
-    @SuppressWarnings("checkstyle:MemberName")
-    private PayAllSui PayAllSui;
-
-    /**
-     * Gets pay all sui.
-     *
-     * @return the pay all sui
-     */
-    public PayAllSui getPayAllSui() {
-      return PayAllSui;
-    }
-
-    /**
-     * Sets pay all sui.
-     *
-     * @param payAllSui the pay all sui
-     */
-    public void setPayAllSui(PayAllSui payAllSui) {
-      PayAllSui = payAllSui;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (!(o instanceof PayAllSuiTransactionKind)) {
-        return false;
-      }
-      PayAllSuiTransactionKind that = (PayAllSuiTransactionKind) o;
-      return PayAllSui.equals(that.PayAllSui);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(PayAllSui);
-    }
-
-    @Override
-    public String toString() {
-      return "PayAllSuiTransactionKind{" + "PayAllSui=" + PayAllSui + '}';
-    }
-  }
 
   /** The type Change epoch transaction kind. */
   public static class ChangeEpochTransactionKind extends TransactionKind {
@@ -400,6 +72,529 @@ public abstract class TransactionKind {
     @Override
     public String toString() {
       return "ChangeEpochTransactionKind{" + "ChangeEpoch=" + ChangeEpoch + '}';
+    }
+  }
+
+  /** The type Genesis transaction kind. */
+  public static class GenesisTransactionKind extends TransactionKind {
+
+    @SuppressWarnings("checkstyle:MemberName")
+    private Genesis Genesis;
+
+    /**
+     * Gets genesis.
+     *
+     * @return the genesis
+     */
+    public Genesis getGenesis() {
+      return Genesis;
+    }
+
+    /**
+     * Sets genesis.
+     *
+     * @param genesis the genesis
+     */
+    public void setGenesis(Genesis genesis) {
+      Genesis = genesis;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof GenesisTransactionKind)) {
+        return false;
+      }
+      GenesisTransactionKind that = (GenesisTransactionKind) o;
+      return Genesis.equals(that.Genesis);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(Genesis);
+    }
+
+    @Override
+    public String toString() {
+      return "GenesisTransactionKind{" + "Genesis=" + Genesis + '}';
+    }
+  }
+
+  /** The type Consensus commit prologue transaction kind. */
+  public static class ConsensusCommitPrologueTransactionKind extends TransactionKind {
+
+    @SuppressWarnings("checkstyle:MemberName")
+    private ConsensusCommitPrologue ConsensusCommitPrologue;
+
+    /**
+     * Gets consensus commit prologue.
+     *
+     * @return the consensus commit prologue
+     */
+    public TransactionKind.ConsensusCommitPrologue getConsensusCommitPrologue() {
+      return ConsensusCommitPrologue;
+    }
+
+    /**
+     * Sets consensus commit prologue.
+     *
+     * @param consensusCommitPrologue the consensus commit prologue
+     */
+    public void setConsensusCommitPrologue(
+        TransactionKind.ConsensusCommitPrologue consensusCommitPrologue) {
+      ConsensusCommitPrologue = consensusCommitPrologue;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof ConsensusCommitPrologueTransactionKind)) {
+        return false;
+      }
+      ConsensusCommitPrologueTransactionKind that = (ConsensusCommitPrologueTransactionKind) o;
+      return ConsensusCommitPrologue.equals(that.ConsensusCommitPrologue);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(ConsensusCommitPrologue);
+    }
+
+    @Override
+    public String toString() {
+      return "ConsensusCommitPrologueTransactionKind{"
+          + "ConsensusCommitPrologue="
+          + ConsensusCommitPrologue
+          + '}';
+    }
+  }
+
+  /** The type Programmable transaction transaction kind. */
+  public static class ProgrammableTransactionTransactionKind extends TransactionKind {
+
+    @SuppressWarnings("checkstyle:MemberName")
+    private ProgrammableTransaction ProgrammableTransaction;
+
+    /**
+     * Gets programmable transaction.
+     *
+     * @return the programmable transaction
+     */
+    public TransactionKind.ProgrammableTransaction getProgrammableTransaction() {
+      return ProgrammableTransaction;
+    }
+
+    /**
+     * Sets programmable transaction.
+     *
+     * @param programmableTransaction the programmable transaction
+     */
+    public void setProgrammableTransaction(
+        TransactionKind.ProgrammableTransaction programmableTransaction) {
+      ProgrammableTransaction = programmableTransaction;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof ProgrammableTransactionTransactionKind)) {
+        return false;
+      }
+      ProgrammableTransactionTransactionKind that = (ProgrammableTransactionTransactionKind) o;
+      return ProgrammableTransaction.equals(that.ProgrammableTransaction);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(ProgrammableTransaction);
+    }
+
+    @Override
+    public String toString() {
+      return "ProgrammableTransactionTransactionKind{"
+          + "ProgrammableTransaction="
+          + ProgrammableTransaction
+          + '}';
+    }
+  }
+
+  /**
+   * The type Genesis.
+   *
+   * @author grapebaba
+   * @since 2023.03
+   */
+  public static class Genesis {
+
+    private List<String> objects;
+
+    /**
+     * Gets objects.
+     *
+     * @return the objects
+     */
+    public List<String> getObjects() {
+      return objects;
+    }
+
+    /**
+     * Sets objects.
+     *
+     * @param objects the objects
+     */
+    public void setObjects(List<String> objects) {
+      this.objects = objects;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof Genesis)) {
+        return false;
+      }
+      Genesis genesis = (Genesis) o;
+      return objects.equals(genesis.objects);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(objects);
+    }
+
+    @Override
+    public String toString() {
+      return "Genesis{" + "objects=" + objects + '}';
+    }
+  }
+
+  /**
+   * The type Change epoch.
+   *
+   * @author grapebaba
+   * @since 2023.03
+   */
+  public static class ChangeEpoch {
+
+    private Long epoch;
+
+    @SuppressWarnings("checkstyle:MemberName")
+    private Long storage_charge;
+
+    @SuppressWarnings("checkstyle:MemberName")
+    private Long computation_charge;
+
+    @SuppressWarnings("checkstyle:MemberName")
+    private Long storage_rebate;
+
+    @SuppressWarnings("checkstyle:MemberName")
+    private Long epoch_start_timestamp_ms;
+
+    /**
+     * Gets storage rebate.
+     *
+     * @return the storage rebate
+     */
+    public long getStorage_rebate() {
+      return storage_rebate;
+    }
+
+    /**
+     * Sets storage rebate.
+     *
+     * @param storage_rebate the storage rebate
+     */
+    @SuppressWarnings("checkstyle:ParameterName")
+    public void setStorage_rebate(long storage_rebate) {
+      this.storage_rebate = storage_rebate;
+    }
+
+    /**
+     * Gets epoch start timestamp ms.
+     *
+     * @return the epoch start timestamp ms
+     */
+    public long getEpoch_start_timestamp_ms() {
+      return epoch_start_timestamp_ms;
+    }
+
+    /**
+     * Sets epoch start timestamp ms.
+     *
+     * @param epoch_start_timestamp_ms the epoch start timestamp ms
+     */
+    @SuppressWarnings("checkstyle:ParameterName")
+    public void setEpoch_start_timestamp_ms(long epoch_start_timestamp_ms) {
+      this.epoch_start_timestamp_ms = epoch_start_timestamp_ms;
+    }
+
+    /**
+     * Gets epoch.
+     *
+     * @return the epoch
+     */
+    public Long getEpoch() {
+      return epoch;
+    }
+
+    /**
+     * Sets epoch.
+     *
+     * @param epoch the epoch
+     */
+    public void setEpoch(Long epoch) {
+      this.epoch = epoch;
+    }
+
+    /**
+     * Gets storage charge.
+     *
+     * @return the storage charge
+     */
+    public Long getStorage_charge() {
+      return storage_charge;
+    }
+
+    /**
+     * Sets storage charge.
+     *
+     * @param storage_charge the storage charge
+     */
+    @SuppressWarnings("checkstyle:ParameterName")
+    public void setStorage_charge(Long storage_charge) {
+      this.storage_charge = storage_charge;
+    }
+
+    /**
+     * Gets computation charge.
+     *
+     * @return the computation charge
+     */
+    public Long getComputation_charge() {
+      return computation_charge;
+    }
+
+    /**
+     * Sets computation charge.
+     *
+     * @param computation_charge the computation charge
+     */
+    @SuppressWarnings("checkstyle:ParameterName")
+    public void setComputation_charge(Long computation_charge) {
+      this.computation_charge = computation_charge;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof ChangeEpoch)) {
+        return false;
+      }
+      ChangeEpoch that = (ChangeEpoch) o;
+      return epoch.equals(that.epoch)
+          && storage_charge.equals(that.storage_charge)
+          && computation_charge.equals(that.computation_charge)
+          && storage_rebate.equals(that.storage_rebate)
+          && epoch_start_timestamp_ms.equals(that.epoch_start_timestamp_ms);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(
+          epoch, storage_charge, computation_charge, storage_rebate, epoch_start_timestamp_ms);
+    }
+
+    @Override
+    public String toString() {
+      return "ChangeEpoch{"
+          + "epoch="
+          + epoch
+          + ", storage_charge="
+          + storage_charge
+          + ", computation_charge="
+          + computation_charge
+          + ", storage_rebate="
+          + storage_rebate
+          + ", epoch_start_timestamp_ms="
+          + epoch_start_timestamp_ms
+          + '}';
+    }
+  }
+
+  /**
+   * The type Consensus commit prologue.
+   *
+   * @author grapebaba
+   * @since 2023.03
+   */
+  public static class ConsensusCommitPrologue {
+
+    private Long epoch;
+
+    private Long round;
+
+    @SuppressWarnings("checkstyle:MemberName")
+    private Long commit_timestamp_ms;
+
+    /**
+     * Gets epoch.
+     *
+     * @return the epoch
+     */
+    public long getEpoch() {
+      return epoch;
+    }
+
+    /**
+     * Sets epoch.
+     *
+     * @param epoch the epoch
+     */
+    public void setEpoch(long epoch) {
+      this.epoch = epoch;
+    }
+
+    /**
+     * Gets round.
+     *
+     * @return the round
+     */
+    public long getRound() {
+      return round;
+    }
+
+    /**
+     * Sets round.
+     *
+     * @param round the round
+     */
+    public void setRound(long round) {
+      this.round = round;
+    }
+
+    /**
+     * Gets commit timestamp ms.
+     *
+     * @return the commit timestamp ms
+     */
+    public long getCommit_timestamp_ms() {
+      return commit_timestamp_ms;
+    }
+
+    /**
+     * Sets commit timestamp ms.
+     *
+     * @param commit_timestamp_ms the commit timestamp ms
+     */
+    @SuppressWarnings("checkstyle:ParameterName")
+    public void setCommit_timestamp_ms(long commit_timestamp_ms) {
+      this.commit_timestamp_ms = commit_timestamp_ms;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof ConsensusCommitPrologue)) {
+        return false;
+      }
+      ConsensusCommitPrologue that = (ConsensusCommitPrologue) o;
+      return epoch.equals(that.epoch)
+          && round.equals(that.round)
+          && commit_timestamp_ms.equals(that.commit_timestamp_ms);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(epoch, round, commit_timestamp_ms);
+    }
+
+    @Override
+    public String toString() {
+      return "ConsensusCommitPrologue{"
+          + "epoch="
+          + epoch
+          + ", round="
+          + round
+          + ", commit_timestamp_ms="
+          + commit_timestamp_ms
+          + '}';
+    }
+  }
+
+  /** The type Programmable transaction. */
+  public static class ProgrammableTransaction {
+
+    private List<Command> commands;
+
+    private List<?> inputs;
+
+    /**
+     * Gets commands.
+     *
+     * @return the commands
+     */
+    public List<Command> getCommands() {
+      return commands;
+    }
+
+    /**
+     * Sets commands.
+     *
+     * @param commands the commands
+     */
+    public void setCommands(List<Command> commands) {
+      this.commands = commands;
+    }
+
+    /**
+     * Gets inputs.
+     *
+     * @return the inputs
+     */
+    public List<?> getInputs() {
+      return inputs;
+    }
+
+    /**
+     * Sets inputs.
+     *
+     * @param inputs the inputs
+     */
+    public void setInputs(List<?> inputs) {
+      this.inputs = inputs;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof ProgrammableTransaction)) {
+        return false;
+      }
+      ProgrammableTransaction that = (ProgrammableTransaction) o;
+      return commands.equals(that.commands) && inputs.equals(that.inputs);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(commands, inputs);
+    }
+
+    @Override
+    public String toString() {
+      return "ProgrammableTransaction{" + "commands=" + commands + ", inputs=" + inputs + '}';
     }
   }
 }

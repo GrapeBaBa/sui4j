@@ -1,14 +1,14 @@
 package io.sui.bcsgen;
 
 
-public final class MoveCall {
+public final class ProgrammableMoveCall {
     public final ObjectID Package;
     public final Identifier module;
     public final Identifier function;
     public final java.util.List<TypeTag> type_arguments;
-    public final java.util.List<CallArg> arguments;
+    public final java.util.List<Argument> arguments;
 
-    public MoveCall(ObjectID Package, Identifier module, Identifier function, java.util.List<TypeTag> type_arguments, java.util.List<CallArg> arguments) {
+    public ProgrammableMoveCall(ObjectID Package, Identifier module, Identifier function, java.util.List<TypeTag> type_arguments, java.util.List<Argument> arguments) {
         java.util.Objects.requireNonNull(Package, "Package must not be null");
         java.util.Objects.requireNonNull(module, "module must not be null");
         java.util.Objects.requireNonNull(function, "function must not be null");
@@ -27,7 +27,7 @@ public final class MoveCall {
         module.serialize(serializer);
         function.serialize(serializer);
         TraitHelpers.serialize_vector_TypeTag(type_arguments, serializer);
-        TraitHelpers.serialize_vector_CallArg(arguments, serializer);
+        TraitHelpers.serialize_vector_Argument(arguments, serializer);
         serializer.decrease_container_depth();
     }
 
@@ -37,24 +37,24 @@ public final class MoveCall {
         return serializer.get_bytes();
     }
 
-    public static MoveCall deserialize(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+    public static ProgrammableMoveCall deserialize(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
         deserializer.increase_container_depth();
         Builder builder = new Builder();
         builder.Package = ObjectID.deserialize(deserializer);
         builder.module = Identifier.deserialize(deserializer);
         builder.function = Identifier.deserialize(deserializer);
         builder.type_arguments = TraitHelpers.deserialize_vector_TypeTag(deserializer);
-        builder.arguments = TraitHelpers.deserialize_vector_CallArg(deserializer);
+        builder.arguments = TraitHelpers.deserialize_vector_Argument(deserializer);
         deserializer.decrease_container_depth();
         return builder.build();
     }
 
-    public static MoveCall bcsDeserialize(byte[] input) throws com.novi.serde.DeserializationError {
+    public static ProgrammableMoveCall bcsDeserialize(byte[] input) throws com.novi.serde.DeserializationError {
         if (input == null) {
              throw new com.novi.serde.DeserializationError("Cannot deserialize null array");
         }
         com.novi.serde.Deserializer deserializer = new com.novi.bcs.BcsDeserializer(input);
-        MoveCall value = deserialize(deserializer);
+        ProgrammableMoveCall value = deserialize(deserializer);
         if (deserializer.get_buffer_offset() < input.length) {
              throw new com.novi.serde.DeserializationError("Some input bytes were not read");
         }
@@ -65,7 +65,7 @@ public final class MoveCall {
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        MoveCall other = (MoveCall) obj;
+        ProgrammableMoveCall other = (ProgrammableMoveCall) obj;
         if (!java.util.Objects.equals(this.Package, other.Package)) { return false; }
         if (!java.util.Objects.equals(this.module, other.module)) { return false; }
         if (!java.util.Objects.equals(this.function, other.function)) { return false; }
@@ -89,10 +89,10 @@ public final class MoveCall {
         public Identifier module;
         public Identifier function;
         public java.util.List<TypeTag> type_arguments;
-        public java.util.List<CallArg> arguments;
+        public java.util.List<Argument> arguments;
 
-        public MoveCall build() {
-            return new MoveCall(
+        public ProgrammableMoveCall build() {
+            return new ProgrammableMoveCall(
                 Package,
                 module,
                 function,

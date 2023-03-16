@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -85,6 +85,26 @@ public abstract class InputObjectKind {
       @SuppressWarnings("checkstyle:MemberName")
       private Long initial_shared_version;
 
+      private boolean mutable;
+
+      /**
+       * Is mutable boolean.
+       *
+       * @return the boolean
+       */
+      public boolean isMutable() {
+        return mutable;
+      }
+
+      /**
+       * Sets mutable.
+       *
+       * @param mutable the mutable
+       */
+      public void setMutable(boolean mutable) {
+        this.mutable = mutable;
+      }
+
       /**
        * Gets id.
        *
@@ -131,12 +151,14 @@ public abstract class InputObjectKind {
           return false;
         }
         SharedObject that = (SharedObject) o;
-        return id.equals(that.id) && initial_shared_version.equals(that.initial_shared_version);
+        return mutable == that.mutable
+            && id.equals(that.id)
+            && initial_shared_version.equals(that.initial_shared_version);
       }
 
       @Override
       public int hashCode() {
-        return Objects.hash(id, initial_shared_version);
+        return Objects.hash(id, initial_shared_version, mutable);
       }
 
       @Override
@@ -147,6 +169,8 @@ public abstract class InputObjectKind {
             + '\''
             + ", initial_shared_version="
             + initial_shared_version
+            + ", mutable="
+            + mutable
             + '}';
       }
     }

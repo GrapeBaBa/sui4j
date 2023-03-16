@@ -16,19 +16,12 @@
 
 package io.sui.clients;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.sui.jsonrpc.GsonJsonHandler;
 import io.sui.jsonrpc.JsonHandler;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
-import io.sui.models.objects.ValidatorMetadata;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 /** Created by IntelliJ IDEA. Author: kaichen Date: 2023/3/7 Time: 20:31 */
 public class NewQueryClientImplTests {
@@ -46,14 +39,5 @@ public class NewQueryClientImplTests {
     JsonRpcClientProvider jsonRpcClientProvider =
         new OkHttpJsonRpcClientProvider(BASE_URL, jsonHandler);
     client = new QueryClientImpl(jsonRpcClientProvider);
-  }
-
-  @Test
-  @DisplayName("Test getObject returns existing move object.")
-  void getObjectExistingMoveObject() throws ExecutionException, InterruptedException {
-    CompletableFuture<List<ValidatorMetadata>> res = client.getValidators();
-    List<ValidatorMetadata> validatorMetadatas = res.get();
-    assertEquals(4, validatorMetadatas.size());
-    System.out.println(res.get());
   }
 }
