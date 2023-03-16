@@ -10,39 +10,29 @@ public abstract class ExecutionFailureStatus {
         switch (index) {
             case 0: return InsufficientGas.load(deserializer);
             case 1: return InvalidGasObject.load(deserializer);
-            case 2: return InvalidTransactionUpdate.load(deserializer);
-            case 3: return ModuleNotFound.load(deserializer);
-            case 4: return FunctionNotFound.load(deserializer);
-            case 5: return InvariantViolation.load(deserializer);
-            case 6: return MoveObjectTooBig.load(deserializer);
-            case 7: return MovePackageTooBig.load(deserializer);
-            case 8: return InvalidTransferObject.load(deserializer);
-            case 9: return InvalidTransferSui.load(deserializer);
-            case 10: return InvalidTransferSuiInsufficientBalance.load(deserializer);
-            case 11: return InvalidCoinObject.load(deserializer);
-            case 12: return EmptyInputCoins.load(deserializer);
-            case 13: return EmptyRecipients.load(deserializer);
-            case 14: return RecipientsAmountsArityMismatch.load(deserializer);
-            case 15: return InsufficientBalance.load(deserializer);
-            case 16: return CoinTypeMismatch.load(deserializer);
-            case 17: return NonEntryFunctionInvoked.load(deserializer);
-            case 18: return EntryTypeArityMismatch.load(deserializer);
-            case 19: return EntryArgumentError.load(deserializer);
-            case 20: return EntryTypeArgumentError.load(deserializer);
-            case 21: return CircularObjectOwnership.load(deserializer);
-            case 22: return InvalidChildObjectArgument.load(deserializer);
-            case 23: return InvalidSharedByValue.load(deserializer);
-            case 24: return TooManyChildObjects.load(deserializer);
-            case 25: return InvalidParentDeletion.load(deserializer);
-            case 26: return InvalidParentFreezing.load(deserializer);
-            case 27: return PublishErrorEmptyPackage.load(deserializer);
-            case 28: return PublishErrorNonZeroAddress.load(deserializer);
-            case 29: return PublishErrorDuplicateModule.load(deserializer);
-            case 30: return SuiMoveVerificationError.load(deserializer);
-            case 31: return MovePrimitiveRuntimeError.load(deserializer);
-            case 32: return MoveAbort.load(deserializer);
-            case 33: return VMVerificationOrDeserializationError.load(deserializer);
-            case 34: return VMInvariantViolation.load(deserializer);
+            case 2: return InvariantViolation.load(deserializer);
+            case 3: return FeatureNotYetSupported.load(deserializer);
+            case 4: return MoveObjectTooBig.load(deserializer);
+            case 5: return MovePackageTooBig.load(deserializer);
+            case 6: return CircularObjectOwnership.load(deserializer);
+            case 7: return InsufficientCoinBalance.load(deserializer);
+            case 8: return CoinBalanceOverflow.load(deserializer);
+            case 9: return PublishErrorNonZeroAddress.load(deserializer);
+            case 10: return SuiMoveVerificationError.load(deserializer);
+            case 11: return MovePrimitiveRuntimeError.load(deserializer);
+            case 12: return MoveAbort.load(deserializer);
+            case 13: return VMVerificationOrDeserializationError.load(deserializer);
+            case 14: return VMInvariantViolation.load(deserializer);
+            case 15: return FunctionNotFound.load(deserializer);
+            case 16: return ArityMismatch.load(deserializer);
+            case 17: return TypeArityMismatch.load(deserializer);
+            case 18: return NonEntryFunctionInvoked.load(deserializer);
+            case 19: return CommandArgumentError.load(deserializer);
+            case 20: return TypeArgumentError.load(deserializer);
+            case 21: return UnusedValueWithoutDrop.load(deserializer);
+            case 22: return InvalidPublicFunctionReturnType.load(deserializer);
+            case 23: return InvalidTransferObject.load(deserializer);
+            case 24: return EffectsTooLarge.load(deserializer);
             default: throw new com.novi.serde.DeserializationError("Unknown variant index for ExecutionFailureStatus: " + index);
         }
     }
@@ -141,127 +131,13 @@ public abstract class ExecutionFailureStatus {
         }
     }
 
-    public static final class InvalidTransactionUpdate extends ExecutionFailureStatus {
-        public InvalidTransactionUpdate() {
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(2);
-            serializer.decrease_container_depth();
-        }
-
-        static InvalidTransactionUpdate load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            InvalidTransactionUpdate other = (InvalidTransactionUpdate) obj;
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            return value;
-        }
-
-        public static final class Builder {
-            public InvalidTransactionUpdate build() {
-                return new InvalidTransactionUpdate(
-                );
-            }
-        }
-    }
-
-    public static final class ModuleNotFound extends ExecutionFailureStatus {
-        public ModuleNotFound() {
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(3);
-            serializer.decrease_container_depth();
-        }
-
-        static ModuleNotFound load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            ModuleNotFound other = (ModuleNotFound) obj;
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            return value;
-        }
-
-        public static final class Builder {
-            public ModuleNotFound build() {
-                return new ModuleNotFound(
-                );
-            }
-        }
-    }
-
-    public static final class FunctionNotFound extends ExecutionFailureStatus {
-        public FunctionNotFound() {
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(4);
-            serializer.decrease_container_depth();
-        }
-
-        static FunctionNotFound load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            FunctionNotFound other = (FunctionNotFound) obj;
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            return value;
-        }
-
-        public static final class Builder {
-            public FunctionNotFound build() {
-                return new FunctionNotFound(
-                );
-            }
-        }
-    }
-
     public static final class InvariantViolation extends ExecutionFailureStatus {
         public InvariantViolation() {
         }
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(5);
+            serializer.serialize_variant_index(2);
             serializer.decrease_container_depth();
         }
 
@@ -293,6 +169,44 @@ public abstract class ExecutionFailureStatus {
         }
     }
 
+    public static final class FeatureNotYetSupported extends ExecutionFailureStatus {
+        public FeatureNotYetSupported() {
+        }
+
+        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+            serializer.increase_container_depth();
+            serializer.serialize_variant_index(3);
+            serializer.decrease_container_depth();
+        }
+
+        static FeatureNotYetSupported load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+            deserializer.increase_container_depth();
+            Builder builder = new Builder();
+            deserializer.decrease_container_depth();
+            return builder.build();
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            FeatureNotYetSupported other = (FeatureNotYetSupported) obj;
+            return true;
+        }
+
+        public int hashCode() {
+            int value = 7;
+            return value;
+        }
+
+        public static final class Builder {
+            public FeatureNotYetSupported build() {
+                return new FeatureNotYetSupported(
+                );
+            }
+        }
+    }
+
     public static final class MoveObjectTooBig extends ExecutionFailureStatus {
         public final @com.novi.serde.Unsigned Long object_size;
         public final @com.novi.serde.Unsigned Long max_object_size;
@@ -306,7 +220,7 @@ public abstract class ExecutionFailureStatus {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(6);
+            serializer.serialize_variant_index(4);
             serializer.serialize_u64(object_size);
             serializer.serialize_u64(max_object_size);
             serializer.decrease_container_depth();
@@ -364,7 +278,7 @@ public abstract class ExecutionFailureStatus {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(7);
+            serializer.serialize_variant_index(5);
             serializer.serialize_u64(object_size);
             serializer.serialize_u64(max_object_size);
             serializer.decrease_container_depth();
@@ -409,685 +323,22 @@ public abstract class ExecutionFailureStatus {
         }
     }
 
-    public static final class InvalidTransferObject extends ExecutionFailureStatus {
-        public InvalidTransferObject() {
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(8);
-            serializer.decrease_container_depth();
-        }
-
-        static InvalidTransferObject load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            InvalidTransferObject other = (InvalidTransferObject) obj;
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            return value;
-        }
-
-        public static final class Builder {
-            public InvalidTransferObject build() {
-                return new InvalidTransferObject(
-                );
-            }
-        }
-    }
-
-    public static final class InvalidTransferSui extends ExecutionFailureStatus {
-        public InvalidTransferSui() {
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(9);
-            serializer.decrease_container_depth();
-        }
-
-        static InvalidTransferSui load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            InvalidTransferSui other = (InvalidTransferSui) obj;
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            return value;
-        }
-
-        public static final class Builder {
-            public InvalidTransferSui build() {
-                return new InvalidTransferSui(
-                );
-            }
-        }
-    }
-
-    public static final class InvalidTransferSuiInsufficientBalance extends ExecutionFailureStatus {
-        public InvalidTransferSuiInsufficientBalance() {
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(10);
-            serializer.decrease_container_depth();
-        }
-
-        static InvalidTransferSuiInsufficientBalance load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            InvalidTransferSuiInsufficientBalance other = (InvalidTransferSuiInsufficientBalance) obj;
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            return value;
-        }
-
-        public static final class Builder {
-            public InvalidTransferSuiInsufficientBalance build() {
-                return new InvalidTransferSuiInsufficientBalance(
-                );
-            }
-        }
-    }
-
-    public static final class InvalidCoinObject extends ExecutionFailureStatus {
-        public InvalidCoinObject() {
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(11);
-            serializer.decrease_container_depth();
-        }
-
-        static InvalidCoinObject load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            InvalidCoinObject other = (InvalidCoinObject) obj;
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            return value;
-        }
-
-        public static final class Builder {
-            public InvalidCoinObject build() {
-                return new InvalidCoinObject(
-                );
-            }
-        }
-    }
-
-    public static final class EmptyInputCoins extends ExecutionFailureStatus {
-        public EmptyInputCoins() {
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(12);
-            serializer.decrease_container_depth();
-        }
-
-        static EmptyInputCoins load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            EmptyInputCoins other = (EmptyInputCoins) obj;
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            return value;
-        }
-
-        public static final class Builder {
-            public EmptyInputCoins build() {
-                return new EmptyInputCoins(
-                );
-            }
-        }
-    }
-
-    public static final class EmptyRecipients extends ExecutionFailureStatus {
-        public EmptyRecipients() {
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(13);
-            serializer.decrease_container_depth();
-        }
-
-        static EmptyRecipients load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            EmptyRecipients other = (EmptyRecipients) obj;
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            return value;
-        }
-
-        public static final class Builder {
-            public EmptyRecipients build() {
-                return new EmptyRecipients(
-                );
-            }
-        }
-    }
-
-    public static final class RecipientsAmountsArityMismatch extends ExecutionFailureStatus {
-        public RecipientsAmountsArityMismatch() {
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(14);
-            serializer.decrease_container_depth();
-        }
-
-        static RecipientsAmountsArityMismatch load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            RecipientsAmountsArityMismatch other = (RecipientsAmountsArityMismatch) obj;
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            return value;
-        }
-
-        public static final class Builder {
-            public RecipientsAmountsArityMismatch build() {
-                return new RecipientsAmountsArityMismatch(
-                );
-            }
-        }
-    }
-
-    public static final class InsufficientBalance extends ExecutionFailureStatus {
-        public InsufficientBalance() {
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(15);
-            serializer.decrease_container_depth();
-        }
-
-        static InsufficientBalance load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            InsufficientBalance other = (InsufficientBalance) obj;
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            return value;
-        }
-
-        public static final class Builder {
-            public InsufficientBalance build() {
-                return new InsufficientBalance(
-                );
-            }
-        }
-    }
-
-    public static final class CoinTypeMismatch extends ExecutionFailureStatus {
-        public CoinTypeMismatch() {
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(16);
-            serializer.decrease_container_depth();
-        }
-
-        static CoinTypeMismatch load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            CoinTypeMismatch other = (CoinTypeMismatch) obj;
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            return value;
-        }
-
-        public static final class Builder {
-            public CoinTypeMismatch build() {
-                return new CoinTypeMismatch(
-                );
-            }
-        }
-    }
-
-    public static final class NonEntryFunctionInvoked extends ExecutionFailureStatus {
-        public NonEntryFunctionInvoked() {
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(17);
-            serializer.decrease_container_depth();
-        }
-
-        static NonEntryFunctionInvoked load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            NonEntryFunctionInvoked other = (NonEntryFunctionInvoked) obj;
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            return value;
-        }
-
-        public static final class Builder {
-            public NonEntryFunctionInvoked build() {
-                return new NonEntryFunctionInvoked(
-                );
-            }
-        }
-    }
-
-    public static final class EntryTypeArityMismatch extends ExecutionFailureStatus {
-        public EntryTypeArityMismatch() {
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(18);
-            serializer.decrease_container_depth();
-        }
-
-        static EntryTypeArityMismatch load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            EntryTypeArityMismatch other = (EntryTypeArityMismatch) obj;
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            return value;
-        }
-
-        public static final class Builder {
-            public EntryTypeArityMismatch build() {
-                return new EntryTypeArityMismatch(
-                );
-            }
-        }
-    }
-
-    public static final class EntryArgumentError extends ExecutionFailureStatus {
-        public final io.sui.bcsgen.EntryArgumentError value;
-
-        public EntryArgumentError(io.sui.bcsgen.EntryArgumentError value) {
-            java.util.Objects.requireNonNull(value, "value must not be null");
-            this.value = value;
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(19);
-            value.serialize(serializer);
-            serializer.decrease_container_depth();
-        }
-
-        static EntryArgumentError load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            builder.value = io.sui.bcsgen.EntryArgumentError.deserialize(deserializer);
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            EntryArgumentError other = (EntryArgumentError) obj;
-            if (!java.util.Objects.equals(this.value, other.value)) { return false; }
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            value = 31 * value + (this.value != null ? this.value.hashCode() : 0);
-            return value;
-        }
-
-        public static final class Builder {
-            public io.sui.bcsgen.EntryArgumentError value;
-
-            public EntryArgumentError build() {
-                return new EntryArgumentError(
-                    value
-                );
-            }
-        }
-    }
-
-    public static final class EntryTypeArgumentError extends ExecutionFailureStatus {
-        public final io.sui.bcsgen.EntryTypeArgumentError value;
-
-        public EntryTypeArgumentError(io.sui.bcsgen.EntryTypeArgumentError value) {
-            java.util.Objects.requireNonNull(value, "value must not be null");
-            this.value = value;
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(20);
-            value.serialize(serializer);
-            serializer.decrease_container_depth();
-        }
-
-        static EntryTypeArgumentError load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            builder.value = io.sui.bcsgen.EntryTypeArgumentError.deserialize(deserializer);
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            EntryTypeArgumentError other = (EntryTypeArgumentError) obj;
-            if (!java.util.Objects.equals(this.value, other.value)) { return false; }
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            value = 31 * value + (this.value != null ? this.value.hashCode() : 0);
-            return value;
-        }
-
-        public static final class Builder {
-            public io.sui.bcsgen.EntryTypeArgumentError value;
-
-            public EntryTypeArgumentError build() {
-                return new EntryTypeArgumentError(
-                    value
-                );
-            }
-        }
-    }
-
     public static final class CircularObjectOwnership extends ExecutionFailureStatus {
-        public final io.sui.bcsgen.CircularObjectOwnership value;
-
-        public CircularObjectOwnership(io.sui.bcsgen.CircularObjectOwnership value) {
-            java.util.Objects.requireNonNull(value, "value must not be null");
-            this.value = value;
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(21);
-            value.serialize(serializer);
-            serializer.decrease_container_depth();
-        }
-
-        static CircularObjectOwnership load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            builder.value = io.sui.bcsgen.CircularObjectOwnership.deserialize(deserializer);
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            CircularObjectOwnership other = (CircularObjectOwnership) obj;
-            if (!java.util.Objects.equals(this.value, other.value)) { return false; }
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            value = 31 * value + (this.value != null ? this.value.hashCode() : 0);
-            return value;
-        }
-
-        public static final class Builder {
-            public io.sui.bcsgen.CircularObjectOwnership value;
-
-            public CircularObjectOwnership build() {
-                return new CircularObjectOwnership(
-                    value
-                );
-            }
-        }
-    }
-
-    public static final class InvalidChildObjectArgument extends ExecutionFailureStatus {
-        public final io.sui.bcsgen.InvalidChildObjectArgument value;
-
-        public InvalidChildObjectArgument(io.sui.bcsgen.InvalidChildObjectArgument value) {
-            java.util.Objects.requireNonNull(value, "value must not be null");
-            this.value = value;
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(22);
-            value.serialize(serializer);
-            serializer.decrease_container_depth();
-        }
-
-        static InvalidChildObjectArgument load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            builder.value = io.sui.bcsgen.InvalidChildObjectArgument.deserialize(deserializer);
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            InvalidChildObjectArgument other = (InvalidChildObjectArgument) obj;
-            if (!java.util.Objects.equals(this.value, other.value)) { return false; }
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            value = 31 * value + (this.value != null ? this.value.hashCode() : 0);
-            return value;
-        }
-
-        public static final class Builder {
-            public io.sui.bcsgen.InvalidChildObjectArgument value;
-
-            public InvalidChildObjectArgument build() {
-                return new InvalidChildObjectArgument(
-                    value
-                );
-            }
-        }
-    }
-
-    public static final class InvalidSharedByValue extends ExecutionFailureStatus {
-        public final io.sui.bcsgen.InvalidSharedByValue value;
-
-        public InvalidSharedByValue(io.sui.bcsgen.InvalidSharedByValue value) {
-            java.util.Objects.requireNonNull(value, "value must not be null");
-            this.value = value;
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(23);
-            value.serialize(serializer);
-            serializer.decrease_container_depth();
-        }
-
-        static InvalidSharedByValue load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            builder.value = io.sui.bcsgen.InvalidSharedByValue.deserialize(deserializer);
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            InvalidSharedByValue other = (InvalidSharedByValue) obj;
-            if (!java.util.Objects.equals(this.value, other.value)) { return false; }
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            value = 31 * value + (this.value != null ? this.value.hashCode() : 0);
-            return value;
-        }
-
-        public static final class Builder {
-            public io.sui.bcsgen.InvalidSharedByValue value;
-
-            public InvalidSharedByValue build() {
-                return new InvalidSharedByValue(
-                    value
-                );
-            }
-        }
-    }
-
-    public static final class TooManyChildObjects extends ExecutionFailureStatus {
         public final ObjectID object;
 
-        public TooManyChildObjects(ObjectID object) {
+        public CircularObjectOwnership(ObjectID object) {
             java.util.Objects.requireNonNull(object, "object must not be null");
             this.object = object;
         }
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(24);
+            serializer.serialize_variant_index(6);
             object.serialize(serializer);
             serializer.decrease_container_depth();
         }
 
-        static TooManyChildObjects load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        static CircularObjectOwnership load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
             deserializer.increase_container_depth();
             Builder builder = new Builder();
             builder.object = ObjectID.deserialize(deserializer);
@@ -1099,7 +350,7 @@ public abstract class ExecutionFailureStatus {
             if (this == obj) return true;
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
-            TooManyChildObjects other = (TooManyChildObjects) obj;
+            CircularObjectOwnership other = (CircularObjectOwnership) obj;
             if (!java.util.Objects.equals(this.object, other.object)) { return false; }
             return true;
         }
@@ -1113,38 +364,27 @@ public abstract class ExecutionFailureStatus {
         public static final class Builder {
             public ObjectID object;
 
-            public TooManyChildObjects build() {
-                return new TooManyChildObjects(
+            public CircularObjectOwnership build() {
+                return new CircularObjectOwnership(
                     object
                 );
             }
         }
     }
 
-    public static final class InvalidParentDeletion extends ExecutionFailureStatus {
-        public final ObjectID parent;
-        public final java.util.Optional<DeleteKind> kind;
-
-        public InvalidParentDeletion(ObjectID parent, java.util.Optional<DeleteKind> kind) {
-            java.util.Objects.requireNonNull(parent, "parent must not be null");
-            java.util.Objects.requireNonNull(kind, "kind must not be null");
-            this.parent = parent;
-            this.kind = kind;
+    public static final class InsufficientCoinBalance extends ExecutionFailureStatus {
+        public InsufficientCoinBalance() {
         }
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(25);
-            parent.serialize(serializer);
-            TraitHelpers.serialize_option_DeleteKind(kind, serializer);
+            serializer.serialize_variant_index(7);
             serializer.decrease_container_depth();
         }
 
-        static InvalidParentDeletion load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        static InsufficientCoinBalance load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
             deserializer.increase_container_depth();
             Builder builder = new Builder();
-            builder.parent = ObjectID.deserialize(deserializer);
-            builder.kind = TraitHelpers.deserialize_option_DeleteKind(deserializer);
             deserializer.decrease_container_depth();
             return builder.build();
         }
@@ -1153,92 +393,34 @@ public abstract class ExecutionFailureStatus {
             if (this == obj) return true;
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
-            InvalidParentDeletion other = (InvalidParentDeletion) obj;
-            if (!java.util.Objects.equals(this.parent, other.parent)) { return false; }
-            if (!java.util.Objects.equals(this.kind, other.kind)) { return false; }
+            InsufficientCoinBalance other = (InsufficientCoinBalance) obj;
             return true;
         }
 
         public int hashCode() {
             int value = 7;
-            value = 31 * value + (this.parent != null ? this.parent.hashCode() : 0);
-            value = 31 * value + (this.kind != null ? this.kind.hashCode() : 0);
             return value;
         }
 
         public static final class Builder {
-            public ObjectID parent;
-            public java.util.Optional<DeleteKind> kind;
-
-            public InvalidParentDeletion build() {
-                return new InvalidParentDeletion(
-                    parent,
-                    kind
+            public InsufficientCoinBalance build() {
+                return new InsufficientCoinBalance(
                 );
             }
         }
     }
 
-    public static final class InvalidParentFreezing extends ExecutionFailureStatus {
-        public final ObjectID parent;
-
-        public InvalidParentFreezing(ObjectID parent) {
-            java.util.Objects.requireNonNull(parent, "parent must not be null");
-            this.parent = parent;
+    public static final class CoinBalanceOverflow extends ExecutionFailureStatus {
+        public CoinBalanceOverflow() {
         }
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(26);
-            parent.serialize(serializer);
+            serializer.serialize_variant_index(8);
             serializer.decrease_container_depth();
         }
 
-        static InvalidParentFreezing load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            builder.parent = ObjectID.deserialize(deserializer);
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            InvalidParentFreezing other = (InvalidParentFreezing) obj;
-            if (!java.util.Objects.equals(this.parent, other.parent)) { return false; }
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            value = 31 * value + (this.parent != null ? this.parent.hashCode() : 0);
-            return value;
-        }
-
-        public static final class Builder {
-            public ObjectID parent;
-
-            public InvalidParentFreezing build() {
-                return new InvalidParentFreezing(
-                    parent
-                );
-            }
-        }
-    }
-
-    public static final class PublishErrorEmptyPackage extends ExecutionFailureStatus {
-        public PublishErrorEmptyPackage() {
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(27);
-            serializer.decrease_container_depth();
-        }
-
-        static PublishErrorEmptyPackage load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        static CoinBalanceOverflow load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
             deserializer.increase_container_depth();
             Builder builder = new Builder();
             deserializer.decrease_container_depth();
@@ -1249,7 +431,7 @@ public abstract class ExecutionFailureStatus {
             if (this == obj) return true;
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
-            PublishErrorEmptyPackage other = (PublishErrorEmptyPackage) obj;
+            CoinBalanceOverflow other = (CoinBalanceOverflow) obj;
             return true;
         }
 
@@ -1259,8 +441,8 @@ public abstract class ExecutionFailureStatus {
         }
 
         public static final class Builder {
-            public PublishErrorEmptyPackage build() {
-                return new PublishErrorEmptyPackage(
+            public CoinBalanceOverflow build() {
+                return new CoinBalanceOverflow(
                 );
             }
         }
@@ -1272,7 +454,7 @@ public abstract class ExecutionFailureStatus {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(28);
+            serializer.serialize_variant_index(9);
             serializer.decrease_container_depth();
         }
 
@@ -1304,51 +486,13 @@ public abstract class ExecutionFailureStatus {
         }
     }
 
-    public static final class PublishErrorDuplicateModule extends ExecutionFailureStatus {
-        public PublishErrorDuplicateModule() {
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(29);
-            serializer.decrease_container_depth();
-        }
-
-        static PublishErrorDuplicateModule load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            PublishErrorDuplicateModule other = (PublishErrorDuplicateModule) obj;
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            return value;
-        }
-
-        public static final class Builder {
-            public PublishErrorDuplicateModule build() {
-                return new PublishErrorDuplicateModule(
-                );
-            }
-        }
-    }
-
     public static final class SuiMoveVerificationError extends ExecutionFailureStatus {
         public SuiMoveVerificationError() {
         }
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(30);
+            serializer.serialize_variant_index(10);
             serializer.decrease_container_depth();
         }
 
@@ -1381,24 +525,24 @@ public abstract class ExecutionFailureStatus {
     }
 
     public static final class MovePrimitiveRuntimeError extends ExecutionFailureStatus {
-        public final java.util.Optional<MoveLocation> value;
+        public final MoveLocationOpt value;
 
-        public MovePrimitiveRuntimeError(java.util.Optional<MoveLocation> value) {
+        public MovePrimitiveRuntimeError(MoveLocationOpt value) {
             java.util.Objects.requireNonNull(value, "value must not be null");
             this.value = value;
         }
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(31);
-            TraitHelpers.serialize_option_MoveLocation(value, serializer);
+            serializer.serialize_variant_index(11);
+            value.serialize(serializer);
             serializer.decrease_container_depth();
         }
 
         static MovePrimitiveRuntimeError load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
             deserializer.increase_container_depth();
             Builder builder = new Builder();
-            builder.value = TraitHelpers.deserialize_option_MoveLocation(deserializer);
+            builder.value = MoveLocationOpt.deserialize(deserializer);
             deserializer.decrease_container_depth();
             return builder.build();
         }
@@ -1419,7 +563,7 @@ public abstract class ExecutionFailureStatus {
         }
 
         public static final class Builder {
-            public java.util.Optional<MoveLocation> value;
+            public MoveLocationOpt value;
 
             public MovePrimitiveRuntimeError build() {
                 return new MovePrimitiveRuntimeError(
@@ -1442,7 +586,7 @@ public abstract class ExecutionFailureStatus {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(32);
+            serializer.serialize_variant_index(12);
             field0.serialize(serializer);
             serializer.serialize_u64(field1);
             serializer.decrease_container_depth();
@@ -1493,7 +637,7 @@ public abstract class ExecutionFailureStatus {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(33);
+            serializer.serialize_variant_index(13);
             serializer.decrease_container_depth();
         }
 
@@ -1531,7 +675,7 @@ public abstract class ExecutionFailureStatus {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(34);
+            serializer.serialize_variant_index(14);
             serializer.decrease_container_depth();
         }
 
@@ -1558,6 +702,477 @@ public abstract class ExecutionFailureStatus {
         public static final class Builder {
             public VMInvariantViolation build() {
                 return new VMInvariantViolation(
+                );
+            }
+        }
+    }
+
+    public static final class FunctionNotFound extends ExecutionFailureStatus {
+        public FunctionNotFound() {
+        }
+
+        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+            serializer.increase_container_depth();
+            serializer.serialize_variant_index(15);
+            serializer.decrease_container_depth();
+        }
+
+        static FunctionNotFound load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+            deserializer.increase_container_depth();
+            Builder builder = new Builder();
+            deserializer.decrease_container_depth();
+            return builder.build();
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            FunctionNotFound other = (FunctionNotFound) obj;
+            return true;
+        }
+
+        public int hashCode() {
+            int value = 7;
+            return value;
+        }
+
+        public static final class Builder {
+            public FunctionNotFound build() {
+                return new FunctionNotFound(
+                );
+            }
+        }
+    }
+
+    public static final class ArityMismatch extends ExecutionFailureStatus {
+        public ArityMismatch() {
+        }
+
+        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+            serializer.increase_container_depth();
+            serializer.serialize_variant_index(16);
+            serializer.decrease_container_depth();
+        }
+
+        static ArityMismatch load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+            deserializer.increase_container_depth();
+            Builder builder = new Builder();
+            deserializer.decrease_container_depth();
+            return builder.build();
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            ArityMismatch other = (ArityMismatch) obj;
+            return true;
+        }
+
+        public int hashCode() {
+            int value = 7;
+            return value;
+        }
+
+        public static final class Builder {
+            public ArityMismatch build() {
+                return new ArityMismatch(
+                );
+            }
+        }
+    }
+
+    public static final class TypeArityMismatch extends ExecutionFailureStatus {
+        public TypeArityMismatch() {
+        }
+
+        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+            serializer.increase_container_depth();
+            serializer.serialize_variant_index(17);
+            serializer.decrease_container_depth();
+        }
+
+        static TypeArityMismatch load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+            deserializer.increase_container_depth();
+            Builder builder = new Builder();
+            deserializer.decrease_container_depth();
+            return builder.build();
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            TypeArityMismatch other = (TypeArityMismatch) obj;
+            return true;
+        }
+
+        public int hashCode() {
+            int value = 7;
+            return value;
+        }
+
+        public static final class Builder {
+            public TypeArityMismatch build() {
+                return new TypeArityMismatch(
+                );
+            }
+        }
+    }
+
+    public static final class NonEntryFunctionInvoked extends ExecutionFailureStatus {
+        public NonEntryFunctionInvoked() {
+        }
+
+        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+            serializer.increase_container_depth();
+            serializer.serialize_variant_index(18);
+            serializer.decrease_container_depth();
+        }
+
+        static NonEntryFunctionInvoked load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+            deserializer.increase_container_depth();
+            Builder builder = new Builder();
+            deserializer.decrease_container_depth();
+            return builder.build();
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            NonEntryFunctionInvoked other = (NonEntryFunctionInvoked) obj;
+            return true;
+        }
+
+        public int hashCode() {
+            int value = 7;
+            return value;
+        }
+
+        public static final class Builder {
+            public NonEntryFunctionInvoked build() {
+                return new NonEntryFunctionInvoked(
+                );
+            }
+        }
+    }
+
+    public static final class CommandArgumentError extends ExecutionFailureStatus {
+        public final @com.novi.serde.Unsigned Short arg_idx;
+        public final io.sui.bcsgen.CommandArgumentError kind;
+
+        public CommandArgumentError(@com.novi.serde.Unsigned Short arg_idx, io.sui.bcsgen.CommandArgumentError kind) {
+            java.util.Objects.requireNonNull(arg_idx, "arg_idx must not be null");
+            java.util.Objects.requireNonNull(kind, "kind must not be null");
+            this.arg_idx = arg_idx;
+            this.kind = kind;
+        }
+
+        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+            serializer.increase_container_depth();
+            serializer.serialize_variant_index(19);
+            serializer.serialize_u16(arg_idx);
+            kind.serialize(serializer);
+            serializer.decrease_container_depth();
+        }
+
+        static CommandArgumentError load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+            deserializer.increase_container_depth();
+            Builder builder = new Builder();
+            builder.arg_idx = deserializer.deserialize_u16();
+            builder.kind = io.sui.bcsgen.CommandArgumentError.deserialize(deserializer);
+            deserializer.decrease_container_depth();
+            return builder.build();
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            CommandArgumentError other = (CommandArgumentError) obj;
+            if (!java.util.Objects.equals(this.arg_idx, other.arg_idx)) { return false; }
+            if (!java.util.Objects.equals(this.kind, other.kind)) { return false; }
+            return true;
+        }
+
+        public int hashCode() {
+            int value = 7;
+            value = 31 * value + (this.arg_idx != null ? this.arg_idx.hashCode() : 0);
+            value = 31 * value + (this.kind != null ? this.kind.hashCode() : 0);
+            return value;
+        }
+
+        public static final class Builder {
+            public @com.novi.serde.Unsigned Short arg_idx;
+            public io.sui.bcsgen.CommandArgumentError kind;
+
+            public CommandArgumentError build() {
+                return new CommandArgumentError(
+                    arg_idx,
+                    kind
+                );
+            }
+        }
+    }
+
+    public static final class TypeArgumentError extends ExecutionFailureStatus {
+        public final @com.novi.serde.Unsigned Short argument_idx;
+        public final io.sui.bcsgen.TypeArgumentError kind;
+
+        public TypeArgumentError(@com.novi.serde.Unsigned Short argument_idx, io.sui.bcsgen.TypeArgumentError kind) {
+            java.util.Objects.requireNonNull(argument_idx, "argument_idx must not be null");
+            java.util.Objects.requireNonNull(kind, "kind must not be null");
+            this.argument_idx = argument_idx;
+            this.kind = kind;
+        }
+
+        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+            serializer.increase_container_depth();
+            serializer.serialize_variant_index(20);
+            serializer.serialize_u16(argument_idx);
+            kind.serialize(serializer);
+            serializer.decrease_container_depth();
+        }
+
+        static TypeArgumentError load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+            deserializer.increase_container_depth();
+            Builder builder = new Builder();
+            builder.argument_idx = deserializer.deserialize_u16();
+            builder.kind = io.sui.bcsgen.TypeArgumentError.deserialize(deserializer);
+            deserializer.decrease_container_depth();
+            return builder.build();
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            TypeArgumentError other = (TypeArgumentError) obj;
+            if (!java.util.Objects.equals(this.argument_idx, other.argument_idx)) { return false; }
+            if (!java.util.Objects.equals(this.kind, other.kind)) { return false; }
+            return true;
+        }
+
+        public int hashCode() {
+            int value = 7;
+            value = 31 * value + (this.argument_idx != null ? this.argument_idx.hashCode() : 0);
+            value = 31 * value + (this.kind != null ? this.kind.hashCode() : 0);
+            return value;
+        }
+
+        public static final class Builder {
+            public @com.novi.serde.Unsigned Short argument_idx;
+            public io.sui.bcsgen.TypeArgumentError kind;
+
+            public TypeArgumentError build() {
+                return new TypeArgumentError(
+                    argument_idx,
+                    kind
+                );
+            }
+        }
+    }
+
+    public static final class UnusedValueWithoutDrop extends ExecutionFailureStatus {
+        public final @com.novi.serde.Unsigned Short result_idx;
+        public final @com.novi.serde.Unsigned Short secondary_idx;
+
+        public UnusedValueWithoutDrop(@com.novi.serde.Unsigned Short result_idx, @com.novi.serde.Unsigned Short secondary_idx) {
+            java.util.Objects.requireNonNull(result_idx, "result_idx must not be null");
+            java.util.Objects.requireNonNull(secondary_idx, "secondary_idx must not be null");
+            this.result_idx = result_idx;
+            this.secondary_idx = secondary_idx;
+        }
+
+        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+            serializer.increase_container_depth();
+            serializer.serialize_variant_index(21);
+            serializer.serialize_u16(result_idx);
+            serializer.serialize_u16(secondary_idx);
+            serializer.decrease_container_depth();
+        }
+
+        static UnusedValueWithoutDrop load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+            deserializer.increase_container_depth();
+            Builder builder = new Builder();
+            builder.result_idx = deserializer.deserialize_u16();
+            builder.secondary_idx = deserializer.deserialize_u16();
+            deserializer.decrease_container_depth();
+            return builder.build();
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            UnusedValueWithoutDrop other = (UnusedValueWithoutDrop) obj;
+            if (!java.util.Objects.equals(this.result_idx, other.result_idx)) { return false; }
+            if (!java.util.Objects.equals(this.secondary_idx, other.secondary_idx)) { return false; }
+            return true;
+        }
+
+        public int hashCode() {
+            int value = 7;
+            value = 31 * value + (this.result_idx != null ? this.result_idx.hashCode() : 0);
+            value = 31 * value + (this.secondary_idx != null ? this.secondary_idx.hashCode() : 0);
+            return value;
+        }
+
+        public static final class Builder {
+            public @com.novi.serde.Unsigned Short result_idx;
+            public @com.novi.serde.Unsigned Short secondary_idx;
+
+            public UnusedValueWithoutDrop build() {
+                return new UnusedValueWithoutDrop(
+                    result_idx,
+                    secondary_idx
+                );
+            }
+        }
+    }
+
+    public static final class InvalidPublicFunctionReturnType extends ExecutionFailureStatus {
+        public final @com.novi.serde.Unsigned Short idx;
+
+        public InvalidPublicFunctionReturnType(@com.novi.serde.Unsigned Short idx) {
+            java.util.Objects.requireNonNull(idx, "idx must not be null");
+            this.idx = idx;
+        }
+
+        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+            serializer.increase_container_depth();
+            serializer.serialize_variant_index(22);
+            serializer.serialize_u16(idx);
+            serializer.decrease_container_depth();
+        }
+
+        static InvalidPublicFunctionReturnType load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+            deserializer.increase_container_depth();
+            Builder builder = new Builder();
+            builder.idx = deserializer.deserialize_u16();
+            deserializer.decrease_container_depth();
+            return builder.build();
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            InvalidPublicFunctionReturnType other = (InvalidPublicFunctionReturnType) obj;
+            if (!java.util.Objects.equals(this.idx, other.idx)) { return false; }
+            return true;
+        }
+
+        public int hashCode() {
+            int value = 7;
+            value = 31 * value + (this.idx != null ? this.idx.hashCode() : 0);
+            return value;
+        }
+
+        public static final class Builder {
+            public @com.novi.serde.Unsigned Short idx;
+
+            public InvalidPublicFunctionReturnType build() {
+                return new InvalidPublicFunctionReturnType(
+                    idx
+                );
+            }
+        }
+    }
+
+    public static final class InvalidTransferObject extends ExecutionFailureStatus {
+        public InvalidTransferObject() {
+        }
+
+        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+            serializer.increase_container_depth();
+            serializer.serialize_variant_index(23);
+            serializer.decrease_container_depth();
+        }
+
+        static InvalidTransferObject load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+            deserializer.increase_container_depth();
+            Builder builder = new Builder();
+            deserializer.decrease_container_depth();
+            return builder.build();
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            InvalidTransferObject other = (InvalidTransferObject) obj;
+            return true;
+        }
+
+        public int hashCode() {
+            int value = 7;
+            return value;
+        }
+
+        public static final class Builder {
+            public InvalidTransferObject build() {
+                return new InvalidTransferObject(
+                );
+            }
+        }
+    }
+
+    public static final class EffectsTooLarge extends ExecutionFailureStatus {
+        public final @com.novi.serde.Unsigned Long current_size;
+        public final @com.novi.serde.Unsigned Long max_size;
+
+        public EffectsTooLarge(@com.novi.serde.Unsigned Long current_size, @com.novi.serde.Unsigned Long max_size) {
+            java.util.Objects.requireNonNull(current_size, "current_size must not be null");
+            java.util.Objects.requireNonNull(max_size, "max_size must not be null");
+            this.current_size = current_size;
+            this.max_size = max_size;
+        }
+
+        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+            serializer.increase_container_depth();
+            serializer.serialize_variant_index(24);
+            serializer.serialize_u64(current_size);
+            serializer.serialize_u64(max_size);
+            serializer.decrease_container_depth();
+        }
+
+        static EffectsTooLarge load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+            deserializer.increase_container_depth();
+            Builder builder = new Builder();
+            builder.current_size = deserializer.deserialize_u64();
+            builder.max_size = deserializer.deserialize_u64();
+            deserializer.decrease_container_depth();
+            return builder.build();
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            EffectsTooLarge other = (EffectsTooLarge) obj;
+            if (!java.util.Objects.equals(this.current_size, other.current_size)) { return false; }
+            if (!java.util.Objects.equals(this.max_size, other.max_size)) { return false; }
+            return true;
+        }
+
+        public int hashCode() {
+            int value = 7;
+            value = 31 * value + (this.current_size != null ? this.current_size.hashCode() : 0);
+            value = 31 * value + (this.max_size != null ? this.max_size.hashCode() : 0);
+            return value;
+        }
+
+        public static final class Builder {
+            public @com.novi.serde.Unsigned Long current_size;
+            public @com.novi.serde.Unsigned Long max_size;
+
+            public EffectsTooLarge build() {
+                return new EffectsTooLarge(
+                    current_size,
+                    max_size
                 );
             }
         }

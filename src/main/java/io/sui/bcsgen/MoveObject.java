@@ -2,12 +2,12 @@ package io.sui.bcsgen;
 
 
 public final class MoveObject {
-    public final StructTag type_;
+    public final MoveObjectType type_;
     public final Boolean has_public_transfer;
     public final SequenceNumber version;
     public final com.novi.serde.Bytes contents;
 
-    public MoveObject(StructTag type_, Boolean has_public_transfer, SequenceNumber version, com.novi.serde.Bytes contents) {
+    public MoveObject(MoveObjectType type_, Boolean has_public_transfer, SequenceNumber version, com.novi.serde.Bytes contents) {
         java.util.Objects.requireNonNull(type_, "type_ must not be null");
         java.util.Objects.requireNonNull(has_public_transfer, "has_public_transfer must not be null");
         java.util.Objects.requireNonNull(version, "version must not be null");
@@ -36,7 +36,7 @@ public final class MoveObject {
     public static MoveObject deserialize(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
         deserializer.increase_container_depth();
         Builder builder = new Builder();
-        builder.type_ = StructTag.deserialize(deserializer);
+        builder.type_ = MoveObjectType.deserialize(deserializer);
         builder.has_public_transfer = deserializer.deserialize_bool();
         builder.version = SequenceNumber.deserialize(deserializer);
         builder.contents = deserializer.deserialize_bytes();
@@ -78,7 +78,7 @@ public final class MoveObject {
     }
 
     public static final class Builder {
-        public StructTag type_;
+        public MoveObjectType type_;
         public Boolean has_public_transfer;
         public SequenceNumber version;
         public com.novi.serde.Bytes contents;

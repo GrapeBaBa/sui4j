@@ -38,6 +38,7 @@ import io.sui.models.objects.ValidatorMetadata;
 import io.sui.models.transactions.PaginatedTransactionDigests;
 import io.sui.models.transactions.TransactionQuery;
 import io.sui.models.transactions.TransactionResponse;
+import io.sui.models.transactions.TransactionResponseOptions;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -96,9 +97,11 @@ public interface QueryClient {
    * Gets transaction.
    *
    * @param digest the digest
+   * @param options the options
    * @return the transaction
    */
-  CompletableFuture<TransactionResponse> getTransaction(String digest);
+  CompletableFuture<TransactionResponse> getTransaction(
+      String digest, TransactionResponseOptions options);
 
   /**
    * Return the authority public keys that commits to the authority signature of the transaction.

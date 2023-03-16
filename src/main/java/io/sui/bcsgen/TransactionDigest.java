@@ -2,16 +2,16 @@ package io.sui.bcsgen;
 
 
 public final class TransactionDigest {
-    public final com.novi.serde.Bytes value;
+    public final Digest value;
 
-    public TransactionDigest(com.novi.serde.Bytes value) {
+    public TransactionDigest(Digest value) {
         java.util.Objects.requireNonNull(value, "value must not be null");
         this.value = value;
     }
 
     public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
         serializer.increase_container_depth();
-        serializer.serialize_bytes(value);
+        value.serialize(serializer);
         serializer.decrease_container_depth();
     }
 
@@ -24,7 +24,7 @@ public final class TransactionDigest {
     public static TransactionDigest deserialize(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
         deserializer.increase_container_depth();
         Builder builder = new Builder();
-        builder.value = deserializer.deserialize_bytes();
+        builder.value = Digest.deserialize(deserializer);
         deserializer.decrease_container_depth();
         return builder.build();
     }
@@ -57,7 +57,7 @@ public final class TransactionDigest {
     }
 
     public static final class Builder {
-        public com.novi.serde.Bytes value;
+        public Digest value;
 
         public TransactionDigest build() {
             return new TransactionDigest(

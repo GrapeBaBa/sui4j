@@ -5,14 +5,17 @@ public final class MoveLocation {
     public final ModuleId module;
     public final @com.novi.serde.Unsigned Short function;
     public final @com.novi.serde.Unsigned Short instruction;
+    public final java.util.Optional<String> function_name;
 
-    public MoveLocation(ModuleId module, @com.novi.serde.Unsigned Short function, @com.novi.serde.Unsigned Short instruction) {
+    public MoveLocation(ModuleId module, @com.novi.serde.Unsigned Short function, @com.novi.serde.Unsigned Short instruction, java.util.Optional<String> function_name) {
         java.util.Objects.requireNonNull(module, "module must not be null");
         java.util.Objects.requireNonNull(function, "function must not be null");
         java.util.Objects.requireNonNull(instruction, "instruction must not be null");
+        java.util.Objects.requireNonNull(function_name, "function_name must not be null");
         this.module = module;
         this.function = function;
         this.instruction = instruction;
+        this.function_name = function_name;
     }
 
     public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
@@ -20,6 +23,7 @@ public final class MoveLocation {
         module.serialize(serializer);
         serializer.serialize_u16(function);
         serializer.serialize_u16(instruction);
+        TraitHelpers.serialize_option_str(function_name, serializer);
         serializer.decrease_container_depth();
     }
 
@@ -35,6 +39,7 @@ public final class MoveLocation {
         builder.module = ModuleId.deserialize(deserializer);
         builder.function = deserializer.deserialize_u16();
         builder.instruction = deserializer.deserialize_u16();
+        builder.function_name = TraitHelpers.deserialize_option_str(deserializer);
         deserializer.decrease_container_depth();
         return builder.build();
     }
@@ -59,6 +64,7 @@ public final class MoveLocation {
         if (!java.util.Objects.equals(this.module, other.module)) { return false; }
         if (!java.util.Objects.equals(this.function, other.function)) { return false; }
         if (!java.util.Objects.equals(this.instruction, other.instruction)) { return false; }
+        if (!java.util.Objects.equals(this.function_name, other.function_name)) { return false; }
         return true;
     }
 
@@ -67,6 +73,7 @@ public final class MoveLocation {
         value = 31 * value + (this.module != null ? this.module.hashCode() : 0);
         value = 31 * value + (this.function != null ? this.function.hashCode() : 0);
         value = 31 * value + (this.instruction != null ? this.instruction.hashCode() : 0);
+        value = 31 * value + (this.function_name != null ? this.function_name.hashCode() : 0);
         return value;
     }
 
@@ -74,12 +81,14 @@ public final class MoveLocation {
         public ModuleId module;
         public @com.novi.serde.Unsigned Short function;
         public @com.novi.serde.Unsigned Short instruction;
+        public java.util.Optional<String> function_name;
 
         public MoveLocation build() {
             return new MoveLocation(
                 module,
                 function,
-                instruction
+                instruction,
+                function_name
             );
         }
     }

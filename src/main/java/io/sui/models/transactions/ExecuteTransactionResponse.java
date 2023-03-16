@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -172,14 +172,14 @@ public interface ExecuteTransactionResponse {
   /** The type Tx cert. */
   class TxCert {
 
-    private CertifiedTransaction certificate;
+    private Transaction certificate;
 
     /**
      * Gets certificate.
      *
      * @return the certificate
      */
-    public CertifiedTransaction getCertificate() {
+    public Transaction getCertificate() {
       return certificate;
     }
 
@@ -188,7 +188,7 @@ public interface ExecuteTransactionResponse {
      *
      * @param certificate the certificate
      */
-    public void setCertificate(CertifiedTransaction certificate) {
+    public void setCertificate(Transaction certificate) {
       this.certificate = certificate;
     }
 
@@ -265,7 +265,7 @@ public interface ExecuteTransactionResponse {
   /** The type Effects cert. */
   class EffectsCert {
 
-    private CertifiedTransaction certificate;
+    private Transaction certificate;
 
     private CertifiedTransactionEffects effects;
 
@@ -296,7 +296,7 @@ public interface ExecuteTransactionResponse {
      *
      * @return the certificate
      */
-    public CertifiedTransaction getCertificate() {
+    public Transaction getCertificate() {
       return certificate;
     }
 
@@ -305,7 +305,7 @@ public interface ExecuteTransactionResponse {
      *
      * @param certificate the certificate
      */
-    public void setCertificate(CertifiedTransaction certificate) {
+    public void setCertificate(Transaction certificate) {
       this.certificate = certificate;
     }
 

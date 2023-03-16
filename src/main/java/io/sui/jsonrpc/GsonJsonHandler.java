@@ -51,6 +51,8 @@ import io.sui.models.objects.MoveNormalizedType.MutableReferenceMoveNormalizedTy
 import io.sui.models.objects.MoveNormalizedType.ReferenceMoveNormalizedType;
 import io.sui.models.objects.MoveNormalizedType.TypeMoveNormalizedType;
 import io.sui.models.objects.MoveNormalizedType.VectorReferenceMoveNormalizedType;
+import io.sui.models.objects.ObjectChange;
+import io.sui.models.objects.ObjectChange.ObjectChangeType;
 import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.ObjectResponse.ObjectIdAndVersionResponseDetails;
 import io.sui.models.objects.ObjectResponse.ObjectResponseDetails;
@@ -58,12 +60,26 @@ import io.sui.models.objects.SuiData;
 import io.sui.models.objects.SuiObject;
 import io.sui.models.objects.SuiObjectOwner;
 import io.sui.models.objects.SuiObjectRef;
+import io.sui.models.transactions.Argument;
+import io.sui.models.transactions.Argument.NestedResult;
+import io.sui.models.transactions.Argument.NestedResultArgument;
 import io.sui.models.transactions.AuthorityQuorumSignInfo;
+import io.sui.models.transactions.Command;
+import io.sui.models.transactions.Command.MakeMoveVec;
+import io.sui.models.transactions.Command.MakeMoveVecCommand;
+import io.sui.models.transactions.Command.MergeCoins;
+import io.sui.models.transactions.Command.MergeCoinsCommand;
+import io.sui.models.transactions.Command.MoveCall;
+import io.sui.models.transactions.Command.MoveCallCommand;
+import io.sui.models.transactions.Command.PublishCommand;
+import io.sui.models.transactions.Command.SplitCoin;
+import io.sui.models.transactions.Command.SplitCoinCommand;
+import io.sui.models.transactions.Command.TransferObjects;
+import io.sui.models.transactions.Command.TransferObjectsCommand;
 import io.sui.models.transactions.ExecuteTransactionResponse;
 import io.sui.models.transactions.ExecuteTransactionResponse.EffectsCertResponse;
 import io.sui.models.transactions.ExecuteTransactionResponse.ImmediateReturnResponse;
 import io.sui.models.transactions.ExecuteTransactionResponse.TxCertResponse;
-import io.sui.models.transactions.MoveCall;
 import io.sui.models.transactions.MoveFunction;
 import io.sui.models.transactions.ParsedPublishResponse;
 import io.sui.models.transactions.ParsedTransactionResponseKind;
@@ -112,6 +128,84 @@ public class GsonJsonHandler implements JsonHandler {
       }
       if ("moveObject".equals(json.getAsJsonObject().get("dataType").getAsString())) {
         return gson.fromJson(json, SuiData.MoveObject.class);
+      }
+      return null;
+    }
+  }
+
+  /** The type Sui argument deserializer. */
+  public class SuiArgumentDeserializer implements JsonDeserializer<Argument> {
+
+    @Override
+    public Argument deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        throws JsonParseException {
+      if (json.isJsonObject()) {
+        if (json.getAsJsonObject().get("Input") != null
+            && !json.getAsJsonObject().get("Input").isJsonNull()) {
+          return gson.fromJson(json, Argument.InputArgument.class);
+        }
+        if (json.getAsJsonObject().get("Result") != null
+            && !json.getAsJsonObject().get("Result").isJsonNull()) {
+          return gson.fromJson(json, Argument.ResultArgument.class);
+        }
+        if (json.getAsJsonObject().get("NestedResult") != null
+            && !json.getAsJsonObject().get("NestedResult").isJsonNull()) {
+          Argument.NestedResult nestedResult = new NestedResult();
+          nestedResult.setField0(
+              json.getAsJsonObject().getAsJsonArray("NestedResult").get(0).getAsShort());
+          nestedResult.setField1(
+              json.getAsJsonObject().getAsJsonArray("NestedResult").get(1).getAsShort());
+
+          NestedResultArgument nestedResultArgument = new NestedResultArgument();
+          nestedResultArgument.setNestedResult(nestedResult);
+          return nestedResultArgument;
+        }
+      } else {
+        return Argument.GasCoinArgument.GasCoin;
+      }
+      return null;
+    }
+  }
+
+  /** The type Object change deserializer. */
+  public class ObjectChangeDeserializer implements JsonDeserializer<ObjectChange> {
+
+    @Override
+    public ObjectChange deserialize(
+        JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        throws JsonParseException {
+      if (json.getAsJsonObject().get("type") != null
+          && !json.getAsJsonObject().get("type").isJsonNull()) {
+        if (ObjectChangeType.published
+            .toString()
+            .equals(json.getAsJsonObject().get("type").getAsString())) {
+          return gson.fromJson(json, ObjectChange.ObjectChangePublished.class);
+        }
+        if (ObjectChangeType.transferred
+            .toString()
+            .equals(json.getAsJsonObject().get("type").getAsString())) {
+          return gson.fromJson(json, ObjectChange.ObjectChangeTransferred.class);
+        }
+        if (ObjectChangeType.mutated
+            .toString()
+            .equals(json.getAsJsonObject().get("type").getAsString())) {
+          return gson.fromJson(json, ObjectChange.ObjectChangeMutated.class);
+        }
+        if (ObjectChangeType.deleted
+            .toString()
+            .equals(json.getAsJsonObject().get("type").getAsString())) {
+          return gson.fromJson(json, ObjectChange.ObjectChangeDeleted.class);
+        }
+        if (ObjectChangeType.wrapped
+            .toString()
+            .equals(json.getAsJsonObject().get("type").getAsString())) {
+          return gson.fromJson(json, ObjectChange.ObjectChangeWrapped.class);
+        }
+        if (ObjectChangeType.created
+            .toString()
+            .equals(json.getAsJsonObject().get("type").getAsString())) {
+          return gson.fromJson(json, ObjectChange.ObjectChangeCreated.class);
+        }
       }
       return null;
     }
@@ -232,21 +326,103 @@ public class GsonJsonHandler implements JsonHandler {
     public MoveCall deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
         throws JsonParseException {
       MoveCall moveCall = new MoveCall();
-      List<?> arguments =
+      List<Argument> arguments =
           gson.fromJson(
               json.getAsJsonObject().get("arguments"),
-              new com.google.common.reflect.TypeToken<List<?>>() {}.getType());
+              new com.google.common.reflect.TypeToken<List<Argument>>() {}.getType());
       moveCall.setArguments(arguments);
       moveCall.setModule(json.getAsJsonObject().get("module").getAsString());
       moveCall.setFunction(json.getAsJsonObject().get("function").getAsString());
       List<String> typeArguments =
           gson.fromJson(
-              json.getAsJsonObject().get("typeArguments"),
+              json.getAsJsonObject().get("type_arguments"),
               new com.google.common.reflect.TypeToken<List<String>>() {}.getType());
       moveCall.setTypeArguments(typeArguments);
       String suiPackage = json.getAsJsonObject().get("package").getAsString();
       moveCall.setSuiPackage(suiPackage);
       return moveCall;
+    }
+  }
+
+  /** The type Sui command deserializer. */
+  public class SuiCommandDeserializer implements JsonDeserializer<Command> {
+
+    @Override
+    public Command deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        throws JsonParseException {
+      if (json.getAsJsonObject().get("MoveCall") != null
+          && !json.getAsJsonObject().get("MoveCall").isJsonNull()) {
+        return gson.fromJson(json, MoveCallCommand.class);
+      }
+      if (json.getAsJsonObject().get("TransferObjects") != null
+          && !json.getAsJsonObject().get("TransferObjects").isJsonNull()) {
+        Command.TransferObjects transferObjects = new TransferObjects();
+        List<Argument> field0 =
+            gson.fromJson(
+                json.getAsJsonObject().getAsJsonArray("TransferObjects").get(0),
+                new com.google.common.reflect.TypeToken<List<Argument>>() {}.getType());
+        Argument field1 =
+            gson.fromJson(
+                json.getAsJsonObject().getAsJsonArray("TransferObjects").get(1),
+                new com.google.common.reflect.TypeToken<Argument>() {}.getType());
+        transferObjects.setField0(field0);
+        transferObjects.setField1(field1);
+        TransferObjectsCommand transferObjectsCommand = new TransferObjectsCommand();
+        transferObjectsCommand.setTransferObjects(transferObjects);
+        return transferObjectsCommand;
+      }
+      if (json.getAsJsonObject().get("SplitCoin") != null
+          && !json.getAsJsonObject().get("SplitCoin").isJsonNull()) {
+        Command.SplitCoin splitCoin = new SplitCoin();
+        Argument field0 =
+            gson.fromJson(
+                json.getAsJsonObject().getAsJsonArray("SplitCoin").get(0),
+                new com.google.common.reflect.TypeToken<Argument>() {}.getType());
+        splitCoin.setField0(field0);
+        splitCoin.setAddress(
+            json.getAsJsonObject().getAsJsonArray("SplitCoin").get(1).getAsString());
+        SplitCoinCommand splitCoinCommand = new SplitCoinCommand();
+        splitCoinCommand.setSplitCoin(splitCoin);
+        return splitCoinCommand;
+      }
+      if (json.getAsJsonObject().get("MergeCoins") != null
+          && !json.getAsJsonObject().get("MergeCoins").isJsonNull()) {
+        Command.MergeCoins mergeCoins = new MergeCoins();
+        Argument field0 =
+            gson.fromJson(
+                json.getAsJsonObject().getAsJsonArray("MergeCoins").get(0),
+                new com.google.common.reflect.TypeToken<Argument>() {}.getType());
+        List<Argument> field1 =
+            gson.fromJson(
+                json.getAsJsonObject().getAsJsonArray("MergeCoins").get(1),
+                new com.google.common.reflect.TypeToken<List<Argument>>() {}.getType());
+        mergeCoins.setField0(field0);
+        mergeCoins.setField1(field1);
+
+        MergeCoinsCommand mergeCoinsCommand = new MergeCoinsCommand();
+        mergeCoinsCommand.setMergeCoins(mergeCoins);
+        return mergeCoinsCommand;
+      }
+      if (json.getAsJsonObject().get("Publish") != null
+          && !json.getAsJsonObject().get("Publish").isJsonNull()) {
+        return gson.fromJson(json, PublishCommand.class);
+      }
+      if (json.getAsJsonObject().get("MakeMoveVec") != null
+          && !json.getAsJsonObject().get("MakeMoveVec").isJsonNull()) {
+        Command.MakeMoveVec makeMoveVec = new MakeMoveVec();
+        List<Argument> field1 =
+            gson.fromJson(
+                json.getAsJsonObject().getAsJsonArray("MakeMoveVec").get(1),
+                new com.google.common.reflect.TypeToken<List<Argument>>() {}.getType());
+        makeMoveVec.setField0(
+            json.getAsJsonObject().getAsJsonArray("MakeMoveVec").get(0).getAsString());
+        makeMoveVec.setField1(field1);
+
+        MakeMoveVecCommand makeMoveVecCommand = new MakeMoveVecCommand();
+        makeMoveVecCommand.setMakeMoveVec(makeMoveVec);
+        return makeMoveVecCommand;
+      }
+      return null;
     }
   }
 
@@ -305,37 +481,13 @@ public class GsonJsonHandler implements JsonHandler {
     public TransactionKind deserialize(
         JsonElement json, Type typeOfT, JsonDeserializationContext context)
         throws JsonParseException {
-      if (json.getAsJsonObject().get("TransferObject") != null
-          && !json.getAsJsonObject().get("TransferObject").isJsonNull()) {
-        return gson.fromJson(json, TransactionKind.TransferObjectTransactionKind.class);
-      }
-      if (json.getAsJsonObject().get("Publish") != null
-          && !json.getAsJsonObject().get("Publish").isJsonNull()) {
-        return gson.fromJson(json, TransactionKind.PublishTransactionKind.class);
-      }
-      if (json.getAsJsonObject().get("Call") != null
-          && !json.getAsJsonObject().get("Call").isJsonNull()) {
-        return gson.fromJson(json, TransactionKind.CallTransactionKind.class);
-      }
-      if (json.getAsJsonObject().get("TransferSui") != null
-          && !json.getAsJsonObject().get("TransferSui").isJsonNull()) {
-        return gson.fromJson(json, TransactionKind.TransferSuiTransactionKind.class);
-      }
       if (json.getAsJsonObject().get("ChangeEpoch") != null
           && !json.getAsJsonObject().get("ChangeEpoch").isJsonNull()) {
         return gson.fromJson(json, TransactionKind.ChangeEpochTransactionKind.class);
       }
-      if (json.getAsJsonObject().get("Pay") != null
-          && !json.getAsJsonObject().get("Pay").isJsonNull()) {
-        return gson.fromJson(json, TransactionKind.PayTransactionKind.class);
-      }
-      if (json.getAsJsonObject().get("PaySui") != null
-          && !json.getAsJsonObject().get("PaySui").isJsonNull()) {
-        return gson.fromJson(json, TransactionKind.PaySuiTransactionKind.class);
-      }
-      if (json.getAsJsonObject().get("PayAllSui") != null
-          && !json.getAsJsonObject().get("PayAllSui").isJsonNull()) {
-        return gson.fromJson(json, TransactionKind.PayAllSuiTransactionKind.class);
+      if (json.getAsJsonObject().get("Genesis") != null
+          && !json.getAsJsonObject().get("Genesis").isJsonNull()) {
+        return gson.fromJson(json, TransactionKind.GenesisTransactionKind.class);
       }
       return null;
     }
@@ -603,6 +755,9 @@ public class GsonJsonHandler implements JsonHandler {
             .registerTypeAdapter(TypeTag.class, new TypeTagSerializer())
             .registerTypeAdapter(
                 EventFilter.PackageEventFilter.class, new PackageEventFilterSerializer())
+            .registerTypeAdapter(Argument.class, new SuiArgumentDeserializer())
+            .registerTypeAdapter(Command.class, new SuiCommandDeserializer())
+            .registerTypeAdapter(ObjectChange.class, new ObjectChangeDeserializer())
             .create();
   }
 

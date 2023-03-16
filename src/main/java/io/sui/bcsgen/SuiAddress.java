@@ -2,16 +2,16 @@ package io.sui.bcsgen;
 
 
 public final class SuiAddress {
-    public final java.util.@com.novi.serde.ArrayLen(length=20) List<@com.novi.serde.Unsigned Byte> value;
+    public final java.util.@com.novi.serde.ArrayLen(length=32) List<@com.novi.serde.Unsigned Byte> value;
 
-    public SuiAddress(java.util.@com.novi.serde.ArrayLen(length=20) List<@com.novi.serde.Unsigned Byte> value) {
+    public SuiAddress(java.util.@com.novi.serde.ArrayLen(length=32) List<@com.novi.serde.Unsigned Byte> value) {
         java.util.Objects.requireNonNull(value, "value must not be null");
         this.value = value;
     }
 
     public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
         serializer.increase_container_depth();
-        TraitHelpers.serialize_array20_u8_array(value, serializer);
+        TraitHelpers.serialize_array32_u8_array(value, serializer);
         serializer.decrease_container_depth();
     }
 
@@ -24,7 +24,7 @@ public final class SuiAddress {
     public static SuiAddress deserialize(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
         deserializer.increase_container_depth();
         Builder builder = new Builder();
-        builder.value = TraitHelpers.deserialize_array20_u8_array(deserializer);
+        builder.value = TraitHelpers.deserialize_array32_u8_array(deserializer);
         deserializer.decrease_container_depth();
         return builder.build();
     }
@@ -57,7 +57,7 @@ public final class SuiAddress {
     }
 
     public static final class Builder {
-        public java.util.@com.novi.serde.ArrayLen(length=20) List<@com.novi.serde.Unsigned Byte> value;
+        public java.util.@com.novi.serde.ArrayLen(length=32) List<@com.novi.serde.Unsigned Byte> value;
 
         public SuiAddress build() {
             return new SuiAddress(

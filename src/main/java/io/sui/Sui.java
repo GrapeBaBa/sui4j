@@ -28,7 +28,6 @@ import io.sui.clients.EventClientImpl;
 import io.sui.clients.ExecutionClient;
 import io.sui.clients.ExecutionClientImpl;
 import io.sui.clients.JsonRpcTransactionBuilder;
-import io.sui.clients.LocalTransactionBuilder;
 import io.sui.clients.QueryClient;
 import io.sui.clients.QueryClientImpl;
 import io.sui.clients.TransactionBuilder;
@@ -70,6 +69,7 @@ import io.sui.models.transactions.TransactionBytes;
 import io.sui.models.transactions.TransactionEffects;
 import io.sui.models.transactions.TransactionQuery;
 import io.sui.models.transactions.TransactionResponse;
+import io.sui.models.transactions.TransactionResponseOptions;
 import io.sui.models.transactions.TypeTag;
 import java.util.List;
 import java.util.Map;
@@ -120,10 +120,11 @@ public class Sui {
     final JsonRpcClientProvider jsonRpcClientProvider =
         new OkHttpJsonRpcClientProvider(rpcEndpoint, jsonHandler);
     this.queryClient = new QueryClientImpl(jsonRpcClientProvider);
-    this.transactionBuilder =
-        useLocalTransactionBuilder
-            ? new LocalTransactionBuilder(this.queryClient)
-            : new JsonRpcTransactionBuilder(jsonRpcClientProvider);
+    this.transactionBuilder = new JsonRpcTransactionBuilder(jsonRpcClientProvider);
+    //    this.transactionBuilder =
+    //        useLocalTransactionBuilder
+    //            ? new LocalTransactionBuilder(this.queryClient)
+    //            : new JsonRpcTransactionBuilder(jsonRpcClientProvider);
     this.executionClient = new ExecutionClientImpl(jsonRpcClientProvider);
     this.eventClient = new EventClientImpl(jsonRpcClientProvider);
   }
@@ -450,10 +451,12 @@ public class Sui {
    * Gets transaction.
    *
    * @param digest the digest
+   * @param options the options
    * @return the transaction
    */
-  public CompletableFuture<TransactionResponse> getTransaction(String digest) {
-    return queryClient.getTransaction(digest);
+  public CompletableFuture<TransactionResponse> getTransaction(
+      String digest, TransactionResponseOptions options) {
+    return queryClient.getTransaction(digest, options);
   }
 
   /**
