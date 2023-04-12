@@ -25,16 +25,12 @@ import java.util.Objects;
  * @author grapebaba
  * @since 2022.11
  */
-public interface TransactionQuery {
+public abstract class TransactionQuery {
 
-  /** The enum All query. */
-  enum AllQuery implements TransactionQuery {
-    /** All all query. */
-    All
-  }
-
-  /** The type Move function query. */
-  class MoveFunctionQuery implements TransactionQuery {
+  /**
+   * The type Move function query.
+   */
+  public static class MoveFunctionQuery extends TransactionQuery {
 
     @SuppressWarnings("checkstyle:MemberName")
     private MoveFunction MoveFunction;
@@ -80,8 +76,10 @@ public interface TransactionQuery {
     }
   }
 
-  /** The type Input object query. */
-  class InputObjectQuery implements TransactionQuery {
+  /**
+   * The type Input object query.
+   */
+  public static class InputObjectQuery extends TransactionQuery {
 
     @SuppressWarnings("checkstyle:MemberName")
     private String InputObject;
@@ -127,28 +125,30 @@ public interface TransactionQuery {
     }
   }
 
-  /** The type Mutated object query. */
-  class MutatedObjectQuery implements TransactionQuery {
+  /**
+   * The type Mutated object query.
+   */
+  public static class ChangedObjectQuery extends TransactionQuery {
 
     @SuppressWarnings("checkstyle:MemberName")
-    private String MutatedObject;
+    private String ChangedObject;
 
     /**
      * Gets mutated object.
      *
      * @return the mutated object
      */
-    public String getMutatedObject() {
-      return MutatedObject;
+    public String getChangedObject() {
+      return ChangedObject;
     }
 
     /**
      * Sets mutated object.
      *
-     * @param mutatedObject the mutated object
+     * @param changedObject the mutated object
      */
-    public void setMutatedObject(String mutatedObject) {
-      MutatedObject = mutatedObject;
+    public void setChangedObject(String changedObject) {
+      ChangedObject = changedObject;
     }
 
     @Override
@@ -156,26 +156,28 @@ public interface TransactionQuery {
       if (this == o) {
         return true;
       }
-      if (!(o instanceof MutatedObjectQuery)) {
+      if (!(o instanceof ChangedObjectQuery)) {
         return false;
       }
-      MutatedObjectQuery that = (MutatedObjectQuery) o;
-      return MutatedObject.equals(that.MutatedObject);
+      ChangedObjectQuery that = (ChangedObjectQuery) o;
+      return ChangedObject.equals(that.ChangedObject);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(MutatedObject);
+      return Objects.hash(ChangedObject);
     }
 
     @Override
     public String toString() {
-      return "MutatedObjectQuery{" + "MutatedObject='" + MutatedObject + '\'' + '}';
+      return "MutatedObjectQuery{" + "MutatedObject='" + ChangedObject + '\'' + '}';
     }
   }
 
-  /** The type From address query. */
-  class FromAddressQuery implements TransactionQuery {
+  /**
+   * The type From address query.
+   */
+  public static class FromAddressQuery extends TransactionQuery {
 
     @SuppressWarnings("checkstyle:MemberName")
     private String FromAddress;
@@ -221,8 +223,10 @@ public interface TransactionQuery {
     }
   }
 
-  /** The type To address query. */
-  class ToAddressQuery implements TransactionQuery {
+  /**
+   * The type To address query.
+   */
+  public static class ToAddressQuery extends TransactionQuery {
 
     @SuppressWarnings("checkstyle:MemberName")
     private String ToAddress;
