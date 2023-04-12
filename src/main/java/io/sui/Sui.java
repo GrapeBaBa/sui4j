@@ -17,21 +17,30 @@
 package io.sui;
 
 
+import com.google.common.collect.Lists;
 import com.novi.serde.SerializationError;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Consumer;
+import io.sui.bcsgen.Argument;
 import io.sui.bcsgen.Intent;
+import io.sui.bcsgen.SuiAddress;
+import io.sui.bcsgen.SuiAddress.Builder;
 import io.sui.bcsgen.TransactionData;
 import io.sui.clients.BcsSerializationException;
 import io.sui.clients.EventClient;
 import io.sui.clients.EventClientImpl;
 import io.sui.clients.ExecutionClient;
 import io.sui.clients.ExecutionClientImpl;
+import io.sui.clients.FaucetClient;
 import io.sui.clients.JsonRpcTransactionBuilder;
+import io.sui.clients.LocalTransactionBuilder;
+import io.sui.clients.OkhttpFaucetClient;
 import io.sui.clients.QueryClient;
 import io.sui.clients.QueryClientImpl;
+import io.sui.clients.TransactionBlock;
 import io.sui.clients.TransactionBuilder;
 import io.sui.crypto.FileBasedKeyStore;
+import io.sui.crypto.KeyResponse;
 import io.sui.crypto.KeyStore;
 import io.sui.crypto.SignatureScheme;
 import io.sui.crypto.SigningException;
@@ -40,6 +49,7 @@ import io.sui.jsonrpc.GsonJsonHandler;
 import io.sui.jsonrpc.JsonHandler;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
+import io.sui.models.FaucetResponse;
 import io.sui.models.SuiApiException;
 import io.sui.models.events.EventEnvelope;
 import io.sui.models.events.EventFilter;
@@ -55,27 +65,29 @@ import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveNormalizedStruct;
+import io.sui.models.objects.ObjectDataOptions;
 import io.sui.models.objects.ObjectResponse;
+import io.sui.models.objects.ObjectResponseQuery;
 import io.sui.models.objects.PaginatedCoins;
-import io.sui.models.objects.SuiObjectInfo;
+import io.sui.models.objects.PaginatedObjectsResponse;
 import io.sui.models.objects.SuiObjectRef;
+import io.sui.models.objects.SuiObjectResponse;
 import io.sui.models.objects.SuiSystemState;
 import io.sui.models.objects.ValidatorMetadata;
 import io.sui.models.transactions.ExecuteTransactionRequestType;
-import io.sui.models.transactions.ExecuteTransactionResponse;
-import io.sui.models.transactions.PaginatedTransactionDigests;
-import io.sui.models.transactions.RPCTransactionRequestParams;
+import io.sui.models.transactions.PaginatedTransactionResponse;
+import io.sui.models.transactions.TransactionBlockResponse;
+import io.sui.models.transactions.TransactionBlockResponseOptions;
+import io.sui.models.transactions.TransactionBlockResponseQuery;
 import io.sui.models.transactions.TransactionBytes;
 import io.sui.models.transactions.TransactionEffects;
-import io.sui.models.transactions.TransactionQuery;
-import io.sui.models.transactions.TransactionResponse;
-import io.sui.models.transactions.TransactionResponseOptions;
 import io.sui.models.transactions.TypeTag;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import org.bouncycastle.jcajce.provider.digest.Blake2b.Blake2b256;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.encoders.Base64;
 
@@ -97,65 +109,148 @@ public class Sui {
 
   private final EventClient eventClient;
 
+  private final FaucetClient faucetClient;
+
   /**
    * Instantiates a new Sui.
    *
-   * @param rpcEndpoint the rpc endpoint
+   * @param fullNodeEndpoint the full node endpoint
+   * @param faucetEndpoint the faucet endpoint
    * @param keyStorePath the key store path
    */
-  public Sui(String rpcEndpoint, String keyStorePath) {
-    this(rpcEndpoint, keyStorePath, true);
+  public Sui(String fullNodeEndpoint, String faucetEndpoint, String keyStorePath) {
+    this(fullNodeEndpoint, faucetEndpoint, keyStorePath, true);
   }
 
   /**
    * Instantiates a new Sui.
    *
-   * @param rpcEndpoint the rpc endpoint
+   * @param fullNodeEndpoint the full node endpoint
+   * @param faucetEndpoint the faucet endpoint
    * @param keyStorePath the key store path
    * @param useLocalTransactionBuilder the use local transaction builder
    */
-  public Sui(String rpcEndpoint, String keyStorePath, boolean useLocalTransactionBuilder) {
+  public Sui(
+      String fullNodeEndpoint,
+      String faucetEndpoint,
+      String keyStorePath,
+      boolean useLocalTransactionBuilder) {
     this.keyStore = new FileBasedKeyStore(keyStorePath);
     final JsonHandler jsonHandler = new GsonJsonHandler();
     final JsonRpcClientProvider jsonRpcClientProvider =
-        new OkHttpJsonRpcClientProvider(rpcEndpoint, jsonHandler);
+        new OkHttpJsonRpcClientProvider(fullNodeEndpoint, jsonHandler);
     this.queryClient = new QueryClientImpl(jsonRpcClientProvider);
-    this.transactionBuilder = new JsonRpcTransactionBuilder(jsonRpcClientProvider);
-    //    this.transactionBuilder =
-    //        useLocalTransactionBuilder
-    //            ? new LocalTransactionBuilder(this.queryClient)
-    //            : new JsonRpcTransactionBuilder(jsonRpcClientProvider);
+    this.transactionBuilder =
+        useLocalTransactionBuilder
+            ? new LocalTransactionBuilder(this.queryClient)
+            : new JsonRpcTransactionBuilder(jsonRpcClientProvider);
     this.executionClient = new ExecutionClientImpl(jsonRpcClientProvider);
     this.eventClient = new EventClientImpl(jsonRpcClientProvider);
+    this.faucetClient = new OkhttpFaucetClient(faucetEndpoint, jsonHandler);
+  }
+
+  /**
+   * Request sui from faucet completable future.
+   *
+   * @param address the address
+   * @return the completable future
+   */
+  public CompletableFuture<FaucetResponse> requestSuiFromFaucet(String address) {
+    return this.faucetClient.requestSuiFromFaucet(address);
+  }
+
+  /**
+   * New address key response.
+   *
+   * @param signatureScheme the signature scheme
+   * @return the key response
+   */
+  public KeyResponse newAddress(SignatureScheme signatureScheme) {
+    return this.keyStore.generateNewKey(signatureScheme);
   }
 
   /**
    * Transfer sui completable future.
    *
-   * @param signer the signer
+   * @param sender the signer
    * @param coin the coin
-   * @param gasBudget the gas budget
    * @param recipient the recipient
    * @param amount the amount
+   * @param gas the gas
+   * @param gasBudget the gas budget
+   * @param gasPrice the gas price
+   * @param expiration the expiration
+   * @param transactionBlockResponseOptions the transaction response options
    * @param requestType the request type
    * @return the completable future
    */
-  public CompletableFuture<ExecuteTransactionResponse> transferSui(
-      String signer,
+  public CompletableFuture<TransactionBlockResponse> transferSui(
+      String sender,
       String coin,
-      long gasBudget,
       String recipient,
-      long amount,
+      Long amount,
+      String gas,
+      Long gasBudget,
+      Long gasPrice,
+      Long expiration,
+      TransactionBlockResponseOptions transactionBlockResponseOptions,
       ExecuteTransactionRequestType requestType) {
-    return this.transactionBuilder
-        .transferSui(signer, coin, gasBudget, recipient, amount)
-        .thenCompose(signAndExecuteTransactionFunction(signer, defaultIntent(), requestType));
+    return this.newTransactionBlock()
+        .thenCompose(
+            (Function<TransactionBlock, CompletableFuture<TransactionBlockResponse>>)
+                transactionBlock -> {
+                  transactionBlock.setExpiration(expiration);
+                  transactionBlock.setSender(sender);
+                  return transactionBlock
+                      .splitCoins(coin, Lists.newArrayList(amount))
+                      .thenCompose(
+                          (Function<Argument, CompletableFuture<TransactionBlockResponse>>)
+                              argument -> {
+                                SuiAddress.Builder recipientAddressBuilder = new Builder();
+                                recipientAddressBuilder.value =
+                                    transactionBlock.geAddressBytes(recipient);
+                                transactionBlock.transferObjects(
+                                    Lists.newArrayList(argument),
+                                    transactionBlock.pure(recipientAddressBuilder.build()));
+                                CompletableFuture<TransactionData>
+                                    transactionDataCompletableFuture =
+                                        transactionBlock
+                                            .setGasData(
+                                                gas != null
+                                                    ? Lists.newArrayList(gas)
+                                                    : Lists.newArrayList(),
+                                                sender,
+                                                gasBudget,
+                                                gasPrice)
+                                            .thenCompose(
+                                                (Function<Void, CompletableFuture<TransactionData>>)
+                                                    unused -> transactionBlock.build());
+
+                                return transactionDataCompletableFuture.thenCompose(
+                                    (Function<
+                                            TransactionData,
+                                            CompletableFuture<TransactionBlockResponse>>)
+                                        transactionData ->
+                                            executeTransaction(
+                                                sender, transactionData,
+                                                transactionBlockResponseOptions, requestType));
+                              });
+                });
+  }
+
+  /**
+   * New transaction block completable future.
+   *
+   * @return the completable future
+   */
+  public CompletableFuture<TransactionBlock> newTransactionBlock() {
+    return CompletableFuture.completedFuture(new TransactionBlock(queryClient));
   }
 
   /**
    * Move call completable future.
    *
-   * @param signer the signer
+   * @param sender the signer
    * @param packageObjectId the package object id
    * @param module the module
    * @param function the function
@@ -163,226 +258,240 @@ public class Sui {
    * @param arguments the arguments
    * @param gas the gas
    * @param gasBudget the gas budget
+   * @param gasPrice the gas price
+   * @param expiration the expiration
+   * @param transactionBlockResponseOptions the transaction response options
    * @param requestType the request type
    * @return the completable future
    */
-  public CompletableFuture<ExecuteTransactionResponse> moveCall(
-      String signer,
+  public CompletableFuture<TransactionBlockResponse> moveCall(
+      String sender,
       String packageObjectId,
       String module,
       String function,
       List<TypeTag> typeArguments,
       List<?> arguments,
       String gas,
-      long gasBudget,
+      Long gasBudget,
+      Long gasPrice,
+      Long expiration,
+      TransactionBlockResponseOptions transactionBlockResponseOptions,
       ExecuteTransactionRequestType requestType) {
-    return this.transactionBuilder
-        .moveCall(
-            signer, packageObjectId, module, function, typeArguments, arguments, gas, gasBudget)
-        .thenCompose(signAndExecuteTransactionFunction(signer, defaultIntent(), requestType));
+    return this.newTransactionBlock()
+        .thenCompose(
+            (Function<TransactionBlock, CompletableFuture<TransactionBlockResponse>>)
+                transactionBlock -> {
+                  transactionBlock.setExpiration(expiration);
+                  transactionBlock.setSender(sender);
+                  return transactionBlock
+                      .moveCall(packageObjectId, module, function, typeArguments, arguments)
+                      .thenCompose(
+                          (Function<Argument, CompletableFuture<TransactionBlockResponse>>)
+                              argument -> {
+                                CompletableFuture<TransactionData>
+                                    transactionDataCompletableFuture =
+                                        transactionBlock
+                                            .setGasData(
+                                                gas != null
+                                                    ? Lists.newArrayList(gas)
+                                                    : Lists.newArrayList(),
+                                                sender,
+                                                gasBudget,
+                                                gasPrice)
+                                            .thenCompose(
+                                                (Function<Void, CompletableFuture<TransactionData>>)
+                                                    unused -> transactionBlock.build());
+
+                                return transactionDataCompletableFuture.thenCompose(
+                                    (Function<
+                                            TransactionData,
+                                            CompletableFuture<TransactionBlockResponse>>)
+                                        transactionData ->
+                                            executeTransaction(
+                                                sender, transactionData,
+                                                transactionBlockResponseOptions, requestType));
+                              });
+                });
   }
 
   /**
-   * Batch transaction completable future.
+   * Merge coin completable future.
    *
-   * @param signer the signer
-   * @param batchTransactionParams the batch transaction params
+   * @param sender the sender
+   * @param destCoin the dest coin
+   * @param sourceCoins the source coins
    * @param gas the gas
    * @param gasBudget the gas budget
+   * @param gasPrice the gas price
+   * @param expiration the expiration
+   * @param transactionBlockResponseOptions the transaction response options
    * @param requestType the request type
    * @return the completable future
    */
-  public CompletableFuture<ExecuteTransactionResponse> batchTransaction(
-      String signer,
-      List<RPCTransactionRequestParams> batchTransactionParams,
+  public CompletableFuture<TransactionBlockResponse> mergeCoin(
+      String sender,
+      String destCoin,
+      List<String> sourceCoins,
       String gas,
-      long gasBudget,
+      Long gasBudget,
+      Long gasPrice,
+      Long expiration,
+      TransactionBlockResponseOptions transactionBlockResponseOptions,
       ExecuteTransactionRequestType requestType) {
-    return this.transactionBuilder
-        .batchTransaction(signer, batchTransactionParams, gas, gasBudget)
-        .thenCompose(signAndExecuteTransactionFunction(signer, defaultIntent(), requestType));
+    return this.newTransactionBlock()
+        .thenCompose(
+            (Function<TransactionBlock, CompletableFuture<TransactionBlockResponse>>)
+                transactionBlock -> {
+                  transactionBlock.setExpiration(expiration);
+                  transactionBlock.setSender(sender);
+                  return transactionBlock
+                      .mergeCoins(destCoin, sourceCoins)
+                      .thenCompose(
+                          (Function<Argument, CompletableFuture<TransactionBlockResponse>>)
+                              argument -> {
+                                CompletableFuture<TransactionData>
+                                    transactionDataCompletableFuture =
+                                        transactionBlock
+                                            .setGasData(
+                                                gas != null
+                                                    ? Lists.newArrayList(gas)
+                                                    : Lists.newArrayList(),
+                                                sender,
+                                                gasBudget,
+                                                gasPrice)
+                                            .thenCompose(
+                                                (Function<Void, CompletableFuture<TransactionData>>)
+                                                    unused -> transactionBlock.build());
+
+                                return transactionDataCompletableFuture.thenCompose(
+                                    (Function<
+                                            TransactionData,
+                                            CompletableFuture<TransactionBlockResponse>>)
+                                        transactionData ->
+                                            executeTransaction(
+                                                sender, transactionData,
+                                                transactionBlockResponseOptions, requestType));
+                              });
+                });
   }
 
   /**
-   * Pay sui completable future.
+   * Transfer objects completable future.
    *
-   * @param signer the signer
-   * @param inputCoins the input coins
-   * @param recipients the recipients
-   * @param amounts the amounts
-   * @param gasBudget the gas budget
-   * @param requestType the request type
-   * @return the completable future
-   */
-  public CompletableFuture<ExecuteTransactionResponse> paySui(
-      String signer,
-      List<String> inputCoins,
-      List<String> recipients,
-      List<Long> amounts,
-      long gasBudget,
-      ExecuteTransactionRequestType requestType) {
-    return this.transactionBuilder
-        .paySui(signer, inputCoins, recipients, amounts, gasBudget)
-        .thenCompose(signAndExecuteTransactionFunction(signer, defaultIntent(), requestType));
-  }
-
-  /**
-   * Pay completable future.
-   *
-   * @param signer the signer
-   * @param inputCoins the input coins
-   * @param recipients the recipients
-   * @param amounts the amounts
-   * @param gas the gas
-   * @param gasBudget the gas budget
-   * @param requestType the request type
-   * @return the completable future
-   */
-  public CompletableFuture<ExecuteTransactionResponse> pay(
-      String signer,
-      List<String> inputCoins,
-      List<String> recipients,
-      List<Long> amounts,
-      String gas,
-      long gasBudget,
-      ExecuteTransactionRequestType requestType) {
-    return this.transactionBuilder
-        .pay(signer, inputCoins, recipients, amounts, gas, gasBudget)
-        .thenCompose(signAndExecuteTransactionFunction(signer, defaultIntent(), requestType));
-  }
-
-  /**
-   * Merge coins completable future.
-   *
-   * @param signer the signer
-   * @param primaryCoin the primary coin
-   * @param toMergeCoin the to merge coin
-   * @param gas the gas
-   * @param gasBudget the gas budget
-   * @param requestType the request type
-   * @return the completable future
-   */
-  public CompletableFuture<ExecuteTransactionResponse> mergeCoins(
-      String signer,
-      String primaryCoin,
-      String toMergeCoin,
-      String gas,
-      long gasBudget,
-      ExecuteTransactionRequestType requestType) {
-    return this.transactionBuilder
-        .mergeCoins(signer, primaryCoin, toMergeCoin, gas, gasBudget)
-        .thenCompose(signAndExecuteTransactionFunction(signer, defaultIntent(), requestType));
-  }
-
-  /**
-   * Split coin completable future.
-   *
-   * @param signer the signer
-   * @param coin the coin
-   * @param splitAmounts the split amounts
-   * @param gas the gas
-   * @param gasBudget the gas budget
-   * @param requestType the request type
-   * @return the completable future
-   */
-  public CompletableFuture<ExecuteTransactionResponse> splitCoin(
-      String signer,
-      String coin,
-      List<Long> splitAmounts,
-      String gas,
-      long gasBudget,
-      ExecuteTransactionRequestType requestType) {
-    return this.transactionBuilder
-        .splitCoin(signer, coin, splitAmounts, gas, gasBudget)
-        .thenCompose(signAndExecuteTransactionFunction(signer, defaultIntent(), requestType));
-  }
-
-  /**
-   * Pay all sui completable future.
-   *
-   * @param signer the signer
-   * @param inputCoins the input coins
+   * @param sender the sender
+   * @param suiObjects the sui objects
    * @param recipient the recipient
+   * @param gas the gas
    * @param gasBudget the gas budget
+   * @param gasPrice the gas price
+   * @param expiration the expiration
+   * @param transactionBlockResponseOptions the transaction response options
    * @param requestType the request type
    * @return the completable future
    */
-  public CompletableFuture<ExecuteTransactionResponse> payAllSui(
-      String signer,
-      List<String> inputCoins,
+  public CompletableFuture<TransactionBlockResponse> transferObjects(
+      String sender,
+      List<String> suiObjects,
       String recipient,
-      long gasBudget,
+      String gas,
+      Long gasBudget,
+      Long gasPrice,
+      Long expiration,
+      TransactionBlockResponseOptions transactionBlockResponseOptions,
       ExecuteTransactionRequestType requestType) {
-    return this.transactionBuilder
-        .payAllSui(signer, inputCoins, recipient, gasBudget)
-        .thenCompose(signAndExecuteTransactionFunction(signer, defaultIntent(), requestType));
+    return this.newTransactionBlock()
+        .thenCompose(
+            (Function<TransactionBlock, CompletableFuture<TransactionBlockResponse>>)
+                transactionBlock -> {
+                  transactionBlock.setExpiration(expiration);
+                  transactionBlock.setSender(sender);
+                  return transactionBlock
+                      .transferObjects(suiObjects, recipient)
+                      .thenCompose(
+                          (Function<Argument, CompletableFuture<TransactionBlockResponse>>)
+                              argument -> {
+                                CompletableFuture<TransactionData>
+                                    transactionDataCompletableFuture =
+                                        transactionBlock
+                                            .setGasData(
+                                                gas != null
+                                                    ? Lists.newArrayList(gas)
+                                                    : Lists.newArrayList(),
+                                                sender,
+                                                gasBudget,
+                                                gasPrice)
+                                            .thenCompose(
+                                                (Function<Void, CompletableFuture<TransactionData>>)
+                                                    unused -> transactionBlock.build());
+
+                                return transactionDataCompletableFuture.thenCompose(
+                                    (Function<
+                                            TransactionData,
+                                            CompletableFuture<TransactionBlockResponse>>)
+                                        transactionData ->
+                                            executeTransaction(
+                                                sender, transactionData,
+                                                transactionBlockResponseOptions, requestType));
+                              });
+                });
   }
 
   /**
    * Publish completable future.
    *
-   * @param signer the signer
+   * @param sender the signer
    * @param compiledModules the compiled modules
+   * @param depIds the dep ids
    * @param gas the gas
    * @param gasBudget the gas budget
+   * @param gasPrice the gas price
+   * @param expiration the expiration
+   * @param transactionBlockResponseOptions the transaction response options
    * @param requestType the request type
    * @return the completable future
    */
-  public CompletableFuture<ExecuteTransactionResponse> publish(
-      String signer,
+  public CompletableFuture<TransactionBlockResponse> publish(
+      String sender,
       List<String> compiledModules,
+      List<String> depIds,
       String gas,
-      long gasBudget,
+      Long gasBudget,
+      Long gasPrice,
+      Long expiration,
+      TransactionBlockResponseOptions transactionBlockResponseOptions,
       ExecuteTransactionRequestType requestType) {
-    return this.transactionBuilder
-        .publish(signer, compiledModules, gas, gasBudget)
-        .thenCompose(signAndExecuteTransactionFunction(signer, defaultIntent(), requestType));
-  }
 
-  /**
-   * Split coin equal completable future.
-   *
-   * @param signer the signer
-   * @param coin the coin
-   * @param splitCount the split count
-   * @param gas the gas
-   * @param gasBudget the gas budget
-   * @param requestType the request type
-   * @return the completable future
-   */
-  public CompletableFuture<ExecuteTransactionResponse> splitCoinEqual(
-      String signer,
-      String coin,
-      long splitCount,
-      String gas,
-      long gasBudget,
-      ExecuteTransactionRequestType requestType) {
-    return this.transactionBuilder
-        .splitCoinEqual(signer, coin, splitCount, gas, gasBudget)
-        .thenCompose(signAndExecuteTransactionFunction(signer, defaultIntent(), requestType));
-  }
+    return this.newTransactionBlock()
+        .thenCompose(
+            (Function<TransactionBlock, CompletableFuture<TransactionBlockResponse>>)
+                transactionBlock -> {
+                  transactionBlock.setExpiration(expiration);
+                  transactionBlock.setSender(sender);
+                  Argument result = transactionBlock.publish(compiledModules, depIds);
+                  SuiAddress.Builder senderAddressBuilder = new Builder();
+                  senderAddressBuilder.value = transactionBlock.geAddressBytes(sender);
+                  transactionBlock.transferObjects(
+                      Lists.newArrayList(result),
+                      transactionBlock.pure(senderAddressBuilder.build()));
 
-  /**
-   * Transfer object completable future.
-   *
-   * @param signer the signer
-   * @param suiObject the sui object
-   * @param recipient the recipient
-   * @param gas the gas
-   * @param gasBudget the gas budget
-   * @param requestType the request type
-   * @return the completable future
-   */
-  public CompletableFuture<ExecuteTransactionResponse> transferObject(
-      String signer,
-      String suiObject,
-      String recipient,
-      String gas,
-      long gasBudget,
-      ExecuteTransactionRequestType requestType) {
-    return this.transactionBuilder
-        .transferObject(signer, suiObject, recipient, gas, gasBudget)
-        .thenCompose(signAndExecuteTransactionFunction(signer, defaultIntent(), requestType));
+                  CompletableFuture<TransactionData> transactionDataCompletableFuture =
+                      transactionBlock
+                          .setGasData(
+                              gas != null ? Lists.newArrayList(gas) : Lists.newArrayList(),
+                              sender,
+                              gasBudget,
+                              gasPrice)
+                          .thenCompose(
+                              (Function<Void, CompletableFuture<TransactionData>>)
+                                  unused -> transactionBlock.build());
+
+                  return transactionDataCompletableFuture.thenCompose(
+                      (Function<TransactionData, CompletableFuture<TransactionBlockResponse>>)
+                          transactionData ->
+                              executeTransaction(
+                                  sender, transactionData,
+                                  transactionBlockResponseOptions, requestType));
+                });
   }
 
   /**
@@ -402,40 +511,31 @@ public class Sui {
    * Gets object.
    *
    * @param id the id
+   * @param objectDataOptions the object data options
    * @return the object
    */
-  public CompletableFuture<ObjectResponse> getObject(String id) {
-    return queryClient.getObject(id);
+  public CompletableFuture<SuiObjectResponse> getObject(
+      String id, ObjectDataOptions objectDataOptions) {
+    return queryClient.getObject(id, objectDataOptions);
   }
 
   /**
    * Gets objects owned by address.
    *
    * @param address the address
+   * @param query the query
+   * @param cursor the cursor
+   * @param limit the limit
+   * @param checkpointId the checkpoint id
    * @return the objects owned by address
    */
-  public CompletableFuture<List<SuiObjectInfo>> getObjectsOwnedByAddress(String address) {
-    return queryClient.getObjectsOwnedByAddress(address);
-  }
-
-  /**
-   * Gets objects owned by object.
-   *
-   * @param objectId the object id
-   * @return the objects owned by object
-   */
-  public CompletableFuture<List<SuiObjectInfo>> getObjectsOwnedByObject(String objectId) {
-    return queryClient.getObjectsOwnedByObject(objectId);
-  }
-
-  /**
-   * Gets raw object.
-   *
-   * @param id the id
-   * @return the raw object
-   */
-  public CompletableFuture<ObjectResponse> getRawObject(String id) {
-    return queryClient.getRawObject(id);
+  public CompletableFuture<PaginatedObjectsResponse> getObjectsOwnedByAddress(
+      String address,
+      ObjectResponseQuery query,
+      String cursor,
+      Integer limit,
+      String checkpointId) {
+    return queryClient.getObjectsOwnedByAddress(address, query, cursor, limit, checkpointId);
   }
 
   /**
@@ -443,8 +543,8 @@ public class Sui {
    *
    * @return the total transaction number
    */
-  public CompletableFuture<Long> getTotalTransactionNumber() {
-    return queryClient.getTotalTransactionNumber();
+  public CompletableFuture<Long> getTotalTransactionBlocks() {
+    return queryClient.getTotalTransactionBlocks();
   }
 
   /**
@@ -454,31 +554,24 @@ public class Sui {
    * @param options the options
    * @return the transaction
    */
-  public CompletableFuture<TransactionResponse> getTransaction(
-      String digest, TransactionResponseOptions options) {
-    return queryClient.getTransaction(digest, options);
+  public CompletableFuture<TransactionBlockResponse> getTransactionBlock(
+      String digest, TransactionBlockResponseOptions options) {
+    return queryClient.getTransactionBlock(digest, options);
   }
 
-  /**
-   * Gets transactions in range.
-   *
-   * @param start the start
-   * @param end the end
-   * @return the transactions in range
-   */
-  public CompletableFuture<List<String>> getTransactionsInRange(Long start, Long end) {
-    return queryClient.getTransactionsInRange(start, end);
+  public CompletableFuture<PaginatedTransactionResponse> queryTransactionBlocks(
+      TransactionBlockResponseQuery query, String cursor, Integer limit, boolean isDescOrder) {
+    return queryClient.queryTransactionBlocks(query, cursor, limit, isDescOrder);
   }
 
-  /**
-   * Gets the authority public keys that commits to the authority signature of the transaction.
-   *
-   * @param transactionDigest the digest
-   * @return the Transaction auth signers
-   */
-  public CompletableFuture<TransactionResponse> getTransactionAuthSigners(
-      String transactionDigest) {
-    return queryClient.getTransactionAuthSigners(transactionDigest);
+  public CompletableFuture<List<TransactionBlockResponse>> multiGetTransactionBlocks(
+      List<String> digests, TransactionBlockResponseOptions options) {
+    return queryClient.multiGetTransactionBlocks(digests, options);
+  }
+
+  public CompletableFuture<List<SuiObjectResponse>> multiGetObjects(
+      List<String> objectIds, ObjectDataOptions options) {
+    return queryClient.multiGetObjects(objectIds, options);
   }
 
   /**
@@ -596,19 +689,19 @@ public class Sui {
     return queryClient.tryGetPastObject(objectId, version);
   }
 
-  /**
-   * Gets transactions.
-   *
-   * @param query the query
-   * @param cursor the cursor
-   * @param limit the limit
-   * @param isDescOrder the is desc order
-   * @return the transactions
-   */
-  public CompletableFuture<PaginatedTransactionDigests> getTransactions(
-      TransactionQuery query, String cursor, int limit, boolean isDescOrder) {
-    return queryClient.getTransactions(query, cursor, limit, isDescOrder);
-  }
+  //  /**
+  //   * Gets transactions.
+  //   *
+  //   * @param query       the query
+  //   * @param cursor      the cursor
+  //   * @param limit       the limit
+  //   * @param isDescOrder the is desc order
+  //   * @return the transactions
+  //   */
+  //  public CompletableFuture<PaginatedTransactionResponse> getTransactions(
+  //      TransactionFilter query, String cursor, int limit, boolean isDescOrder) {
+  //    return queryClient.queryTransactionBlocks(query, cursor, limit, isDescOrder);
+  //  }
 
   /**
    * Gets coin metadata.
@@ -633,10 +726,12 @@ public class Sui {
    * Gets object ref.
    *
    * @param id the id
+   * @param objectDataOptions the object data options
    * @return the object ref
    */
-  public CompletableFuture<SuiObjectRef> getObjectRef(String id) {
-    return queryClient.getObjectRef(id);
+  public CompletableFuture<SuiObjectRef> getObjectRef(
+      String id, ObjectDataOptions objectDataOptions) {
+    return queryClient.getObjectRef(id, objectDataOptions);
   }
 
   /**
@@ -771,12 +866,21 @@ public class Sui {
    *
    * @param signer the signer
    * @param transactionData the transaction data
+   * @param transactionBlockResponseOptions the transaction response options
    * @param requestType the request type
    * @return the completable future
    */
-  public CompletableFuture<ExecuteTransactionResponse> executeTransaction(
-      String signer, TransactionData transactionData, ExecuteTransactionRequestType requestType) {
-    return this.executeTransaction(signer, transactionData, defaultIntent(), requestType);
+  public CompletableFuture<TransactionBlockResponse> executeTransaction(
+      String signer,
+      TransactionData transactionData,
+      TransactionBlockResponseOptions transactionBlockResponseOptions,
+      ExecuteTransactionRequestType requestType) {
+    return this.executeTransaction(
+        signer,
+        transactionData,
+        transactionDataIntent(),
+        transactionBlockResponseOptions,
+        requestType);
   }
 
   /**
@@ -785,13 +889,15 @@ public class Sui {
    * @param signer the signer
    * @param transactionData the transaction data
    * @param intent the intent
+   * @param transactionBlockResponseOptions the transaction response options
    * @param requestType the request type
    * @return the completable future
    */
-  public CompletableFuture<ExecuteTransactionResponse> executeTransaction(
+  public CompletableFuture<TransactionBlockResponse> executeTransaction(
       String signer,
       TransactionData transactionData,
       Intent intent,
+      TransactionBlockResponseOptions transactionBlockResponseOptions,
       ExecuteTransactionRequestType requestType) {
     final SuiKeyPair<?> suiKeyPair = keyStore.getByAddress(signer);
     final byte[] publicKey = suiKeyPair.publicKeyBytes();
@@ -803,27 +909,41 @@ public class Sui {
       txBytes = transactionData.bcsSerialize();
       intentBytes = intent.bcsSerialize();
     } catch (SerializationError e) {
-      CompletableFuture<ExecuteTransactionResponse> future = new CompletableFuture<>();
+      CompletableFuture<TransactionBlockResponse> future = new CompletableFuture<>();
       future.completeExceptionally(new SuiApiException(new BcsSerializationException(e)));
       return future;
     }
 
     return signAndExecuteTransaction(
-        txBytes, intentBytes, requestType, suiKeyPair, publicKey, signatureScheme);
+        txBytes,
+        intentBytes,
+        transactionBlockResponseOptions,
+        requestType,
+        suiKeyPair,
+        publicKey,
+        signatureScheme);
   }
 
-  private CompletableFuture<ExecuteTransactionResponse> signAndExecuteTransaction(
+  private CompletableFuture<TransactionBlockResponse> signAndExecuteTransaction(
       byte[] transactionData,
       byte[] intentBytes,
+      TransactionBlockResponseOptions transactionBlockResponseOptions,
       ExecuteTransactionRequestType requestType,
       SuiKeyPair<?> suiKeyPair,
       byte[] publicKey,
       SignatureScheme signatureScheme) {
     final byte[] signature;
     try {
-      signature = suiKeyPair.sign(Arrays.concatenate(intentBytes, transactionData));
+      if ("0.28.0".equals(System.getenv("SUI_VERSION"))) {
+        signature = suiKeyPair.sign(Arrays.concatenate(intentBytes, transactionData));
+      } else {
+        final Blake2b256 blake2b256 = new Blake2b256();
+        final byte[] hash = blake2b256.digest(Arrays.concatenate(intentBytes, transactionData));
+        signature = suiKeyPair.sign(hash);
+      }
+
     } catch (SigningException e) {
-      CompletableFuture<ExecuteTransactionResponse> future = new CompletableFuture<>();
+      CompletableFuture<TransactionBlockResponse> future = new CompletableFuture<>();
       future.completeExceptionally(new SuiApiException(e));
       return future;
     }
@@ -833,12 +953,18 @@ public class Sui {
     final String serializedSignature = Base64.toBase64String(serializedSignatureBytes);
 
     return executionClient.executeTransaction(
-        Base64.toBase64String(transactionData), serializedSignature, requestType);
+        Base64.toBase64String(transactionData),
+        Lists.newArrayList(serializedSignature),
+        transactionBlockResponseOptions,
+        requestType);
   }
 
-  private Function<TransactionBytes, CompletableFuture<ExecuteTransactionResponse>>
+  private Function<TransactionBytes, CompletableFuture<TransactionBlockResponse>>
       signAndExecuteTransactionFunction(
-          String signer, Intent intent, ExecuteTransactionRequestType requestType) {
+          String signer,
+          Intent intent,
+          TransactionBlockResponseOptions transactionBlockResponseOptions,
+          ExecuteTransactionRequestType requestType) {
     return transactionBytes -> {
       final SuiKeyPair<?> suiKeyPair = keyStore.getByAddress(signer);
       final byte[] publicKey = suiKeyPair.publicKeyBytes();
@@ -854,17 +980,23 @@ public class Sui {
                 : Base64.decode(transactionBytes.getTxBytes());
         intentBytes = intent.bcsSerialize();
       } catch (SerializationError e) {
-        CompletableFuture<ExecuteTransactionResponse> future = new CompletableFuture<>();
+        CompletableFuture<TransactionBlockResponse> future = new CompletableFuture<>();
         future.completeExceptionally(new SuiApiException(new BcsSerializationException(e)));
         return future;
       }
 
       return signAndExecuteTransaction(
-          txBytes, intentBytes, requestType, suiKeyPair, publicKey, signatureScheme);
+          txBytes,
+          intentBytes,
+          transactionBlockResponseOptions,
+          requestType,
+          suiKeyPair,
+          publicKey,
+          signatureScheme);
     };
   }
 
-  private Intent defaultIntent() {
+  private Intent transactionDataIntent() {
     final Intent.Builder intentBuilder = new Intent.Builder();
     intentBuilder.app_id = 0;
     intentBuilder.scope = 0;

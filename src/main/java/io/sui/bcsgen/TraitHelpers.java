@@ -18,6 +18,40 @@ final class TraitHelpers {
         return obj;
     }
 
+    static void serialize_map_ObjectID_to_UpgradeInfo(java.util.Map<ObjectID, UpgradeInfo> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+        serializer.serialize_len(value.size());
+        int[] offsets = new int[value.size()];
+        int count = 0;
+        for (java.util.Map.Entry<ObjectID, UpgradeInfo> entry : value.entrySet()) {
+            offsets[count++] = serializer.get_buffer_offset();
+            entry.getKey().serialize(serializer);
+            entry.getValue().serialize(serializer);
+        }
+        serializer.sort_map_entries(offsets);
+    }
+
+    static java.util.Map<ObjectID, UpgradeInfo> deserialize_map_ObjectID_to_UpgradeInfo(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        long length = deserializer.deserialize_len();
+        java.util.Map<ObjectID, UpgradeInfo> obj = new java.util.HashMap<ObjectID, UpgradeInfo>();
+        int previous_key_start = 0;
+        int previous_key_end = 0;
+        for (long i = 0; i < length; i++) {
+            int key_start = deserializer.get_buffer_offset();
+            ObjectID key = ObjectID.deserialize(deserializer);
+            int key_end = deserializer.get_buffer_offset();
+            if (i > 0) {
+                deserializer.check_that_key_slices_are_increasing(
+                    new com.novi.serde.Slice(previous_key_start, previous_key_end),
+                    new com.novi.serde.Slice(key_start, key_end));
+            }
+            previous_key_start = key_start;
+            previous_key_end = key_end;
+            UpgradeInfo value = UpgradeInfo.deserialize(deserializer);
+            obj.put(key, value);
+        }
+        return obj;
+    }
+
     static void serialize_map_str_to_bytes(java.util.Map<String, com.novi.serde.Bytes> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
         serializer.serialize_len(value.size());
         int[] offsets = new int[value.size()];
@@ -136,18 +170,6 @@ final class TraitHelpers {
         );
     }
 
-    static void serialize_tuple2_SequenceNumber_vector_vector_u8(com.novi.serde.Tuple2<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-        value.field0.serialize(serializer);
-        TraitHelpers.serialize_vector_vector_u8(value.field1, serializer);
-    }
-
-    static com.novi.serde.Tuple2<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>> deserialize_tuple2_SequenceNumber_vector_vector_u8(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-        return new com.novi.serde.Tuple2<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>>(
-            SequenceNumber.deserialize(deserializer),
-            TraitHelpers.deserialize_vector_vector_u8(deserializer)
-        );
-    }
-
     static void serialize_tuple3_ObjectID_SequenceNumber_ObjectDigest(com.novi.serde.Tuple3<ObjectID, SequenceNumber, ObjectDigest> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
         value.field0.serialize(serializer);
         value.field1.serialize(serializer);
@@ -159,6 +181,20 @@ final class TraitHelpers {
             ObjectID.deserialize(deserializer),
             SequenceNumber.deserialize(deserializer),
             ObjectDigest.deserialize(deserializer)
+        );
+    }
+
+    static void serialize_tuple3_SequenceNumber_vector_vector_u8_vector_ObjectID(com.novi.serde.Tuple3<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>, java.util.List<ObjectID>> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+        value.field0.serialize(serializer);
+        TraitHelpers.serialize_vector_vector_u8(value.field1, serializer);
+        TraitHelpers.serialize_vector_ObjectID(value.field2, serializer);
+    }
+
+    static com.novi.serde.Tuple3<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>, java.util.List<ObjectID>> deserialize_tuple3_SequenceNumber_vector_vector_u8_vector_ObjectID(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        return new com.novi.serde.Tuple3<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>, java.util.List<ObjectID>>(
+            SequenceNumber.deserialize(deserializer),
+            TraitHelpers.deserialize_vector_vector_u8(deserializer),
+            TraitHelpers.deserialize_vector_ObjectID(deserializer)
         );
     }
 
@@ -290,6 +326,22 @@ final class TraitHelpers {
         return obj;
     }
 
+    static void serialize_vector_TypeOrigin(java.util.List<TypeOrigin> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+        serializer.serialize_len(value.size());
+        for (TypeOrigin item : value) {
+            item.serialize(serializer);
+        }
+    }
+
+    static java.util.List<TypeOrigin> deserialize_vector_TypeOrigin(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        long length = deserializer.deserialize_len();
+        java.util.List<TypeOrigin> obj = new java.util.ArrayList<TypeOrigin>((int) length);
+        for (long i = 0; i < length; i++) {
+            obj.add(TypeOrigin.deserialize(deserializer));
+        }
+        return obj;
+    }
+
     static void serialize_vector_TypeTag(java.util.List<TypeTag> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
         serializer.serialize_len(value.size());
         for (TypeTag item : value) {
@@ -322,22 +374,6 @@ final class TraitHelpers {
         return obj;
     }
 
-    static void serialize_vector_tuple2_SequenceNumber_vector_vector_u8(java.util.List<com.novi.serde.Tuple2<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>>> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-        serializer.serialize_len(value.size());
-        for (com.novi.serde.Tuple2<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>> item : value) {
-            TraitHelpers.serialize_tuple2_SequenceNumber_vector_vector_u8(item, serializer);
-        }
-    }
-
-    static java.util.List<com.novi.serde.Tuple2<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>>> deserialize_vector_tuple2_SequenceNumber_vector_vector_u8(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-        long length = deserializer.deserialize_len();
-        java.util.List<com.novi.serde.Tuple2<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>>> obj = new java.util.ArrayList<com.novi.serde.Tuple2<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>>>((int) length);
-        for (long i = 0; i < length; i++) {
-            obj.add(TraitHelpers.deserialize_tuple2_SequenceNumber_vector_vector_u8(deserializer));
-        }
-        return obj;
-    }
-
     static void serialize_vector_tuple3_ObjectID_SequenceNumber_ObjectDigest(java.util.List<com.novi.serde.Tuple3<ObjectID, SequenceNumber, ObjectDigest>> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
         serializer.serialize_len(value.size());
         for (com.novi.serde.Tuple3<ObjectID, SequenceNumber, ObjectDigest> item : value) {
@@ -350,6 +386,22 @@ final class TraitHelpers {
         java.util.List<com.novi.serde.Tuple3<ObjectID, SequenceNumber, ObjectDigest>> obj = new java.util.ArrayList<com.novi.serde.Tuple3<ObjectID, SequenceNumber, ObjectDigest>>((int) length);
         for (long i = 0; i < length; i++) {
             obj.add(TraitHelpers.deserialize_tuple3_ObjectID_SequenceNumber_ObjectDigest(deserializer));
+        }
+        return obj;
+    }
+
+    static void serialize_vector_tuple3_SequenceNumber_vector_vector_u8_vector_ObjectID(java.util.List<com.novi.serde.Tuple3<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>, java.util.List<ObjectID>>> value, com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+        serializer.serialize_len(value.size());
+        for (com.novi.serde.Tuple3<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>, java.util.List<ObjectID>> item : value) {
+            TraitHelpers.serialize_tuple3_SequenceNumber_vector_vector_u8_vector_ObjectID(item, serializer);
+        }
+    }
+
+    static java.util.List<com.novi.serde.Tuple3<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>, java.util.List<ObjectID>>> deserialize_vector_tuple3_SequenceNumber_vector_vector_u8_vector_ObjectID(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        long length = deserializer.deserialize_len();
+        java.util.List<com.novi.serde.Tuple3<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>, java.util.List<ObjectID>>> obj = new java.util.ArrayList<com.novi.serde.Tuple3<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>, java.util.List<ObjectID>>>((int) length);
+        for (long i = 0; i < length; i++) {
+            obj.add(TraitHelpers.deserialize_tuple3_SequenceNumber_vector_vector_u8_vector_ObjectID(deserializer));
         }
         return obj;
     }

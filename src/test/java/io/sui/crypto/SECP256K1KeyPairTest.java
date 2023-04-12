@@ -37,16 +37,18 @@ class SECP256K1KeyPairTest {
   /** Address. */
   @Test
   void address() {
-    final String base64 = "ABw1fhWdG+Ni9eFfyLdfdmsiMWyirHCV/UVC9jcloBm8";
+    final String base64 = "AfdfC5Tf7gNYm2ElFQsOxnKhYWk7gLW0yXctlAHYQjFe";
     final SuiKeyPair<ECKey> secp256K1KeyPair = SECP256K1KeyPair.decodeBase64(Base64.decode(base64));
 
-    assertEquals("0xea650e4199befc011d2373decabc4c3deb0275d8", secp256K1KeyPair.address());
+    assertEquals(
+        "0x078ad0970cacfec86cd404e6382a86de441ec14c310e3f8c0e310733802f4992",
+        secp256K1KeyPair.address());
   }
 
   /** Decode base 64. */
   @Test
   void decodeBase64() {
-    final String base64 = "ABw1fhWdG+Ni9eFfyLdfdmsiMWyirHCV/UVC9jcloBm8";
+    final String base64 = "AfdfC5Tf7gNYm2ElFQsOxnKhYWk7gLW0yXctlAHYQjFe";
     final SuiKeyPair<ECKey> secp256K1KeyPair = SECP256K1KeyPair.decodeBase64(Base64.decode(base64));
     final String msg = "test";
     final ECDSASignature signature = secp256K1KeyPair.keyPair.sign(Sha256Hash.of(msg.getBytes()));

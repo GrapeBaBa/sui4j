@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -18,6 +18,7 @@ package io.sui.models.objects;
 
 
 import io.sui.models.objects.ObjectResponse.ObjectResponseDetails;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -26,7 +27,7 @@ import java.util.Objects;
  * @author grapebaba
  * @since 2022.11
  */
-public class SuiObject implements ObjectResponseDetails {
+public class SuiObjectData implements ObjectResponseDetails {
 
   private String objectId;
 
@@ -36,30 +37,124 @@ public class SuiObject implements ObjectResponseDetails {
 
   private String type;
 
+  private SuiParsedData content;
+
+  private SuiRawData bcs;
+
   private SuiObjectOwner owner;
 
   private String previousTransaction;
 
   private Long storageRebate;
 
-  private SuiObjectRef reference;
+  private Map<String, String> display;
 
   /**
-   * Gets data.
+   * Gets object id.
    *
-   * @return the data
+   * @return the object id
    */
-  public SuiRawData getData() {
-    return data;
+  public String getObjectId() {
+    return objectId;
   }
 
   /**
-   * Sets data.
+   * Sets object id.
    *
-   * @param data the data
+   * @param objectId the object id
    */
-  public void setData(SuiRawData data) {
-    this.data = data;
+  public void setObjectId(String objectId) {
+    this.objectId = objectId;
+  }
+
+  /**
+   * Gets version.
+   *
+   * @return the version
+   */
+  public Long getVersion() {
+    return version;
+  }
+
+  /**
+   * Sets version.
+   *
+   * @param version the version
+   */
+  public void setVersion(Long version) {
+    this.version = version;
+  }
+
+  /**
+   * Gets digest.
+   *
+   * @return the digest
+   */
+  public String getDigest() {
+    return digest;
+  }
+
+  /**
+   * Sets digest.
+   *
+   * @param digest the digest
+   */
+  public void setDigest(String digest) {
+    this.digest = digest;
+  }
+
+  /**
+   * Gets type.
+   *
+   * @return the type
+   */
+  public String getType() {
+    return type;
+  }
+
+  /**
+   * Sets type.
+   *
+   * @param type the type
+   */
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  /**
+   * Gets content.
+   *
+   * @return the content
+   */
+  public SuiParsedData getContent() {
+    return content;
+  }
+
+  /**
+   * Sets content.
+   *
+   * @param content the content
+   */
+  public void setContent(SuiParsedData content) {
+    this.content = content;
+  }
+
+  /**
+   * Gets bcs.
+   *
+   * @return the bcs
+   */
+  public SuiRawData getBcs() {
+    return bcs;
+  }
+
+  /**
+   * Sets bcs.
+   *
+   * @param bcs the bcs
+   */
+  public void setBcs(SuiRawData bcs) {
+    this.bcs = bcs;
   }
 
   /**
@@ -117,21 +212,21 @@ public class SuiObject implements ObjectResponseDetails {
   }
 
   /**
-   * Gets reference.
+   * Gets display.
    *
-   * @return the reference
+   * @return the display
    */
-  public SuiObjectRef getReference() {
-    return reference;
+  public Map<String, String> getDisplay() {
+    return display;
   }
 
   /**
-   * Sets reference.
+   * Sets display.
    *
-   * @param reference the reference
+   * @param display the display
    */
-  public void setReference(SuiObjectRef reference) {
-    this.reference = reference;
+  public void setDisplay(Map<String, String> display) {
+    this.display = display;
   }
 
   @Override
@@ -139,27 +234,55 @@ public class SuiObject implements ObjectResponseDetails {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (!(o instanceof SuiObjectData)) {
       return false;
     }
-    SuiObject suiObject = (SuiObject) o;
-    return data.equals(suiObject.data)
-        && owner.equals(suiObject.owner)
-        && previousTransaction.equals(suiObject.previousTransaction)
-        && storageRebate.equals(suiObject.storageRebate)
-        && reference.equals(suiObject.reference);
+    SuiObjectData that = (SuiObjectData) o;
+    return objectId.equals(that.objectId)
+        && version.equals(that.version)
+        && digest.equals(that.digest)
+        && type.equals(that.type)
+        && content.equals(that.content)
+        && bcs.equals(that.bcs)
+        && owner.equals(that.owner)
+        && previousTransaction.equals(that.previousTransaction)
+        && storageRebate.equals(that.storageRebate)
+        && display.equals(that.display);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(data, owner, previousTransaction, storageRebate, reference);
+    return Objects.hash(
+        objectId,
+        version,
+        digest,
+        type,
+        content,
+        bcs,
+        owner,
+        previousTransaction,
+        storageRebate,
+        display);
   }
 
   @Override
   public String toString() {
-    return "SuiObject{"
-        + "data="
-        + data
+    return "SuiObjectData{"
+        + "objectId='"
+        + objectId
+        + '\''
+        + ", version="
+        + version
+        + ", digest='"
+        + digest
+        + '\''
+        + ", type='"
+        + type
+        + '\''
+        + ", content="
+        + content
+        + ", bcs="
+        + bcs
         + ", owner="
         + owner
         + ", previousTransaction='"
@@ -167,8 +290,21 @@ public class SuiObject implements ObjectResponseDetails {
         + '\''
         + ", storageRebate="
         + storageRebate
-        + ", reference="
-        + reference
+        + ", display="
+        + display
         + '}';
+  }
+
+  /**
+   * Gets ref.
+   *
+   * @return the ref
+   */
+  public SuiObjectRef getRef() {
+    SuiObjectRef suiObjectRef = new SuiObjectRef();
+    suiObjectRef.setObjectId(this.objectId);
+    suiObjectRef.setDigest(this.digest);
+    suiObjectRef.setVersion(this.version);
+    return suiObjectRef;
   }
 }

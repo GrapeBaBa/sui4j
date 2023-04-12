@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -25,12 +25,10 @@ import java.util.Objects;
  * @author grapebaba
  * @since 2022.11
  */
-public abstract class TransactionQuery {
+public abstract class TransactionFilter {
 
-  /**
-   * The type Move function query.
-   */
-  public static class MoveFunctionQuery extends TransactionQuery {
+  /** The type Move function query. */
+  public static class MoveFunctionFilter extends TransactionFilter {
 
     @SuppressWarnings("checkstyle:MemberName")
     private MoveFunction MoveFunction;
@@ -58,10 +56,10 @@ public abstract class TransactionQuery {
       if (this == o) {
         return true;
       }
-      if (!(o instanceof MoveFunctionQuery)) {
+      if (!(o instanceof MoveFunctionFilter)) {
         return false;
       }
-      MoveFunctionQuery that = (MoveFunctionQuery) o;
+      MoveFunctionFilter that = (MoveFunctionFilter) o;
       return MoveFunction.equals(that.MoveFunction);
     }
 
@@ -72,14 +70,12 @@ public abstract class TransactionQuery {
 
     @Override
     public String toString() {
-      return "MoveFunctionQuery{" + "MoveFunction=" + MoveFunction + '}';
+      return "MoveFunctionFilter{" + "MoveFunction=" + MoveFunction + '}';
     }
   }
 
-  /**
-   * The type Input object query.
-   */
-  public static class InputObjectQuery extends TransactionQuery {
+  /** The type Input object query. */
+  public static class InputObjectFilter extends TransactionFilter {
 
     @SuppressWarnings("checkstyle:MemberName")
     private String InputObject;
@@ -107,10 +103,10 @@ public abstract class TransactionQuery {
       if (this == o) {
         return true;
       }
-      if (!(o instanceof InputObjectQuery)) {
+      if (!(o instanceof InputObjectFilter)) {
         return false;
       }
-      InputObjectQuery that = (InputObjectQuery) o;
+      InputObjectFilter that = (InputObjectFilter) o;
       return InputObject.equals(that.InputObject);
     }
 
@@ -121,14 +117,12 @@ public abstract class TransactionQuery {
 
     @Override
     public String toString() {
-      return "InputObjectQuery{" + "InputObject='" + InputObject + '\'' + '}';
+      return "InputObjectFilter{" + "InputObject='" + InputObject + '\'' + '}';
     }
   }
 
-  /**
-   * The type Mutated object query.
-   */
-  public static class ChangedObjectQuery extends TransactionQuery {
+  /** The type Mutated object query. */
+  public static class ChangedObjectFilter extends TransactionFilter {
 
     @SuppressWarnings("checkstyle:MemberName")
     private String ChangedObject;
@@ -156,10 +150,10 @@ public abstract class TransactionQuery {
       if (this == o) {
         return true;
       }
-      if (!(o instanceof ChangedObjectQuery)) {
+      if (!(o instanceof ChangedObjectFilter)) {
         return false;
       }
-      ChangedObjectQuery that = (ChangedObjectQuery) o;
+      ChangedObjectFilter that = (ChangedObjectFilter) o;
       return ChangedObject.equals(that.ChangedObject);
     }
 
@@ -174,10 +168,8 @@ public abstract class TransactionQuery {
     }
   }
 
-  /**
-   * The type From address query.
-   */
-  public static class FromAddressQuery extends TransactionQuery {
+  /** The type From address query. */
+  public static class FromAddressFilter extends TransactionFilter {
 
     @SuppressWarnings("checkstyle:MemberName")
     private String FromAddress;
@@ -205,10 +197,10 @@ public abstract class TransactionQuery {
       if (this == o) {
         return true;
       }
-      if (!(o instanceof FromAddressQuery)) {
+      if (!(o instanceof FromAddressFilter)) {
         return false;
       }
-      FromAddressQuery that = (FromAddressQuery) o;
+      FromAddressFilter that = (FromAddressFilter) o;
       return FromAddress.equals(that.FromAddress);
     }
 
@@ -219,14 +211,12 @@ public abstract class TransactionQuery {
 
     @Override
     public String toString() {
-      return "FromAddressQuery{" + "FromAddress='" + FromAddress + '\'' + '}';
+      return "FromAddressFilter{" + "FromAddress='" + FromAddress + '\'' + '}';
     }
   }
 
-  /**
-   * The type To address query.
-   */
-  public static class ToAddressQuery extends TransactionQuery {
+  /** The type To address query. */
+  public static class ToAddressFilter extends TransactionFilter {
 
     @SuppressWarnings("checkstyle:MemberName")
     private String ToAddress;
@@ -254,10 +244,10 @@ public abstract class TransactionQuery {
       if (this == o) {
         return true;
       }
-      if (!(o instanceof ToAddressQuery)) {
+      if (!(o instanceof ToAddressFilter)) {
         return false;
       }
-      ToAddressQuery that = (ToAddressQuery) o;
+      ToAddressFilter that = (ToAddressFilter) o;
       return ToAddress.equals(that.ToAddress);
     }
 
@@ -268,7 +258,7 @@ public abstract class TransactionQuery {
 
     @Override
     public String toString() {
-      return "ToAddressQuery{" + "ToAddress='" + ToAddress + '\'' + '}';
+      return "ToAddressFilter{" + "ToAddress='" + ToAddress + '\'' + '}';
     }
   }
 }

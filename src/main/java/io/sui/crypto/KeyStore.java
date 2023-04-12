@@ -49,4 +49,24 @@ public interface KeyStore {
    * @param keyPair the keyPair
    */
   void addKey(String address, SuiKeyPair<?> keyPair);
+
+  /**
+   * Generate new key key response.
+   *
+   * @param schema the schema
+   * @return the key response
+   * @throws SignatureSchemeNotSupportedException the signature scheme not supported exception
+   */
+  KeyResponse generateNewKey(SignatureScheme schema) throws SignatureSchemeNotSupportedException;
+
+  /**
+   * Import from mnemonic string.
+   *
+   * @param mnemonic the mnemonic
+   * @param schema the schema
+   * @return the string
+   * @throws SignatureSchemeNotSupportedException the signature scheme not supported exception
+   */
+  String importFromMnemonic(String mnemonic, SignatureScheme schema)
+      throws SignatureSchemeNotSupportedException;
 }

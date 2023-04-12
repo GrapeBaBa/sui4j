@@ -250,8 +250,7 @@ public interface MoveNormalizedType {
 
       private String name;
 
-      @SuppressWarnings("checkstyle:MemberName")
-      private List<MoveNormalizedType> type_arguments;
+      private List<MoveNormalizedType> typeArguments;
 
       /**
        * Gets address.
@@ -312,18 +311,18 @@ public interface MoveNormalizedType {
        *
        * @return the type arguments
        */
-      public List<MoveNormalizedType> getType_arguments() {
-        return type_arguments;
+      public List<MoveNormalizedType> getTypeArguments() {
+        return typeArguments;
       }
 
       /**
        * Sets type arguments.
        *
-       * @param type_arguments the type arguments
+       * @param typeArguments the type arguments
        */
       @SuppressWarnings("checkstyle:ParameterName")
-      public void setType_arguments(List<MoveNormalizedType> type_arguments) {
-        this.type_arguments = type_arguments;
+      public void setTypeArguments(List<MoveNormalizedType> typeArguments) {
+        this.typeArguments = typeArguments;
       }
 
       @Override
@@ -358,7 +357,7 @@ public interface MoveNormalizedType {
             + name
             + '\''
             + ", type_arguments="
-            + type_arguments
+            + typeArguments
             + '}';
       }
     }

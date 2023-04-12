@@ -8,9 +8,9 @@ public final class ChangeEpoch {
     public final @com.novi.serde.Unsigned Long computation_charge;
     public final @com.novi.serde.Unsigned Long storage_rebate;
     public final @com.novi.serde.Unsigned Long epoch_start_timestamp_ms;
-    public final java.util.List<com.novi.serde.Tuple2<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>>> system_packages;
+    public final java.util.List<com.novi.serde.Tuple3<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>, java.util.List<ObjectID>>> system_packages;
 
-    public ChangeEpoch(@com.novi.serde.Unsigned Long epoch, ProtocolVersion protocol_version, @com.novi.serde.Unsigned Long storage_charge, @com.novi.serde.Unsigned Long computation_charge, @com.novi.serde.Unsigned Long storage_rebate, @com.novi.serde.Unsigned Long epoch_start_timestamp_ms, java.util.List<com.novi.serde.Tuple2<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>>> system_packages) {
+    public ChangeEpoch(@com.novi.serde.Unsigned Long epoch, ProtocolVersion protocol_version, @com.novi.serde.Unsigned Long storage_charge, @com.novi.serde.Unsigned Long computation_charge, @com.novi.serde.Unsigned Long storage_rebate, @com.novi.serde.Unsigned Long epoch_start_timestamp_ms, java.util.List<com.novi.serde.Tuple3<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>, java.util.List<ObjectID>>> system_packages) {
         java.util.Objects.requireNonNull(epoch, "epoch must not be null");
         java.util.Objects.requireNonNull(protocol_version, "protocol_version must not be null");
         java.util.Objects.requireNonNull(storage_charge, "storage_charge must not be null");
@@ -35,7 +35,7 @@ public final class ChangeEpoch {
         serializer.serialize_u64(computation_charge);
         serializer.serialize_u64(storage_rebate);
         serializer.serialize_u64(epoch_start_timestamp_ms);
-        TraitHelpers.serialize_vector_tuple2_SequenceNumber_vector_vector_u8(system_packages, serializer);
+        TraitHelpers.serialize_vector_tuple3_SequenceNumber_vector_vector_u8_vector_ObjectID(system_packages, serializer);
         serializer.decrease_container_depth();
     }
 
@@ -54,7 +54,7 @@ public final class ChangeEpoch {
         builder.computation_charge = deserializer.deserialize_u64();
         builder.storage_rebate = deserializer.deserialize_u64();
         builder.epoch_start_timestamp_ms = deserializer.deserialize_u64();
-        builder.system_packages = TraitHelpers.deserialize_vector_tuple2_SequenceNumber_vector_vector_u8(deserializer);
+        builder.system_packages = TraitHelpers.deserialize_vector_tuple3_SequenceNumber_vector_vector_u8_vector_ObjectID(deserializer);
         deserializer.decrease_container_depth();
         return builder.build();
     }
@@ -105,7 +105,7 @@ public final class ChangeEpoch {
         public @com.novi.serde.Unsigned Long computation_charge;
         public @com.novi.serde.Unsigned Long storage_rebate;
         public @com.novi.serde.Unsigned Long epoch_start_timestamp_ms;
-        public java.util.List<com.novi.serde.Tuple2<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>>> system_packages;
+        public java.util.List<com.novi.serde.Tuple3<SequenceNumber, java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>>, java.util.List<ObjectID>>> system_packages;
 
         public ChangeEpoch build() {
             return new ChangeEpoch(

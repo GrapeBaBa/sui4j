@@ -52,13 +52,13 @@ class FileBasedKeyStoreTest {
 
     assertEquals(7, fileBasedKeyStore.keys.size());
     String expected =
-        "0x0a7421363a1f6a82800f7c9340ac02b5905798cb\n"
-            + "0x64e1714eb06c22dff8ac7dab7eb302d4abededf9\n"
-            + "0xa0fd2a6814cff90d4463fb7e5b5b81d01d763472\n"
-            + "0xd456963facd4c40adfc3858d1a33c93d4d759664\n"
-            + "0xee3752e38e25a52c5d35cff23695d1115d3a0149\n"
-            + "0xf76f8c0e679c55a9d17229b9cbda702645836aa7\n"
-            + "0xfa423b6448e5e83d03e0d98ce00b5be32da5ee86\n";
+        "0x078ad0970cacfec86cd404e6382a86de441ec14c310e3f8c0e310733802f4992\n"
+            + "0x0e842f5339d01f22f9b6412884cee3defdccb0d8c092755e2a043c842941b6ab\n"
+            + "0x16aa1d0462fe9b4a97d2f9ad1a1f299b21c5002f7f1b7320d83ff3c8ee97d951\n"
+            + "0x1b8321a438ab8eea0ab6eb94e1dd0b2da347b1697a066cbe5e5122f5d7debe6c\n"
+            + "0x49e14eea497baef59ed20be791790ae152d63209bfc4b5235c608f60caba82bd\n"
+            + "0x508bbbb2d623e7718a298e13cf78e8d667b2299e77d87407f6e32c84a4c3dc37\n"
+            + "0xb43d0468fbc80c81931b73a4b9ef4663e671b65a07ae5b336a0e7d8a70ac0646\n";
     StringBuilder actual = new StringBuilder();
     for (String key : fileBasedKeyStore.keys.navigableKeySet()) {
       actual.append(key).append("\n");
@@ -66,11 +66,13 @@ class FileBasedKeyStoreTest {
     assertEquals(expected, actual.toString());
   }
 
-  // ED25519  0x4e0cc5c559ee61c36d61d0624c924cc43348b764
-  // "feel acid liar execute insane midnight oval oyster slot uncle bitter person"
+  // ED25519  0xf6959f5969790295e2fe37615fe78f1b2e9311ff93fe560ac08b0d2963efe7c5
+  // "version final youth crush olive light leg perfect fashion able rally cotton pulse giraffe hurt
+  // blush type devote provide leopard echo print mention leg"
 
-  // Secp256k1  0x6604964784bd9792e53dca3750d29ab39fb053e5
-  // heart position turkey bus virtual host panther pioneer ready lesson fence what
+  // Secp256k1  0x16aa1d0462fe9b4a97d2f9ad1a1f299b21c5002f7f1b7320d83ff3c8ee97d951
+  // chest shuffle jar trophy nurse fish board member dove rival adjust awful wool camp rebuild fire
+  // bunker verify message velvet save oblige net twice
   @Test
   void importFromMnemonicTest() throws Exception {
 
@@ -80,14 +82,16 @@ class FileBasedKeyStoreTest {
     // test data from sui client
     String[] mnemonics =
         new String[] {
-          "feel acid liar execute insane midnight oval oyster slot uncle bitter person",
-          "heart position turkey bus virtual host panther pioneer ready lesson fence what",
+          "version final youth crush olive light leg perfect fashion able rally cotton pulse "
+              + "giraffe hurt blush type devote provide leopard echo print mention leg",
+          "chest shuffle jar trophy nurse fish board member dove rival adjust awful wool camp "
+              + "rebuild fire bunker verify message velvet save oblige net twice",
         };
 
     String[] addresses =
         new String[] {
-          "0x4e0cc5c559ee61c36d61d0624c924cc43348b764",
-          "0x6604964784bd9792e53dca3750d29ab39fb053e5",
+          "0xf6959f5969790295e2fe37615fe78f1b2e9311ff93fe560ac08b0d2963efe7c5",
+          "0x16aa1d0462fe9b4a97d2f9ad1a1f299b21c5002f7f1b7320d83ff3c8ee97d951",
         };
 
     String addr = fileBasedKeyStore.importFromMnemonic(mnemonics[0], SignatureScheme.ED25519);

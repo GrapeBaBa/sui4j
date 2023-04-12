@@ -16,6 +16,9 @@
 
 package io.sui.crypto;
 
+
+import java.util.Objects;
+
 /**
  * The type Key response.
  *
@@ -54,5 +57,27 @@ public class KeyResponse {
    */
   public String getAddress() {
     return address;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof KeyResponse)) {
+      return false;
+    }
+    KeyResponse that = (KeyResponse) o;
+    return mnemonic.equals(that.mnemonic) && address.equals(that.address);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(mnemonic, address);
+  }
+
+  @Override
+  public String toString() {
+    return "KeyResponse{" + "mnemonic='" + mnemonic + '\'' + ", address='" + address + '\'' + '}';
   }
 }

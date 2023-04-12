@@ -59,6 +59,7 @@ public abstract class AbstractKeyStore implements KeyStore {
    * @return the key response
    * @throws SignatureSchemeNotSupportedException the signature scheme not supported exception
    */
+  @Override
   public KeyResponse generateNewKey(SignatureScheme schema)
       throws SignatureSchemeNotSupportedException {
 
@@ -88,6 +89,7 @@ public abstract class AbstractKeyStore implements KeyStore {
    * @return the string
    * @throws SignatureSchemeNotSupportedException the signature scheme not supported exception
    */
+  @Override
   public String importFromMnemonic(String mnemonic, SignatureScheme schema)
       throws SignatureSchemeNotSupportedException {
     // todo check mnemonic

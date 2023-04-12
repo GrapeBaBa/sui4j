@@ -16,11 +16,15 @@
 
 package io.sui.clients;
 
-/** The type No supported move normalized type exception. */
-public class NotSupportedMoveNormalizedTypeException extends RuntimeException {
+/** The type Not supported argument exception. */
+public class NotSupportedArgumentException extends RuntimeException {
 
-  /** Instantiates a new No supported move normalized type exception. */
-  public NotSupportedMoveNormalizedTypeException() {
-    super("not supported MOVE normalized type tag.");
+  /**
+   * Instantiates a new Not supported argument exception.
+   *
+   * @param clazz the clazz
+   */
+  public NotSupportedArgumentException(Class<?> clazz) {
+    super(String.format("not supported Class %s", clazz.getCanonicalName()));
   }
 }

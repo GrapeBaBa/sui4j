@@ -25,7 +25,7 @@ import org.bouncycastle.crypto.Signer;
 import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
 import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
 import org.bouncycastle.crypto.signers.Ed25519Signer;
-import org.bouncycastle.jcajce.provider.digest.SHA3.Digest256;
+import org.bouncycastle.jcajce.provider.digest.Blake2b.Blake2b256;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
@@ -53,13 +53,13 @@ public class ED25519KeyPair extends SuiKeyPair<AsymmetricCipherKeyPair> {
 
   @Override
   public String address() {
-    final Digest256 digest256 = new Digest256();
+    final Blake2b256 blake2b256 = new Blake2b256();
     final byte[] hash =
-        digest256.digest(
+        blake2b256.digest(
             Arrays.prepend(
                 ((Ed25519PublicKeyParameters) keyPair.getPublic()).getEncoded(),
                 SignatureScheme.ED25519.getScheme()));
-    return "0x" + StringUtils.substring(Hex.toHexString(hash), 0, 40);
+    return "0x" + StringUtils.substring(Hex.toHexString(hash), 0, 64);
   }
 
   @Override

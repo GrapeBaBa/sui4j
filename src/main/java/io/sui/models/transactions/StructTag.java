@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -17,6 +17,7 @@
 package io.sui.models.transactions;
 
 
+import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,7 +35,7 @@ public class StructTag {
 
   private String name;
 
-  private List<TypeTag> typeParams;
+  private List<TypeTag> typeParams = Lists.newArrayList();
 
   /**
    * Gets address.

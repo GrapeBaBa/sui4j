@@ -40,16 +40,17 @@ class ED25519KeyPairTest {
   /** Address. */
   @Test
   void address() {
-    final String base64 = "ADfbVnAT2QLG7W+bM+1ENzEKAxnoUx10+WfGg5zx8VRm";
+    final String base64 = "AGppxlDnjjspxa/5JSzPXx9s4QfqhDN7prZ9ZSpk/1qk";
     final ED25519KeyPair keyPair = ED25519KeyPair.decodeBase64(Base64.decode(base64));
 
-    assertEquals("0x0a7421363a1f6a82800f7c9340ac02b5905798cb", keyPair.address());
+    assertEquals(
+        "0x0e842f5339d01f22f9b6412884cee3defdccb0d8c092755e2a043c842941b6ab", keyPair.address());
   }
 
-  /** Decode base 64. */
+  /** Decode base 64. @throws CryptoException the crypto exception */
   @Test
   void decodeBase64() throws CryptoException {
-    final String base64 = "ADfbVnAT2QLG7W+bM+1ENzEKAxnoUx10+WfGg5zx8VRm";
+    final String base64 = "AGppxlDnjjspxa/5JSzPXx9s4QfqhDN7prZ9ZSpk/1qk";
     final ED25519KeyPair ed25519KeyPair = ED25519KeyPair.decodeBase64(Base64.decode(base64));
 
     Signer signer = new Ed25519Signer();
