@@ -28,47 +28,49 @@ import java.util.Objects;
  */
 public abstract class SuiData {
 
-  /** The type Package object. */
+  /**
+   * The type Package object.
+   */
   public static class PackageObject extends SuiData {
+
+    private String id;
 
     private String dataType;
 
-    private Map<String, ?> disassembled;
+    private Map<String, String> moduleMap;
 
-    /**
-     * Gets disassembled.
-     *
-     * @return the disassembled
-     */
-    public Map<String, ?> getDisassembled() {
-      return disassembled;
+    private Long version;
+
+    public String getId() {
+      return id;
     }
 
-    /**
-     * Sets disassembled.
-     *
-     * @param disassembled the disassembled
-     */
-    public void setDisassembled(Map<String, ?> disassembled) {
-      this.disassembled = disassembled;
+    public void setId(String id) {
+      this.id = id;
     }
 
-    /**
-     * Gets data type.
-     *
-     * @return the data type
-     */
     public String getDataType() {
       return dataType;
     }
 
-    /**
-     * Sets data type.
-     *
-     * @param dataType the data type
-     */
     public void setDataType(String dataType) {
       this.dataType = dataType;
+    }
+
+    public Map<String, String> getModuleMap() {
+      return moduleMap;
+    }
+
+    public void setModuleMap(Map<String, String> moduleMap) {
+      this.moduleMap = moduleMap;
+    }
+
+    public Long getVersion() {
+      return version;
+    }
+
+    public void setVersion(Long version) {
+      this.version = version;
     }
 
     @Override
@@ -76,62 +78,63 @@ public abstract class SuiData {
       if (this == o) {
         return true;
       }
-      if (o == null || getClass() != o.getClass()) {
+      if (!(o instanceof PackageObject)) {
         return false;
       }
       PackageObject that = (PackageObject) o;
-      return dataType.equals(that.dataType) && disassembled.equals(that.disassembled);
+      return id.equals(that.id) && dataType.equals(that.dataType) && moduleMap.equals(
+          that.moduleMap)
+          && version.equals(that.version);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(dataType, disassembled);
+      return Objects.hash(id, dataType, moduleMap, version);
     }
 
     @Override
     public String toString() {
-      return "PackageObject{"
-          + "dataType='"
-          + dataType
-          + '\''
-          + ", disassembled="
-          + disassembled
-          + '}';
+      return "PackageObject{" +
+          "id='" + id + '\'' +
+          ", dataType='" + dataType + '\'' +
+          ", moduleMap=" + moduleMap +
+          ", version=" + version +
+          '}';
     }
   }
 
-  /** The type Move object. */
+  /**
+   * The type Move object.
+   */
   public static class MoveObject extends SuiData {
 
     private String dataType;
 
-    @SuppressWarnings("checkstyle:MemberName")
-    private boolean has_public_transfer;
+    private boolean hasPublicTransfer;
 
     private String type;
 
-    private Map<String, ?> fields;
+    private Long version;
 
-    @SuppressWarnings("checkstyle:MemberName")
-    private String bcs_bytes;
+    private String bcsBytes;
 
     /**
      * Is has public transfer boolean.
      *
      * @return the boolean
      */
-    public boolean isHas_public_transfer() {
-      return has_public_transfer;
+    public boolean isHasPublicTransfer() {
+      return hasPublicTransfer;
     }
 
     /**
      * Sets has public transfer.
      *
-     * @param has_public_transfer the has public transfer
+     * @param hasPublicTransfer the has public transfer
      */
     @SuppressWarnings("checkstyle:ParameterName")
-    public void setHas_public_transfer(boolean has_public_transfer) {
-      this.has_public_transfer = has_public_transfer;
+    public void setHasPublicTransfer(boolean hasPublicTransfer) {
+      this.hasPublicTransfer = hasPublicTransfer;
     }
 
     /**
@@ -170,31 +173,21 @@ public abstract class SuiData {
       this.dataType = dataType;
     }
 
-    /**
-     * Gets fields.
-     *
-     * @return the fields
-     */
-    public Map<String, ?> getFields() {
-      return fields;
-    }
-
-    /**
-     * Sets fields.
-     *
-     * @param fields the fields
-     */
-    public void setFields(Map<String, ?> fields) {
-      this.fields = fields;
-    }
-
-    public String getBcs_bytes() {
-      return bcs_bytes;
+    public String getBcsBytes() {
+      return bcsBytes;
     }
 
     @SuppressWarnings("checkstyle:ParameterName")
-    public void setBcs_bytes(String bcs_bytes) {
-      this.bcs_bytes = bcs_bytes;
+    public void setBcsBytes(String bcsBytes) {
+      this.bcsBytes = bcsBytes;
+    }
+
+    public Long getVersion() {
+      return version;
+    }
+
+    public void setVersion(Long version) {
+      this.version = version;
     }
 
     @Override
@@ -206,35 +199,25 @@ public abstract class SuiData {
         return false;
       }
       MoveObject that = (MoveObject) o;
-      return has_public_transfer == that.has_public_transfer
-          && dataType.equals(that.dataType)
-          && type.equals(that.type)
-          && fields.equals(that.fields)
-          && bcs_bytes.equals(that.bcs_bytes);
+      return hasPublicTransfer == that.hasPublicTransfer && dataType.equals(that.dataType)
+          && type.equals(that.type) && version.equals(that.version) && bcsBytes.equals(
+          that.bcsBytes);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(dataType, has_public_transfer, type, fields, bcs_bytes);
+      return Objects.hash(dataType, hasPublicTransfer, type, version, bcsBytes);
     }
 
     @Override
     public String toString() {
-      return "MoveObject{"
-          + "dataType='"
-          + dataType
-          + '\''
-          + ", has_public_transfer="
-          + has_public_transfer
-          + ", type='"
-          + type
-          + '\''
-          + ", fields="
-          + fields
-          + ", bcs_bytes='"
-          + bcs_bytes
-          + '\''
-          + '}';
+      return "MoveObject{" +
+          "dataType='" + dataType + '\'' +
+          ", hasPublicTransfer=" + hasPublicTransfer +
+          ", type='" + type + '\'' +
+          ", version=" + version +
+          ", bcsBytes='" + bcsBytes + '\'' +
+          '}';
     }
   }
 }

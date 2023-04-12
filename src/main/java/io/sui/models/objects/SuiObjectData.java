@@ -28,7 +28,13 @@ import java.util.Objects;
  */
 public class SuiObject implements ObjectResponseDetails {
 
-  private SuiData data;
+  private String objectId;
+
+  private Long version;
+
+  private String digest;
+
+  private String type;
 
   private SuiObjectOwner owner;
 
@@ -43,7 +49,7 @@ public class SuiObject implements ObjectResponseDetails {
    *
    * @return the data
    */
-  public SuiData getData() {
+  public SuiRawData getData() {
     return data;
   }
 
@@ -52,7 +58,7 @@ public class SuiObject implements ObjectResponseDetails {
    *
    * @param data the data
    */
-  public void setData(SuiData data) {
+  public void setData(SuiRawData data) {
     this.data = data;
   }
 
