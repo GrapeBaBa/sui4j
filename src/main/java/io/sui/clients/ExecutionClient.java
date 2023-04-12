@@ -18,8 +18,10 @@ package io.sui.clients;
 
 
 import io.sui.models.transactions.ExecuteTransactionRequestType;
-import io.sui.models.transactions.ExecuteTransactionResponse;
+import io.sui.models.transactions.TransactionBlockResponse;
+import io.sui.models.transactions.TransactionBlockResponseOptions;
 import io.sui.models.transactions.TransactionEffects;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -42,10 +44,14 @@ public interface ExecutionClient {
    * Execute transaction completable future.
    *
    * @param txBytes the tx bytes
-   * @param serializedSignatureBytes the serialized signature bytes
+   * @param signatures the signatures
+   * @param transactionBlockResponseOptions the transaction block response options
    * @param requestType the request type
    * @return the completable future
    */
-  CompletableFuture<ExecuteTransactionResponse> executeTransaction(
-      String txBytes, String serializedSignatureBytes, ExecuteTransactionRequestType requestType);
+  CompletableFuture<TransactionBlockResponse> executeTransaction(
+      String txBytes,
+      List<String> signatures,
+      TransactionBlockResponseOptions transactionBlockResponseOptions,
+      ExecuteTransactionRequestType requestType);
 }

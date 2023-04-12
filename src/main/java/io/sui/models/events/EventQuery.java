@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -17,6 +17,7 @@
 package io.sui.models.events;
 
 
+import io.sui.models.objects.MoveModule;
 import io.sui.models.objects.SuiObjectOwner;
 import java.util.Objects;
 
@@ -92,7 +93,7 @@ public interface EventQuery {
      *
      * @return the move module
      */
-    public io.sui.models.events.MoveModule getMoveModule() {
+    public io.sui.models.objects.MoveModule getMoveModule() {
       return MoveModule;
     }
 
@@ -101,7 +102,7 @@ public interface EventQuery {
      *
      * @param moveModule the move module
      */
-    public void setMoveModule(io.sui.models.events.MoveModule moveModule) {
+    public void setMoveModule(io.sui.models.objects.MoveModule moveModule) {
       MoveModule = moveModule;
     }
 

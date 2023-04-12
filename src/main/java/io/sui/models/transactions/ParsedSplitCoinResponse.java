@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -17,7 +17,7 @@
 package io.sui.models.transactions;
 
 
-import io.sui.models.objects.SuiObject;
+import io.sui.models.objects.SuiObjectData;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,18 +29,18 @@ import java.util.Objects;
  */
 public class ParsedSplitCoinResponse {
 
-  private SuiObject updatedCoin;
+  private SuiObjectData updatedCoin;
 
-  private List<SuiObject> newCoins;
+  private List<SuiObjectData> newCoins;
 
-  private SuiObject updatedGas;
+  private SuiObjectData updatedGas;
 
   /**
    * Gets updated coin.
    *
    * @return the updated coin
    */
-  public SuiObject getUpdatedCoin() {
+  public SuiObjectData getUpdatedCoin() {
     return updatedCoin;
   }
 
@@ -49,7 +49,7 @@ public class ParsedSplitCoinResponse {
    *
    * @param updatedCoin the updated coin
    */
-  public void setUpdatedCoin(SuiObject updatedCoin) {
+  public void setUpdatedCoin(SuiObjectData updatedCoin) {
     this.updatedCoin = updatedCoin;
   }
 
@@ -58,7 +58,7 @@ public class ParsedSplitCoinResponse {
    *
    * @return the new coins
    */
-  public List<SuiObject> getNewCoins() {
+  public List<SuiObjectData> getNewCoins() {
     return newCoins;
   }
 
@@ -67,7 +67,7 @@ public class ParsedSplitCoinResponse {
    *
    * @param newCoins the new coins
    */
-  public void setNewCoins(List<SuiObject> newCoins) {
+  public void setNewCoins(List<SuiObjectData> newCoins) {
     this.newCoins = newCoins;
   }
 
@@ -76,7 +76,7 @@ public class ParsedSplitCoinResponse {
    *
    * @return the updated gas
    */
-  public SuiObject getUpdatedGas() {
+  public SuiObjectData getUpdatedGas() {
     return updatedGas;
   }
 
@@ -85,7 +85,7 @@ public class ParsedSplitCoinResponse {
    *
    * @param updatedGas the updated gas
    */
-  public void setUpdatedGas(SuiObject updatedGas) {
+  public void setUpdatedGas(SuiObjectData updatedGas) {
     this.updatedGas = updatedGas;
   }
 

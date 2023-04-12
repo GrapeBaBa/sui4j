@@ -34,7 +34,7 @@ class SuiKeyPairTest {
   /** Decode base 64. */
   @Test
   void decodeBase64() {
-    final String base64 = "ADfbVnAT2QLG7W+bM+1ENzEKAxnoUx10+WfGg5zx8VRm";
+    final String base64 = "AUsCQlGEBz1TLmEfRsxUzxcyI3yywp+1/k4UZ5wV05CE";
     try {
       SuiKeyPair.decodeBase64(base64);
     } catch (SignatureSchemeNotSupportedException e) {

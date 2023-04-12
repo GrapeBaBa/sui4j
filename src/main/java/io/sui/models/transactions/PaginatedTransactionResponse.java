@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -26,18 +26,20 @@ import java.util.Objects;
  * @author grapebaba
  * @since 2022.11
  */
-public class PaginatedTransactionDigests {
+public class PaginatedTransactionResponse {
 
-  private List<String> data;
+  private List<TransactionBlockResponse> data;
 
   private String nextCursor;
+
+  private boolean hasNextPage;
 
   /**
    * Gets data.
    *
    * @return the data
    */
-  public List<String> getData() {
+  public List<TransactionBlockResponse> getData() {
     return data;
   }
 
@@ -46,7 +48,7 @@ public class PaginatedTransactionDigests {
    *
    * @param data the data
    */
-  public void setData(List<String> data) {
+  public void setData(List<TransactionBlockResponse> data) {
     this.data = data;
   }
 
@@ -68,31 +70,53 @@ public class PaginatedTransactionDigests {
     this.nextCursor = nextCursor;
   }
 
+  /**
+   * Is has next page boolean.
+   *
+   * @return the boolean
+   */
+  public boolean isHasNextPage() {
+    return hasNextPage;
+  }
+
+  /**
+   * Sets has next page.
+   *
+   * @param hasNextPage the has next page
+   */
+  public void setHasNextPage(boolean hasNextPage) {
+    this.hasNextPage = hasNextPage;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof PaginatedTransactionDigests)) {
+    if (!(o instanceof PaginatedTransactionResponse)) {
       return false;
     }
-    PaginatedTransactionDigests that = (PaginatedTransactionDigests) o;
-    return data.equals(that.data) && nextCursor.equals(that.nextCursor);
+    PaginatedTransactionResponse that = (PaginatedTransactionResponse) o;
+    return hasNextPage == that.hasNextPage
+        && data.equals(that.data)
+        && nextCursor.equals(that.nextCursor);
   }
 
   @Override
   public String toString() {
-    return "PaginatedTransactionDigests{"
+    return "PaginatedTransactionResponse{"
         + "data="
         + data
         + ", nextCursor='"
         + nextCursor
         + '\''
+        + ", hasNextPage="
+        + hasNextPage
         + '}';
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(data, nextCursor);
+    return Objects.hash(data, nextCursor, hasNextPage);
   }
 }

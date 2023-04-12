@@ -25,7 +25,7 @@ import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.ECKey.ECDSASignature;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.Utils;
-import org.bouncycastle.jcajce.provider.digest.SHA3;
+import org.bouncycastle.jcajce.provider.digest.Blake2b.Blake2b256;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -59,10 +59,10 @@ public class SECP256K1KeyPair extends SuiKeyPair<ECKey> {
 
   @Override
   public String address() {
-    SHA3.Digest256 digest256 = new SHA3.Digest256();
+    final Blake2b256 blake2b256 = new Blake2b256();
     byte[] hash =
-        digest256.digest(prepend(keyPair.getPubKey(), SignatureScheme.Secp256k1.getScheme()));
-    return "0x" + StringUtils.substring(Hex.toHexString(hash), 0, 40);
+        blake2b256.digest(prepend(keyPair.getPubKey(), SignatureScheme.Secp256k1.getScheme()));
+    return "0x" + StringUtils.substring(Hex.toHexString(hash), 0, 64);
   }
 
   @Override
@@ -79,29 +79,11 @@ public class SECP256K1KeyPair extends SuiKeyPair<ECKey> {
   public byte[] sign(byte[] msg) throws SigningException {
     Sha256Hash sha256Hash = Sha256Hash.of(msg);
     ECDSASignature signature = keyPair.sign(sha256Hash);
-    byte recId = findRecoveryId(sha256Hash, signature);
 
-    byte[] sigData = new byte[65]; // 32 bytes for R + 32 bytes for S + 1 recID
+    byte[] sigData = new byte[64]; // 32 bytes for R + 32 bytes for S
     System.arraycopy(Utils.bigIntegerToBytes(signature.r, 32), 0, sigData, 0, 32);
     System.arraycopy(Utils.bigIntegerToBytes(signature.s, 32), 0, sigData, 32, 32);
-    sigData[64] = recId;
     return sigData;
-  }
-
-  private byte findRecoveryId(Sha256Hash hash, ECDSASignature sig) throws SigningException {
-    byte recId = -1;
-    for (byte i = 0; i < 2; i++) {
-      ECKey k = ECKey.recoverFromSignature(i, sig, hash, keyPair.isCompressed());
-      if (k != null && Arrays.equals(k.getPubKey(), keyPair.getPubKey())) {
-        recId = i;
-        break;
-      }
-    }
-    if (recId == -1) {
-      throw new SigningException(
-          "Could not construct a recoverable key. This should never happen.");
-    }
-    return recId;
   }
 
   /**

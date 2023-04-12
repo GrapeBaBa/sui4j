@@ -4,22 +4,22 @@ package io.sui.bcsgen;
 public final class TypeOrigin {
     public final String module_name;
     public final String struct_name;
-    public final ObjectID package;
+    public final ObjectID Package;
 
-    public TypeOrigin(String module_name, String struct_name, ObjectID package) {
+    public TypeOrigin(String module_name, String struct_name, ObjectID Package) {
         java.util.Objects.requireNonNull(module_name, "module_name must not be null");
         java.util.Objects.requireNonNull(struct_name, "struct_name must not be null");
-        java.util.Objects.requireNonNull(package, "package must not be null");
+        java.util.Objects.requireNonNull(Package, "Package must not be null");
         this.module_name = module_name;
         this.struct_name = struct_name;
-        this.package = package;
+        this.Package = Package;
     }
 
     public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
         serializer.increase_container_depth();
         serializer.serialize_str(module_name);
         serializer.serialize_str(struct_name);
-        package.serialize(serializer);
+        Package.serialize(serializer);
         serializer.decrease_container_depth();
     }
 
@@ -34,7 +34,7 @@ public final class TypeOrigin {
         Builder builder = new Builder();
         builder.module_name = deserializer.deserialize_str();
         builder.struct_name = deserializer.deserialize_str();
-        builder.package = ObjectID.deserialize(deserializer);
+        builder.Package = ObjectID.deserialize(deserializer);
         deserializer.decrease_container_depth();
         return builder.build();
     }
@@ -58,7 +58,7 @@ public final class TypeOrigin {
         TypeOrigin other = (TypeOrigin) obj;
         if (!java.util.Objects.equals(this.module_name, other.module_name)) { return false; }
         if (!java.util.Objects.equals(this.struct_name, other.struct_name)) { return false; }
-        if (!java.util.Objects.equals(this.package, other.package)) { return false; }
+        if (!java.util.Objects.equals(this.Package, other.Package)) { return false; }
         return true;
     }
 
@@ -66,20 +66,20 @@ public final class TypeOrigin {
         int value = 7;
         value = 31 * value + (this.module_name != null ? this.module_name.hashCode() : 0);
         value = 31 * value + (this.struct_name != null ? this.struct_name.hashCode() : 0);
-        value = 31 * value + (this.package != null ? this.package.hashCode() : 0);
+        value = 31 * value + (this.Package != null ? this.Package.hashCode() : 0);
         return value;
     }
 
     public static final class Builder {
         public String module_name;
         public String struct_name;
-        public ObjectID package;
+        public ObjectID Package;
 
         public TypeOrigin build() {
             return new TypeOrigin(
                 module_name,
                 struct_name,
-                package
+                Package
             );
         }
     }

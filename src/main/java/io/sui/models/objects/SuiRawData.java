@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -26,12 +26,10 @@ import java.util.Objects;
  * @author grapebaba
  * @since 2022.11
  */
-public abstract class SuiData {
+public abstract class SuiRawData {
 
-  /**
-   * The type Package object.
-   */
-  public static class PackageObject extends SuiData {
+  /** The type Package object. */
+  public static class PackageObject extends SuiRawData {
 
     private String id;
 
@@ -82,8 +80,9 @@ public abstract class SuiData {
         return false;
       }
       PackageObject that = (PackageObject) o;
-      return id.equals(that.id) && dataType.equals(that.dataType) && moduleMap.equals(
-          that.moduleMap)
+      return id.equals(that.id)
+          && dataType.equals(that.dataType)
+          && moduleMap.equals(that.moduleMap)
           && version.equals(that.version);
     }
 
@@ -94,19 +93,23 @@ public abstract class SuiData {
 
     @Override
     public String toString() {
-      return "PackageObject{" +
-          "id='" + id + '\'' +
-          ", dataType='" + dataType + '\'' +
-          ", moduleMap=" + moduleMap +
-          ", version=" + version +
-          '}';
+      return "PackageObject{"
+          + "id='"
+          + id
+          + '\''
+          + ", dataType='"
+          + dataType
+          + '\''
+          + ", moduleMap="
+          + moduleMap
+          + ", version="
+          + version
+          + '}';
     }
   }
 
-  /**
-   * The type Move object.
-   */
-  public static class MoveObject extends SuiData {
+  /** The type Move object. */
+  public static class MoveObject extends SuiRawData {
 
     private String dataType;
 
@@ -199,9 +202,11 @@ public abstract class SuiData {
         return false;
       }
       MoveObject that = (MoveObject) o;
-      return hasPublicTransfer == that.hasPublicTransfer && dataType.equals(that.dataType)
-          && type.equals(that.type) && version.equals(that.version) && bcsBytes.equals(
-          that.bcsBytes);
+      return hasPublicTransfer == that.hasPublicTransfer
+          && dataType.equals(that.dataType)
+          && type.equals(that.type)
+          && version.equals(that.version)
+          && bcsBytes.equals(that.bcsBytes);
     }
 
     @Override
@@ -211,13 +216,21 @@ public abstract class SuiData {
 
     @Override
     public String toString() {
-      return "MoveObject{" +
-          "dataType='" + dataType + '\'' +
-          ", hasPublicTransfer=" + hasPublicTransfer +
-          ", type='" + type + '\'' +
-          ", version=" + version +
-          ", bcsBytes='" + bcsBytes + '\'' +
-          '}';
+      return "MoveObject{"
+          + "dataType='"
+          + dataType
+          + '\''
+          + ", hasPublicTransfer="
+          + hasPublicTransfer
+          + ", type='"
+          + type
+          + '\''
+          + ", version="
+          + version
+          + ", bcsBytes='"
+          + bcsBytes
+          + '\''
+          + '}';
     }
   }
 }

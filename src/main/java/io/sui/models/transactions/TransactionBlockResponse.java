@@ -28,7 +28,7 @@ import java.util.Objects;
  * @author grapebaba
  * @since 2022.11
  */
-public class TransactionResponse {
+public class TransactionBlockResponse {
 
   private String digest;
 
@@ -216,10 +216,10 @@ public class TransactionResponse {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof TransactionResponse)) {
+    if (!(o instanceof TransactionBlockResponse)) {
       return false;
     }
-    TransactionResponse that = (TransactionResponse) o;
+    TransactionBlockResponse that = (TransactionBlockResponse) o;
     return confirmedLocalExecution == that.confirmedLocalExecution
         && digest.equals(that.digest)
         && transaction.equals(that.transaction)

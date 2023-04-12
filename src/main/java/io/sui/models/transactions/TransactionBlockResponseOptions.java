@@ -25,7 +25,7 @@ import java.util.Objects;
  * @author grapebaba
  * @since 2023.03
  */
-public class TransactionResponseOptions {
+public class TransactionBlockResponseOptions {
 
   private boolean showInput;
 
@@ -114,10 +114,10 @@ public class TransactionResponseOptions {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof TransactionResponseOptions)) {
+    if (!(o instanceof TransactionBlockResponseOptions)) {
       return false;
     }
-    TransactionResponseOptions that = (TransactionResponseOptions) o;
+    TransactionBlockResponseOptions that = (TransactionBlockResponseOptions) o;
     return showInput == that.showInput
         && showEffects == that.showEffects
         && showEvents == that.showEvents
@@ -131,7 +131,7 @@ public class TransactionResponseOptions {
 
   @Override
   public String toString() {
-    return "TransactionResponseOptions{"
+    return "TransactionBlockResponseOptions{"
         + "show_input="
         + showInput
         + ", show_effects="

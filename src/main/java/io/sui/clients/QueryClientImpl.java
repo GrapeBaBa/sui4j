@@ -33,16 +33,19 @@ import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveNormalizedStruct;
+import io.sui.models.objects.ObjectDataOptions;
 import io.sui.models.objects.ObjectResponse;
+import io.sui.models.objects.ObjectResponseQuery;
 import io.sui.models.objects.PaginatedCoins;
-import io.sui.models.objects.SuiObjectInfo;
+import io.sui.models.objects.PaginatedObjectsResponse;
 import io.sui.models.objects.SuiObjectRef;
+import io.sui.models.objects.SuiObjectResponse;
 import io.sui.models.objects.SuiSystemState;
 import io.sui.models.objects.ValidatorMetadata;
-import io.sui.models.transactions.PaginatedTransactionDigests;
-import io.sui.models.transactions.TransactionQuery;
-import io.sui.models.transactions.TransactionResponse;
-import io.sui.models.transactions.TransactionResponseOptions;
+import io.sui.models.transactions.PaginatedTransactionResponse;
+import io.sui.models.transactions.TransactionBlockResponse;
+import io.sui.models.transactions.TransactionBlockResponseOptions;
+import io.sui.models.transactions.TransactionBlockResponseQuery;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -68,84 +71,76 @@ public class QueryClientImpl implements QueryClient {
   }
 
   @Override
-  public CompletableFuture<ObjectResponse> getObject(String id) {
+  public CompletableFuture<SuiObjectResponse> getObject(
+      String id, ObjectDataOptions objectDataOptions) {
     final JsonRpc20Request request =
-        this.jsonRpcClientProvider.createJsonRpc20Request("sui_getObject", Lists.newArrayList(id));
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "sui_getObject", Lists.newArrayList(id, objectDataOptions));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getObject", request, new TypeToken<ObjectResponse>() {}.getType());
+        "/sui_getObject", request, new TypeToken<SuiObjectResponse>() {}.getType());
   }
 
-  public CompletableFuture<SuiObjectRef> getObjectRef(String id) {
-    return this.getObject(id).thenApply(ObjectResponse::getObjectRef);
+  public CompletableFuture<SuiObjectRef> getObjectRef(
+      String id, ObjectDataOptions objectDataOptions) {
+    return this.getObject(id, objectDataOptions).thenApply(SuiObjectResponse::getObjectRef);
   }
 
   @Override
-  public CompletableFuture<List<SuiObjectInfo>> getObjectsOwnedByAddress(String address) {
+  public CompletableFuture<PaginatedObjectsResponse> getObjectsOwnedByAddress(
+      String address,
+      ObjectResponseQuery query,
+      String cursor,
+      Integer limit,
+      String checkpointId) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_getObjectsOwnedByAddress", Lists.newArrayList(address));
+            "suix_getOwnedObjects",
+            Lists.newArrayList(address, query, cursor, limit, checkpointId));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getObjectsOwnedByAddress",
+        "/suix_getOwnedObjects", request, new TypeToken<PaginatedObjectsResponse>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<Long> getTotalTransactionBlocks() {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "sui_getTotalTransactionBlocks", Lists.newArrayList());
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_getTotalTransactionBlocks", request, new TypeToken<Long>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<TransactionBlockResponse> getTransactionBlock(
+      String digest, TransactionBlockResponseOptions options) {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "sui_getTransactionBlock", Lists.newArrayList(digest, options));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/sui_getTransactionBlock",
         request,
-        new TypeToken<List<SuiObjectInfo>>() {}.getType());
+        new TypeToken<TransactionBlockResponse>() {}.getType());
   }
 
   @Override
-  public CompletableFuture<List<SuiObjectInfo>> getObjectsOwnedByObject(String objectId) {
+  public CompletableFuture<List<TransactionBlockResponse>> multiGetTransactionBlocks(
+      List<String> digests, TransactionBlockResponseOptions options) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_getObjectsOwnedByObject", Lists.newArrayList(objectId));
+            "sui_multiGetTransactionBlocks", Lists.newArrayList(digests, options));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getObjectsOwnedByObject", request, new TypeToken<List<SuiObjectInfo>>() {}.getType());
-  }
-
-  @Override
-  public CompletableFuture<ObjectResponse> getRawObject(String id) {
-    final JsonRpc20Request request =
-        this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_getRawObject", Lists.newArrayList(id));
-    return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getRawObject", request, new TypeToken<ObjectResponse>() {}.getType());
-  }
-
-  @Override
-  public CompletableFuture<Long> getTotalTransactionNumber() {
-    final JsonRpc20Request request =
-        this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_getTotalTransactionNumber", Lists.newArrayList());
-    return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getTotalTransactionNumber", request, new TypeToken<Long>() {}.getType());
-  }
-
-  @Override
-  public CompletableFuture<TransactionResponse> getTransaction(
-      String digest, TransactionResponseOptions options) {
-    final JsonRpc20Request request =
-        this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_getTransaction", Lists.newArrayList(digest, options));
-    return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getTransaction", request, new TypeToken<TransactionResponse>() {}.getType());
-  }
-
-  @Override
-  public CompletableFuture<TransactionResponse> getTransactionAuthSigners(
-      String transactionDigest) {
-    final JsonRpc20Request request =
-        this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_getTransactionAuthSigners", Lists.newArrayList(transactionDigest));
-    return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getTransactionAuthSigners",
+        "/sui_multiGetTransactionBlocks",
         request,
-        new TypeToken<TransactionResponse>() {}.getType());
+        new TypeToken<List<TransactionBlockResponse>>() {}.getType());
   }
 
   @Override
-  public CompletableFuture<List<String>> getTransactionsInRange(Long start, Long end) {
+  public CompletableFuture<List<SuiObjectResponse>> multiGetObjects(
+      List<String> objectIds, ObjectDataOptions options) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_getTransactionsInRange", Lists.newArrayList(start, end));
+            "sui_multiGetObjects", Lists.newArrayList(objectIds, options));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getTransactionsInRange", request, new TypeToken<List<String>>() {}.getType());
+        "/sui_multiGetObjects", request, new TypeToken<List<SuiObjectResponse>>() {}.getType());
   }
 
   @Override
@@ -255,13 +250,15 @@ public class QueryClientImpl implements QueryClient {
   }
 
   @Override
-  public CompletableFuture<PaginatedTransactionDigests> getTransactions(
-      TransactionQuery query, String cursor, int limit, boolean isDescOrder) {
+  public CompletableFuture<PaginatedTransactionResponse> queryTransactionBlocks(
+      TransactionBlockResponseQuery query, String cursor, Integer limit, boolean isDescOrder) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_getTransactions", Lists.newArrayList(query, cursor, limit, isDescOrder));
+            "suix_queryTransactionBlocks", Lists.newArrayList(query, cursor, limit, isDescOrder));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getTransactions", request, new TypeToken<PaginatedTransactionDigests>() {}.getType());
+        "/suix_queryTransactionBlocks",
+        request,
+        new TypeToken<PaginatedTransactionResponse>() {}.getType());
   }
 
   @Override
@@ -277,9 +274,9 @@ public class QueryClientImpl implements QueryClient {
   public CompletableFuture<Long> getReferenceGasPrice() {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_getReferenceGasPrice", Lists.newArrayList());
+            "suix_getReferenceGasPrice", Lists.newArrayList());
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getReferenceGasPrice", request, new TypeToken<Long>() {}.getType());
+        "/suix_getReferenceGasPrice", request, new TypeToken<Long>() {}.getType());
   }
 
   @Override

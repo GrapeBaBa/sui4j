@@ -22,8 +22,10 @@ import com.google.common.reflect.TypeToken;
 import io.sui.jsonrpc.JsonRpc20Request;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.models.transactions.ExecuteTransactionRequestType;
-import io.sui.models.transactions.ExecuteTransactionResponse;
+import io.sui.models.transactions.TransactionBlockResponse;
+import io.sui.models.transactions.TransactionBlockResponseOptions;
 import io.sui.models.transactions.TransactionEffects;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -55,15 +57,18 @@ public class ExecutionClientImpl implements ExecutionClient {
   }
 
   @Override
-  public CompletableFuture<ExecuteTransactionResponse> executeTransaction(
-      String txBytes, String serializedSignatureBytes, ExecuteTransactionRequestType requestType) {
+  public CompletableFuture<TransactionBlockResponse> executeTransaction(
+      String txBytes,
+      List<String> signatures,
+      TransactionBlockResponseOptions transactionBlockResponseOptions,
+      ExecuteTransactionRequestType requestType) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_executeTransaction",
-            Lists.newArrayList(txBytes, serializedSignatureBytes, requestType));
+            "sui_executeTransactionBlock",
+            Lists.newArrayList(txBytes, signatures, transactionBlockResponseOptions, requestType));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_executeTransaction",
+        "/sui_executeTransactionBlock",
         request,
-        new TypeToken<ExecuteTransactionResponse>() {}.getType());
+        new TypeToken<TransactionBlockResponse>() {}.getType());
   }
 }

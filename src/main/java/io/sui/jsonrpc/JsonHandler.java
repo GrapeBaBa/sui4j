@@ -17,6 +17,7 @@
 package io.sui.jsonrpc;
 
 
+import io.sui.models.FaucetResponse;
 import java.lang.reflect.Type;
 import java.util.Map;
 
@@ -45,6 +46,14 @@ public interface JsonHandler {
    * @return the json rpc 20 ws response
    */
   JsonRpc20WSResponse fromJson(String response);
+
+  /**
+   * From json faucet faucet response.
+   *
+   * @param response the response
+   * @return the faucet response
+   */
+  FaucetResponse fromJsonFaucet(String response);
 
   /**
    * From json general map.

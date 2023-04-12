@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -87,7 +87,7 @@ public interface TransactionBuilder {
       List<String> recipients,
       List<Long> amounts,
       String gas,
-      long gasBudget);
+      Long gasBudget);
 
   /**
    * Pay sui completable future.
@@ -104,7 +104,7 @@ public interface TransactionBuilder {
       List<String> inputCoins,
       List<String> recipients,
       List<Long> amounts,
-      long gasBudget);
+      Long gasBudget);
 
   /**
    * Pay all sui completable future.
@@ -116,7 +116,7 @@ public interface TransactionBuilder {
    * @return the completable future
    */
   CompletableFuture<TransactionBytes> payAllSui(
-      String signer, List<String> inputCoins, String recipient, long gasBudget);
+      String signer, List<String> inputCoins, String recipient, Long gasBudget);
 
   /**
    * Transfer sui completable future.
@@ -129,20 +129,20 @@ public interface TransactionBuilder {
    * @return the completable future
    */
   CompletableFuture<TransactionBytes> transferSui(
-      String signer, String coin, long gasBudget, String recipient, long amount);
+      String signer, String coin, Long gasBudget, String recipient, Long amount);
 
   /**
    * Transfer object completable future.
    *
    * @param signer the signer
    * @param suiObject the sui object
+   * @param recipient the recipient
    * @param gas the gas
    * @param gasBudget the gas budget
-   * @param recipient the recipient
    * @return the completable future
    */
   CompletableFuture<TransactionBytes> transferObject(
-      String signer, String suiObject, String recipient, String gas, long gasBudget);
+      String signer, String suiObject, String recipient, String gas, Long gasBudget);
 
   /**
    * Batch transaction completable future.
@@ -187,10 +187,11 @@ public interface TransactionBuilder {
    *
    * @param signer the signer
    * @param compiledModules the compiled modules
+   * @param depIds the dep ids
    * @param gas the gas
    * @param gasBudget the gas budget
    * @return the completable future
    */
   CompletableFuture<TransactionBytes> publish(
-      String signer, List<String> compiledModules, String gas, long gasBudget);
+      String signer, List<String> compiledModules, List<String> depIds, String gas, Long gasBudget);
 }

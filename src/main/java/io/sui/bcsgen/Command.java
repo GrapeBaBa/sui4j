@@ -10,7 +10,7 @@ public abstract class Command {
         switch (index) {
             case 0: return MoveCall.load(deserializer);
             case 1: return TransferObjects.load(deserializer);
-            case 2: return SplitCoin.load(deserializer);
+            case 2: return SplitCoins.load(deserializer);
             case 3: return MergeCoins.load(deserializer);
             case 4: return Publish.load(deserializer);
             case 5: return MakeMoveVec.load(deserializer);
@@ -144,11 +144,11 @@ public abstract class Command {
         }
     }
 
-    public static final class SplitCoin extends Command {
+    public static final class SplitCoins extends Command {
         public final Argument field0;
-        public final Argument field1;
+        public final java.util.List<Argument> field1;
 
-        public SplitCoin(Argument field0, Argument field1) {
+        public SplitCoins(Argument field0, java.util.List<Argument> field1) {
             java.util.Objects.requireNonNull(field0, "field0 must not be null");
             java.util.Objects.requireNonNull(field1, "field1 must not be null");
             this.field0 = field0;
@@ -159,15 +159,15 @@ public abstract class Command {
             serializer.increase_container_depth();
             serializer.serialize_variant_index(2);
             field0.serialize(serializer);
-            field1.serialize(serializer);
+            TraitHelpers.serialize_vector_Argument(field1, serializer);
             serializer.decrease_container_depth();
         }
 
-        static SplitCoin load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        static SplitCoins load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
             deserializer.increase_container_depth();
             Builder builder = new Builder();
             builder.field0 = Argument.deserialize(deserializer);
-            builder.field1 = Argument.deserialize(deserializer);
+            builder.field1 = TraitHelpers.deserialize_vector_Argument(deserializer);
             deserializer.decrease_container_depth();
             return builder.build();
         }
@@ -176,7 +176,7 @@ public abstract class Command {
             if (this == obj) return true;
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
-            SplitCoin other = (SplitCoin) obj;
+            SplitCoins other = (SplitCoins) obj;
             if (!java.util.Objects.equals(this.field0, other.field0)) { return false; }
             if (!java.util.Objects.equals(this.field1, other.field1)) { return false; }
             return true;
@@ -191,10 +191,10 @@ public abstract class Command {
 
         public static final class Builder {
             public Argument field0;
-            public Argument field1;
+            public java.util.List<Argument> field1;
 
-            public SplitCoin build() {
-                return new SplitCoin(
+            public SplitCoins build() {
+                return new SplitCoins(
                     field0,
                     field1
                 );
@@ -261,24 +261,29 @@ public abstract class Command {
     }
 
     public static final class Publish extends Command {
-        public final java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>> value;
+        public final java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>> field0;
+        public final java.util.List<ObjectID> field1;
 
-        public Publish(java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>> value) {
-            java.util.Objects.requireNonNull(value, "value must not be null");
-            this.value = value;
+        public Publish(java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>> field0, java.util.List<ObjectID> field1) {
+            java.util.Objects.requireNonNull(field0, "field0 must not be null");
+            java.util.Objects.requireNonNull(field1, "field1 must not be null");
+            this.field0 = field0;
+            this.field1 = field1;
         }
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
             serializer.serialize_variant_index(4);
-            TraitHelpers.serialize_vector_vector_u8(value, serializer);
+            TraitHelpers.serialize_vector_vector_u8(field0, serializer);
+            TraitHelpers.serialize_vector_ObjectID(field1, serializer);
             serializer.decrease_container_depth();
         }
 
         static Publish load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
             deserializer.increase_container_depth();
             Builder builder = new Builder();
-            builder.value = TraitHelpers.deserialize_vector_vector_u8(deserializer);
+            builder.field0 = TraitHelpers.deserialize_vector_vector_u8(deserializer);
+            builder.field1 = TraitHelpers.deserialize_vector_ObjectID(deserializer);
             deserializer.decrease_container_depth();
             return builder.build();
         }
@@ -288,22 +293,26 @@ public abstract class Command {
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
             Publish other = (Publish) obj;
-            if (!java.util.Objects.equals(this.value, other.value)) { return false; }
+            if (!java.util.Objects.equals(this.field0, other.field0)) { return false; }
+            if (!java.util.Objects.equals(this.field1, other.field1)) { return false; }
             return true;
         }
 
         public int hashCode() {
             int value = 7;
-            value = 31 * value + (this.value != null ? this.value.hashCode() : 0);
+            value = 31 * value + (this.field0 != null ? this.field0.hashCode() : 0);
+            value = 31 * value + (this.field1 != null ? this.field1.hashCode() : 0);
             return value;
         }
 
         public static final class Builder {
-            public java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>> value;
+            public java.util.List<java.util.List<@com.novi.serde.Unsigned Byte>> field0;
+            public java.util.List<ObjectID> field1;
 
             public Publish build() {
                 return new Publish(
-                    value
+                    field0,
+                    field1
                 );
             }
         }

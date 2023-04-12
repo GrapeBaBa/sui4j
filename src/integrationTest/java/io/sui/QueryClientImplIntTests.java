@@ -18,44 +18,41 @@ package io.sui;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.sui.clients.QueryClient;
 import io.sui.clients.QueryClientImpl;
 import io.sui.jsonrpc.GsonJsonHandler;
 import io.sui.jsonrpc.JsonHandler;
-import io.sui.jsonrpc.JsonRpc20Response.Error.ErrorCode;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
-import io.sui.models.SuiApiException;
 import io.sui.models.events.EventQuery.TransactionEventQuery;
 import io.sui.models.events.PaginatedEvents;
-import io.sui.models.objects.Balance;
 import io.sui.models.objects.CheckpointContents;
 import io.sui.models.objects.CheckpointSummary;
 import io.sui.models.objects.CoinMetadata;
 import io.sui.models.objects.CommitteeInfoResponse;
 import io.sui.models.objects.MoveFunctionArgType;
+import io.sui.models.objects.MoveModule;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveNormalizedStruct;
+import io.sui.models.objects.ObjectDataFilter;
+import io.sui.models.objects.ObjectDataFilter.MoveModuleFilter;
+import io.sui.models.objects.ObjectDataFilter.StructTypeFilter;
+import io.sui.models.objects.ObjectDataOptions;
 import io.sui.models.objects.ObjectResponse;
-import io.sui.models.objects.PaginatedCoins;
-import io.sui.models.objects.SuiObjectInfo;
+import io.sui.models.objects.ObjectResponseQuery;
+import io.sui.models.objects.PaginatedObjectsResponse;
 import io.sui.models.objects.SuiSystemState;
 import io.sui.models.objects.ValidatorMetadata;
-import io.sui.models.transactions.PaginatedTransactionDigests;
-import io.sui.models.transactions.TransactionQuery;
-import io.sui.models.transactions.TransactionQuery.AllQuery;
-import io.sui.models.transactions.TransactionQuery.FromAddressQuery;
-import io.sui.models.transactions.TransactionResponse;
-import io.sui.models.transactions.TransactionResponseOptions;
+import io.sui.models.transactions.PaginatedTransactionResponse;
+import io.sui.models.transactions.TransactionBlockResponse;
+import io.sui.models.transactions.TransactionBlockResponseOptions;
+import io.sui.models.transactions.TransactionBlockResponseQuery;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -70,6 +67,8 @@ class QueryClientImplIntTests {
 
   private static final String BASE_URL = "http://localhost:9000";
 
+  private static final String BASE_FAUCET_URL = "http://localhost:9123";
+
   private static final String TEST_KEY_STORE_PATH =
       System.getProperty("user.home") + "/.sui/sui_config/sui.keystore";
 
@@ -77,108 +76,12 @@ class QueryClientImplIntTests {
 
   private static QueryClient client;
 
-  private static Sui sui;
-
   /** Before all. */
   @BeforeAll
   static void beforeAll() {
     JsonRpcClientProvider jsonRpcClientProvider =
         new OkHttpJsonRpcClientProvider(BASE_URL, jsonHandler);
     client = new QueryClientImpl(jsonRpcClientProvider);
-    sui = new Sui(BASE_URL, TEST_KEY_STORE_PATH, true);
-  }
-
-  /**
-   * Gets first address.
-   *
-   * @return the first address
-   */
-  static Optional<String> getFirstAddress() {
-    final Optional<String> sender =
-        sui.addresses().stream()
-            .filter(
-                s -> {
-                  try {
-                    return sui.getObjectsOwnedByAddress(s).get().size() > 1;
-                  } catch (InterruptedException | ExecutionException e) {
-                    return false;
-                  }
-                })
-            .findFirst();
-    if (!sender.isPresent()) {
-      Assertions.fail();
-    }
-    return sender;
-  }
-
-  /**
-   * Gets object.
-   *
-   * @throws ExecutionException the execution exception
-   * @throws InterruptedException the interrupted exception
-   */
-  @Test
-  @DisplayName("Test getObject returns existing move object.")
-  void getObjectExistingMoveObject() throws ExecutionException, InterruptedException {
-    CompletableFuture<ObjectResponse> res =
-        client.getObject("0x342950ba2451c2f27ed128e591c2b4551e5177c2");
-    ObjectResponse response = res.get();
-    System.out.println(response);
-    //    assertEquals(ObjectStatus.Exists, response.getStatus());
-    //    SuiObject suiObject = (SuiObject) response.getDetails();
-    //    SuiData.MoveObject moveObject = (SuiData.MoveObject) suiObject.getData();
-    //    assertEquals("0x2::coin::Coin<0x2::sui::SUI>", moveObject.getType());
-    //    SuiObjectOwner.AddressOwner addressOwner = (SuiObjectOwner.AddressOwner)
-    // suiObject.getOwner();
-    //    assertEquals("0xea79464d86786b7a7a63e3f13f798f29f5e65947",
-    // addressOwner.getAddressOwner());
-    //    assertEquals(BigInteger.valueOf(100000000000000L), moveObject.getFields().get("balance"));
-    //    SuiObjectRef suiObjectRef = suiObject.getReference();
-    //    assertEquals("bWkh6f80oGFCtsPtS3//66LvAvqGJTOVJtKmUJAd5l0=", suiObjectRef.getDigest());
-  }
-
-  /**
-   * Gets object no exist.
-   *
-   * @throws ExecutionException the execution exception
-   * @throws InterruptedException the interrupted exception
-   */
-  @Test
-  @DisplayName("Test getObject returns non existing object.")
-  void getObjectNoExist() throws ExecutionException, InterruptedException {
-    CompletableFuture<ObjectResponse> res =
-        client.getObject("0xa204b49f2a65eb3d418ccae864b331c524c2fa76");
-
-    ObjectResponse response = res.get();
-    System.out.println(response);
-    //    assertEquals(ObjectStatus.NotExists, response.getStatus());
-    //    ObjectIdResponseDetails objectIdResponseDetails =
-    //        (ObjectIdResponseDetails) response.getDetails();
-    //    assertEquals(
-    //        "0xa204b49f2a65eb3d418ccae864b331c524c2fa76", objectIdResponseDetails.getObjectId());
-  }
-
-  /**
-   * Gets object invalid params.
-   *
-   * @throws ExecutionException the execution exception
-   * @throws InterruptedException the interrupted exception
-   */
-  @Test
-  @DisplayName("Test getObject with invalid params.")
-  void getObjectInvalidParams() throws ExecutionException, InterruptedException {
-    CompletableFuture<ObjectResponse> res = client.getObject("");
-
-    CompletableFuture<Throwable> completableFuture = new CompletableFuture<>();
-    res.whenComplete(
-        (getObjectResponse, throwable) -> {
-          if (throwable != null) {
-            completableFuture.complete(throwable);
-          }
-        });
-
-    assertEquals(
-        ErrorCode.INVALID_PARAMS, ((SuiApiException) completableFuture.get()).getError().getCode());
   }
 
   /**
@@ -190,10 +93,57 @@ class QueryClientImplIntTests {
   @Test
   @DisplayName("Test getObjectsOwnedByAddress returns not empty list.")
   void getObjectsOwnedByAddressIsNotEmpty() throws ExecutionException, InterruptedException {
-    CompletableFuture<List<SuiObjectInfo>> res =
-        client.getObjectsOwnedByAddress("0xea79464d86786b7a7a63e3f13f798f29f5e65947");
-    List<SuiObjectInfo> response = res.get();
-    System.out.println(response);
+    ObjectDataFilter.StructTypeFilter filter = new StructTypeFilter();
+    filter.setStructType("0x2::coin::Coin<0x2::sui::SUI>");
+    ObjectResponseQuery query = new ObjectResponseQuery();
+    query.setFilter(filter);
+    ObjectDataOptions objectDataOptions = new ObjectDataOptions();
+    objectDataOptions.setShowOwner(true);
+    objectDataOptions.setShowPreviousTransaction(true);
+    query.setOptions(objectDataOptions);
+    CompletableFuture<PaginatedObjectsResponse> res =
+        client.getObjectsOwnedByAddress(
+            "0xb43d0468fbc80c81931b73a4b9ef4663e671b65a07ae5b336a0e7d8a70ac0646",
+            query,
+            null,
+            null,
+            null);
+    CompletableFuture<Object> future = new CompletableFuture<>();
+    res.whenComplete(
+        (paginatedObjectsResponse, throwable) -> {
+          if (throwable != null) {
+            future.complete(throwable);
+          } else {
+            future.complete(paginatedObjectsResponse);
+          }
+        });
+    System.out.println(future.get());
+
+    ObjectDataFilter.MoveModuleFilter moduleFilter = new MoveModuleFilter();
+    MoveModule moveModule = new MoveModule();
+    moveModule.setModule("coin");
+    moveModule.setSuiPackage("0x0000000000000000000000000000000000000002");
+    moduleFilter.setMoveModule(moveModule);
+    ObjectResponseQuery query1 = new ObjectResponseQuery();
+    query1.setFilter(moduleFilter);
+    query1.setOptions(objectDataOptions);
+    CompletableFuture<PaginatedObjectsResponse> res1 =
+        client.getObjectsOwnedByAddress(
+            "0xb43d0468fbc80c81931b73a4b9ef4663e671b65a07ae5b336a0e7d8a70ac0646",
+            query1,
+            null,
+            null,
+            null);
+    CompletableFuture<Object> future1 = new CompletableFuture<>();
+    res1.whenComplete(
+        (paginatedObjectsResponse, throwable) -> {
+          if (throwable != null) {
+            future1.complete(throwable);
+          } else {
+            future1.complete(paginatedObjectsResponse);
+          }
+        });
+    System.out.println(future1.get());
     //    assertTrue(response.size() > 0);
     //    assertEquals(
     //        "0xea79464d86786b7a7a63e3f13f798f29f5e65947",
@@ -204,57 +154,15 @@ class QueryClientImplIntTests {
   }
 
   /**
-   * Gets objects owned by object is empty.
-   *
-   * @throws ExecutionException the execution exception
-   * @throws InterruptedException the interrupted exception
-   */
-  @Test
-  @DisplayName("Test getObjectsOwnedByObject returns empty list.")
-  void getObjectsOwnedByObjectIsEmpty() throws ExecutionException, InterruptedException {
-    CompletableFuture<List<SuiObjectInfo>> res =
-        client.getObjectsOwnedByObject("0xde2952390ab3d0cfbb0a0602532480ed5ec99cf3");
-    List<SuiObjectInfo> response = res.get();
-    System.out.println(response);
-    //    assertEquals(0, response.size());
-  }
-
-  /**
-   * Gets raw object existing move object.
-   *
-   * @throws ExecutionException the execution exception
-   * @throws InterruptedException the interrupted exception
-   */
-  @Test
-  @DisplayName("Test getRawObject returns existing move object.")
-  void getRawObjectExistingMoveObject() throws ExecutionException, InterruptedException {
-    CompletableFuture<ObjectResponse> res =
-        client.getRawObject("0x342950ba2451c2f27ed128e591c2b4551e5177c2");
-    ObjectResponse response = res.get();
-    System.out.println(response);
-    //    assertEquals(ObjectStatus.Exists, response.getStatus());
-    //    SuiObject suiObject = (SuiObject) response.getDetails();
-    //    SuiData.MoveObject moveObject = (SuiData.MoveObject) suiObject.getData();
-    //    assertEquals("0x2::coin::Coin<0x2::sui::SUI>", moveObject.getType());
-    //    SuiObjectOwner.AddressOwner addressOwner = (SuiObjectOwner.AddressOwner)
-    // suiObject.getOwner();
-    //    assertEquals("0xea79464d86786b7a7a63e3f13f798f29f5e65947",
-    // addressOwner.getAddressOwner());
-    //    assertEquals("NClQuiRRwvJ+0SjlkcK0VR5Rd8LQN3oQ81oAAA==", moveObject.getBcs_bytes());
-    //    SuiObjectRef suiObjectRef = suiObject.getReference();
-    //    assertEquals("QZMMmu37jER7FFU3+HhbdwIyZyOwwThNAa07vSsPBGw=", suiObjectRef.getDigest());
-  }
-
-  /**
    * Gets total transaction number.
    *
    * @throws ExecutionException the execution exception
    * @throws InterruptedException the interrupted exception
    */
   @Test
-  @DisplayName("Test getTotalTransactionNumber.")
+  @DisplayName("Test getTotalTransactionBlocks.")
   void getTotalTransactionNumber() throws ExecutionException, InterruptedException {
-    CompletableFuture<Long> res = client.getTotalTransactionNumber();
+    CompletableFuture<Long> res = client.getTotalTransactionBlocks();
     System.out.println(res.get());
     //    assertEquals(2L, res.get());
   }
@@ -266,17 +174,17 @@ class QueryClientImplIntTests {
    * @throws InterruptedException the interrupted exception
    */
   @Test
-  @DisplayName("Test getTransaction.")
+  @DisplayName("Test getTransactionBlock.")
   void getTransaction() throws ExecutionException, InterruptedException {
-    TransactionResponseOptions options = new TransactionResponseOptions();
+    TransactionBlockResponseOptions options = new TransactionBlockResponseOptions();
     options.setShowEffects(true);
     options.setShowEvents(true);
     options.setShowObjectChanges(true);
     options.setShowInput(true);
-    CompletableFuture<TransactionResponse> res =
-        client.getTransaction("2zcrJHVMnqjQ47iauQsSqdDzpJVKzTrrohu4mYcGr2JG", options);
-    TransactionResponse transactionResponse = res.get();
-    System.out.println(transactionResponse);
+    CompletableFuture<TransactionBlockResponse> res =
+        client.getTransactionBlock("2zcrJHVMnqjQ47iauQsSqdDzpJVKzTrrohu4mYcGr2JG", options);
+    TransactionBlockResponse transactionBlockResponse = res.get();
+    System.out.println(transactionBlockResponse);
     //    TransactionResponse transactionResponse = res.get();
     //    System.out.println(transactionResponse);
     //    assertEquals(1,
@@ -292,10 +200,12 @@ class QueryClientImplIntTests {
     //        "3Dda4/74LXf6GmOxMxp3qdbW/WdQ6/8EHobZ1LvSyYk=",
     //        transactionResponse.getCertificate().getTransactionDigest());
     //
-    //    assertEquals(1, transactionResponse.getCertificate().getData().getTransactions().size());
+    //    assertEquals(1,
+    // transactionResponse.getCertificate().getData().queryTransactionBlocks().size());
     //    MoveCall call =
     //        ((TransactionKind.CallTransactionKind)
-    //                transactionResponse.getCertificate().getData().getTransactions().get(0))
+    //
+    // transactionResponse.getCertificate().getData().queryTransactionBlocks().get(0))
     //            .getCall();
     //    assertEquals("devnet_nft", call.getModule());
     //    assertEquals("mint", call.getFunction());
@@ -345,13 +255,13 @@ class QueryClientImplIntTests {
   @Test
   @DisplayName("Test getTransactionAuthSigners.")
   void getTransactionAuthSigners() throws ExecutionException, InterruptedException {
-    TransactionResponseOptions options = new TransactionResponseOptions();
+    TransactionBlockResponseOptions options = new TransactionBlockResponseOptions();
     options.setShowEffects(true);
     options.setShowEvents(true);
     options.setShowObjectChanges(true);
     options.setShowInput(true);
-    CompletableFuture<TransactionResponse> res =
-        client.getTransaction("49rpBTf2KUkf4aroydtZGAb5rsLGYoutoEPowNu3962q", options);
+    CompletableFuture<TransactionBlockResponse> res =
+        client.getTransactionBlock("49rpBTf2KUkf4aroydtZGAb5rsLGYoutoEPowNu3962q", options);
     CompletableFuture<Object> future = new CompletableFuture<>();
     res.whenComplete(
         (transactionResponse, throwable) -> {
@@ -362,21 +272,6 @@ class QueryClientImplIntTests {
           }
         });
     System.out.println(future.get());
-  }
-
-  /**
-   * Gets transactions in range.
-   *
-   * @throws ExecutionException the execution exception
-   * @throws InterruptedException the interrupted exception
-   */
-  @Test
-  @DisplayName("Test getTransactionsInRange.")
-  void getTransactionsInRange() throws ExecutionException, InterruptedException {
-    CompletableFuture<List<String>> res = client.getTransactionsInRange(0L, 100L);
-    System.out.println(res.get());
-    //    assertEquals(2, res.get().size());
-    //    assertEquals("GN9sW4hBVNFIc83VIfyn/J1n4a9tU9sQVq3+UkfgEKU=", res.get().get(1));
   }
 
   /**
@@ -544,18 +439,22 @@ class QueryClientImplIntTests {
    * @throws InterruptedException the interrupted exception
    */
   @Test
-  @DisplayName("Test getTransactions.")
-  void getTransactions() throws ExecutionException, InterruptedException {
-    TransactionQuery query = AllQuery.All;
-    CompletableFuture<PaginatedTransactionDigests> res =
-        client.getTransactions(query, null, 10, false);
-    System.out.println(res.get());
+  @DisplayName("Test queryTransactionBlocks.")
+  void queryTransactionBlocks() throws ExecutionException, InterruptedException {
+    TransactionBlockResponseQuery query = new TransactionBlockResponseQuery();
+    CompletableFuture<PaginatedTransactionResponse> res =
+        client.queryTransactionBlocks(query, null, 10, false);
 
-    FromAddressQuery query1 = new FromAddressQuery();
-    query1.setFromAddress("0xea79464d86786b7a7a63e3f13f798f29f5e65947");
-    CompletableFuture<PaginatedTransactionDigests> res1 =
-        client.getTransactions(query1, null, 10, false);
-    System.out.println(res1.get());
+    CompletableFuture<Object> future = new CompletableFuture<>();
+    res.whenComplete(
+        (transactionResponse, throwable) -> {
+          if (throwable != null) {
+            future.complete(throwable);
+          } else {
+            future.complete(transactionResponse);
+          }
+        });
+    System.out.println(future.get());
   }
 
   /**
@@ -571,66 +470,66 @@ class QueryClientImplIntTests {
     System.out.println(res.get());
   }
 
-  /**
-   * Gets all balances.
-   *
-   * @throws ExecutionException the execution exception
-   * @throws InterruptedException the interrupted exception
-   */
-  @Test
-  @DisplayName("Test getAllBalances.")
-  void getAllBalances() throws ExecutionException, InterruptedException {
-    Optional<String> address = getFirstAddress();
-    CompletableFuture<List<Balance>> res = client.getAllBalances(address.get());
-    System.out.println(res.get());
-    List<Balance> balances = res.get();
-    assertTrue(balances.size() != 0);
-  }
+  //  /**
+  //   * Gets all balances.
+  //   *
+  //   * @throws ExecutionException   the execution exception
+  //   * @throws InterruptedException the interrupted exception
+  //   */
+  //  @Test
+  //  @DisplayName("Test getAllBalances.")
+  //  void getAllBalances() throws ExecutionException, InterruptedException {
+  //    Optional<String> address = getFirstAddress();
+  //    CompletableFuture<List<Balance>> res = client.getAllBalances(address.get());
+  //    System.out.println(res.get());
+  //    List<Balance> balances = res.get();
+  //    assertTrue(balances.size() != 0);
+  //  }
 
-  /**
-   * Gets all coins.
-   *
-   * @throws ExecutionException the execution exception
-   * @throws InterruptedException the interrupted exception
-   */
-  @Test
-  @DisplayName("Test getAllCoins.")
-  void getAllCoins() throws ExecutionException, InterruptedException {
-    Optional<String> address = getFirstAddress();
-    CompletableFuture<PaginatedCoins> res = client.getAllCoins(address.get(), null, 10);
-    System.out.println(res.get());
-    assertNotNull(res.get());
-  }
+  //  /**
+  //   * Gets all coins.
+  //   *
+  //   * @throws ExecutionException   the execution exception
+  //   * @throws InterruptedException the interrupted exception
+  //   */
+  //  @Test
+  //  @DisplayName("Test getAllCoins.")
+  //  void getAllCoins() throws ExecutionException, InterruptedException {
+  //    Optional<String> address = getFirstAddress();
+  //    CompletableFuture<PaginatedCoins> res = client.getAllCoins(address.get(), null, 10);
+  //    System.out.println(res.get());
+  //    assertNotNull(res.get());
+  //  }
 
-  /**
-   * Gets coins.
-   *
-   * @throws ExecutionException the execution exception
-   * @throws InterruptedException the interrupted exception
-   */
-  @Test
-  @DisplayName("Test getCoins.")
-  void getCoins() throws ExecutionException, InterruptedException {
-    Optional<String> address = getFirstAddress();
-    CompletableFuture<PaginatedCoins> res =
-        client.getCoins(address.get(), QueryClient.DEFAULT_COIN_TYPE, null, 10);
-    System.out.println(res.get());
-  }
+  //  /**
+  //   * Gets coins.
+  //   *
+  //   * @throws ExecutionException   the execution exception
+  //   * @throws InterruptedException the interrupted exception
+  //   */
+  //  @Test
+  //  @DisplayName("Test getCoins.")
+  //  void getCoins() throws ExecutionException, InterruptedException {
+  //    Optional<String> address = getFirstAddress();
+  //    CompletableFuture<PaginatedCoins> res =
+  //        client.getCoins(address.get(), QueryClient.DEFAULT_COIN_TYPE, null, 10);
+  //    System.out.println(res.get());
+  //  }
 
-  /**
-   * Gets balance.
-   *
-   * @throws ExecutionException the execution exception
-   * @throws InterruptedException the interrupted exception
-   */
-  @Test
-  @DisplayName("Test getBalance.")
-  void getBalance() throws ExecutionException, InterruptedException {
-    Optional<String> address = getFirstAddress();
-    CompletableFuture<Balance> res =
-        client.getBalance(address.get(), QueryClient.DEFAULT_COIN_TYPE);
-    System.out.println(res.get());
-  }
+  //  /**
+  //   * Gets balance.
+  //   *
+  //   * @throws ExecutionException   the execution exception
+  //   * @throws InterruptedException the interrupted exception
+  //   */
+  //  @Test
+  //  @DisplayName("Test getBalance.")
+  //  void getBalance() throws ExecutionException, InterruptedException {
+  //    Optional<String> address = getFirstAddress();
+  //    CompletableFuture<Balance> res =
+  //        client.getBalance(address.get(), QueryClient.DEFAULT_COIN_TYPE);
+  //    System.out.println(res.get());
+  //  }
 
   /**
    * Gets checkpoint contents.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -17,7 +17,7 @@
 package io.sui.models.transactions;
 
 
-import io.sui.models.objects.SuiObject;
+import io.sui.models.objects.SuiObjectData;
 import io.sui.models.objects.SuiObjectRef;
 import java.util.List;
 import java.util.Objects;
@@ -30,18 +30,18 @@ import java.util.Objects;
  */
 public class ParsedPublishResponse {
 
-  private List<SuiObject> createdObjects;
+  private List<SuiObjectData> createdObjects;
 
   private SuiObjectRef suiPackage;
 
-  private SuiObject updatedGas;
+  private SuiObjectData updatedGas;
 
   /**
    * Gets created objects.
    *
    * @return the created objects
    */
-  public List<SuiObject> getCreatedObjects() {
+  public List<SuiObjectData> getCreatedObjects() {
     return createdObjects;
   }
 
@@ -50,7 +50,7 @@ public class ParsedPublishResponse {
    *
    * @param createdObjects the created objects
    */
-  public void setCreatedObjects(List<SuiObject> createdObjects) {
+  public void setCreatedObjects(List<SuiObjectData> createdObjects) {
     this.createdObjects = createdObjects;
   }
 
@@ -77,7 +77,7 @@ public class ParsedPublishResponse {
    *
    * @return the updated gas
    */
-  public SuiObject getUpdatedGas() {
+  public SuiObjectData getUpdatedGas() {
     return updatedGas;
   }
 
@@ -86,7 +86,7 @@ public class ParsedPublishResponse {
    *
    * @param updatedGas the updated gas
    */
-  public void setUpdatedGas(SuiObject updatedGas) {
+  public void setUpdatedGas(SuiObjectData updatedGas) {
     this.updatedGas = updatedGas;
   }
 

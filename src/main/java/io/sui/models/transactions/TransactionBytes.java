@@ -30,7 +30,7 @@ import java.util.Objects;
  */
 public class TransactionBytes {
 
-  private SuiObjectRef gas;
+  private List<SuiObjectRef> gas;
 
   private List<InputObjectKind> inputObjects;
 
@@ -38,10 +38,20 @@ public class TransactionBytes {
 
   private io.sui.bcsgen.TransactionData localTxBytes;
 
+  /**
+   * Gets local tx bytes.
+   *
+   * @return the local tx bytes
+   */
   public io.sui.bcsgen.TransactionData getLocalTxBytes() {
     return localTxBytes;
   }
 
+  /**
+   * Sets local tx bytes.
+   *
+   * @param localTxBytes the local tx bytes
+   */
   public void setLocalTxBytes(io.sui.bcsgen.TransactionData localTxBytes) {
     this.localTxBytes = localTxBytes;
   }
@@ -51,7 +61,7 @@ public class TransactionBytes {
    *
    * @return the gas
    */
-  public SuiObjectRef getGas() {
+  public List<SuiObjectRef> getGas() {
     return gas;
   }
 
@@ -60,7 +70,7 @@ public class TransactionBytes {
    *
    * @param gas the gas
    */
-  public void setGas(SuiObjectRef gas) {
+  public void setGas(List<SuiObjectRef> gas) {
     this.gas = gas;
   }
 

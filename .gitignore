@@ -6,3 +6,4 @@ _site
 bin
 .vscode
 *.DS_Store
+src/integrationTest/sui.keystore

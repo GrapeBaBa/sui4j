@@ -33,6 +33,9 @@ public abstract class ExecutionFailureStatus {
             case 22: return InvalidPublicFunctionReturnType.load(deserializer);
             case 23: return InvalidTransferObject.load(deserializer);
             case 24: return EffectsTooLarge.load(deserializer);
+            case 25: return PublishUpgradeMissingDependency.load(deserializer);
+            case 26: return PublishUpgradeDependencyDowngrade.load(deserializer);
+            case 27: return PackageUpgradeError.load(deserializer);
             default: throw new com.novi.serde.DeserializationError("Unknown variant index for ExecutionFailureStatus: " + index);
         }
     }
@@ -1173,6 +1176,131 @@ public abstract class ExecutionFailureStatus {
                 return new EffectsTooLarge(
                     current_size,
                     max_size
+                );
+            }
+        }
+    }
+
+    public static final class PublishUpgradeMissingDependency extends ExecutionFailureStatus {
+        public PublishUpgradeMissingDependency() {
+        }
+
+        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+            serializer.increase_container_depth();
+            serializer.serialize_variant_index(25);
+            serializer.decrease_container_depth();
+        }
+
+        static PublishUpgradeMissingDependency load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+            deserializer.increase_container_depth();
+            Builder builder = new Builder();
+            deserializer.decrease_container_depth();
+            return builder.build();
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            PublishUpgradeMissingDependency other = (PublishUpgradeMissingDependency) obj;
+            return true;
+        }
+
+        public int hashCode() {
+            int value = 7;
+            return value;
+        }
+
+        public static final class Builder {
+            public PublishUpgradeMissingDependency build() {
+                return new PublishUpgradeMissingDependency(
+                );
+            }
+        }
+    }
+
+    public static final class PublishUpgradeDependencyDowngrade extends ExecutionFailureStatus {
+        public PublishUpgradeDependencyDowngrade() {
+        }
+
+        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+            serializer.increase_container_depth();
+            serializer.serialize_variant_index(26);
+            serializer.decrease_container_depth();
+        }
+
+        static PublishUpgradeDependencyDowngrade load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+            deserializer.increase_container_depth();
+            Builder builder = new Builder();
+            deserializer.decrease_container_depth();
+            return builder.build();
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            PublishUpgradeDependencyDowngrade other = (PublishUpgradeDependencyDowngrade) obj;
+            return true;
+        }
+
+        public int hashCode() {
+            int value = 7;
+            return value;
+        }
+
+        public static final class Builder {
+            public PublishUpgradeDependencyDowngrade build() {
+                return new PublishUpgradeDependencyDowngrade(
+                );
+            }
+        }
+    }
+
+    public static final class PackageUpgradeError extends ExecutionFailureStatus {
+        public final io.sui.bcsgen.PackageUpgradeError upgrade_error;
+
+        public PackageUpgradeError(io.sui.bcsgen.PackageUpgradeError upgrade_error) {
+            java.util.Objects.requireNonNull(upgrade_error, "upgrade_error must not be null");
+            this.upgrade_error = upgrade_error;
+        }
+
+        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+            serializer.increase_container_depth();
+            serializer.serialize_variant_index(27);
+            upgrade_error.serialize(serializer);
+            serializer.decrease_container_depth();
+        }
+
+        static PackageUpgradeError load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+            deserializer.increase_container_depth();
+            Builder builder = new Builder();
+            builder.upgrade_error = io.sui.bcsgen.PackageUpgradeError.deserialize(deserializer);
+            deserializer.decrease_container_depth();
+            return builder.build();
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            PackageUpgradeError other = (PackageUpgradeError) obj;
+            if (!java.util.Objects.equals(this.upgrade_error, other.upgrade_error)) { return false; }
+            return true;
+        }
+
+        public int hashCode() {
+            int value = 7;
+            value = 31 * value + (this.upgrade_error != null ? this.upgrade_error.hashCode() : 0);
+            return value;
+        }
+
+        public static final class Builder {
+            public io.sui.bcsgen.PackageUpgradeError upgrade_error;
+
+            public PackageUpgradeError build() {
+                return new PackageUpgradeError(
+                    upgrade_error
                 );
             }
         }

@@ -29,16 +29,19 @@ import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveNormalizedStruct;
+import io.sui.models.objects.ObjectDataOptions;
 import io.sui.models.objects.ObjectResponse;
+import io.sui.models.objects.ObjectResponseQuery;
 import io.sui.models.objects.PaginatedCoins;
-import io.sui.models.objects.SuiObjectInfo;
+import io.sui.models.objects.PaginatedObjectsResponse;
 import io.sui.models.objects.SuiObjectRef;
+import io.sui.models.objects.SuiObjectResponse;
 import io.sui.models.objects.SuiSystemState;
 import io.sui.models.objects.ValidatorMetadata;
-import io.sui.models.transactions.PaginatedTransactionDigests;
-import io.sui.models.transactions.TransactionQuery;
-import io.sui.models.transactions.TransactionResponse;
-import io.sui.models.transactions.TransactionResponseOptions;
+import io.sui.models.transactions.PaginatedTransactionResponse;
+import io.sui.models.transactions.TransactionBlockResponse;
+import io.sui.models.transactions.TransactionBlockResponseOptions;
+import io.sui.models.transactions.TransactionBlockResponseQuery;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -58,40 +61,30 @@ public interface QueryClient {
    * Gets object.
    *
    * @param id the id
+   * @param objectDataOptions the object data options
    * @return the object
    */
-  CompletableFuture<ObjectResponse> getObject(String id);
+  CompletableFuture<SuiObjectResponse> getObject(String id, ObjectDataOptions objectDataOptions);
 
   /**
    * Gets objects owned by address.
    *
    * @param address the address
+   * @param query the query
+   * @param cursor the cursor
+   * @param limit the limit
+   * @param checkpointId the checkpoint id
    * @return the objects owned by address
    */
-  CompletableFuture<List<SuiObjectInfo>> getObjectsOwnedByAddress(String address);
-
-  /**
-   * Gets objects owned by object.
-   *
-   * @param objectId the object id
-   * @return the objects owned by object
-   */
-  CompletableFuture<List<SuiObjectInfo>> getObjectsOwnedByObject(String objectId);
-
-  /**
-   * Gets raw object.
-   *
-   * @param id the id
-   * @return the raw object
-   */
-  CompletableFuture<ObjectResponse> getRawObject(String id);
+  CompletableFuture<PaginatedObjectsResponse> getObjectsOwnedByAddress(
+      String address, ObjectResponseQuery query, String cursor, Integer limit, String checkpointId);
 
   /**
    * Gets total transaction number.
    *
    * @return the total transaction number
    */
-  CompletableFuture<Long> getTotalTransactionNumber();
+  CompletableFuture<Long> getTotalTransactionBlocks();
 
   /**
    * Gets transaction.
@@ -100,25 +93,21 @@ public interface QueryClient {
    * @param options the options
    * @return the transaction
    */
-  CompletableFuture<TransactionResponse> getTransaction(
-      String digest, TransactionResponseOptions options);
+  CompletableFuture<TransactionBlockResponse> getTransactionBlock(
+      String digest, TransactionBlockResponseOptions options);
 
   /**
-   * Return the authority public keys that commits to the authority signature of the transaction.
+   * Multi get transaction blocks completable future.
    *
-   * @param transactionDigest the digest
-   * @return the Transaction auth signers
+   * @param digests the digests
+   * @param options the options
+   * @return the completable future
    */
-  CompletableFuture<TransactionResponse> getTransactionAuthSigners(String transactionDigest);
+  CompletableFuture<List<TransactionBlockResponse>> multiGetTransactionBlocks(
+      List<String> digests, TransactionBlockResponseOptions options);
 
-  /**
-   * Gets transactions in range.
-   *
-   * @param start the start
-   * @param end the end
-   * @return the transactions in range
-   */
-  CompletableFuture<List<String>> getTransactionsInRange(Long start, Long end);
+  CompletableFuture<List<SuiObjectResponse>> multiGetObjects(
+      List<String> objectIds, ObjectDataOptions options);
 
   /**
    * Gets sui system state.
@@ -223,8 +212,8 @@ public interface QueryClient {
    * @param isDescOrder the is desc order
    * @return the transactions
    */
-  CompletableFuture<PaginatedTransactionDigests> getTransactions(
-      TransactionQuery query, String cursor, int limit, boolean isDescOrder);
+  CompletableFuture<PaginatedTransactionResponse> queryTransactionBlocks(
+      TransactionBlockResponseQuery query, String cursor, Integer limit, boolean isDescOrder);
 
   /**
    * Gets coin metadata.
@@ -245,9 +234,10 @@ public interface QueryClient {
    * Gets object ref.
    *
    * @param id the id
+   * @param objectDataOptions the object data options
    * @return the object ref
    */
-  CompletableFuture<SuiObjectRef> getObjectRef(String id);
+  CompletableFuture<SuiObjectRef> getObjectRef(String id, ObjectDataOptions objectDataOptions);
 
   /**
    * Return the total coin balance for all coin type, owned by the address owner.

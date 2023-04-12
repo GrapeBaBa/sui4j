@@ -18,7 +18,7 @@ upcoming TestNet launch.
 
 ## Using
 
-The latest 0.4.1 version tested with sui devnet-0.24.0 version.
+The latest 0.4.2 version tested with sui devnet-0.24.0 version.
 
 ### Maven
 
@@ -27,7 +27,7 @@ The latest 0.4.1 version tested with sui devnet-0.24.0 version.
 <dependency>
 <groupId>me.grapebaba</groupId>
 <artifactId>sui4j</artifactId>
-<version>0.4.1</version>
+<version>0.4.2</version>
 </dependency>
 ```
 
@@ -35,7 +35,7 @@ The latest 0.4.1 version tested with sui devnet-0.24.0 version.
 
 ```groovy
 // https://mvnrepository.com/artifact/me.grapebaba/sui4j
-implementation 'me.grapebaba:sui4j:0.4.1'
+implementation 'me.grapebaba:sui4j:0.4.2'
 ```
 
 ## Building Locally

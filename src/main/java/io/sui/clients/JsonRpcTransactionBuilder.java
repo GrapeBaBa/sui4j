@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -26,6 +26,7 @@ import io.sui.models.transactions.TransactionBytes;
 import io.sui.models.transactions.TypeTag;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * The type Json rpc transaction builder.
@@ -83,12 +84,19 @@ public class JsonRpcTransactionBuilder implements TransactionBuilder {
       List<String> recipients,
       List<Long> amounts,
       String gas,
-      long gasBudget) {
+      Long gasBudget) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_pay", Lists.newArrayList(signer, inputCoins, recipients, amounts, gas, gasBudget));
+            "unsafe_pay",
+            Lists.newArrayList(
+                signer,
+                inputCoins,
+                recipients,
+                amounts.stream().map(String::valueOf).collect(Collectors.toList()),
+                gas,
+                gasBudget));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_pay", request, new TypeToken<TransactionBytes>() {}.getType());
+        "/unsafe_pay", request, new TypeToken<TransactionBytes>() {}.getType());
   }
 
   @Override
@@ -97,42 +105,49 @@ public class JsonRpcTransactionBuilder implements TransactionBuilder {
       List<String> inputCoins,
       List<String> recipients,
       List<Long> amounts,
-      long gasBudget) {
+      Long gasBudget) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_paySui", Lists.newArrayList(signer, inputCoins, recipients, amounts, gasBudget));
+            "unsafe_paySui",
+            Lists.newArrayList(
+                signer,
+                inputCoins,
+                recipients,
+                amounts.stream().map(String::valueOf).collect(Collectors.toList()),
+                gasBudget));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_paySui", request, new TypeToken<TransactionBytes>() {}.getType());
+        "/unsafe_paySui", request, new TypeToken<TransactionBytes>() {}.getType());
   }
 
   @Override
   public CompletableFuture<TransactionBytes> payAllSui(
-      String signer, List<String> inputCoins, String recipient, long gasBudget) {
+      String signer, List<String> inputCoins, String recipient, Long gasBudget) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_payAllSui", Lists.newArrayList(signer, inputCoins, recipient, gasBudget));
+            "unsafe_payAllSui", Lists.newArrayList(signer, inputCoins, recipient, gasBudget));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_payAllSui", request, new TypeToken<TransactionBytes>() {}.getType());
+        "/unsafe_payAllSui", request, new TypeToken<TransactionBytes>() {}.getType());
   }
 
   @Override
   public CompletableFuture<TransactionBytes> transferSui(
-      String signer, String coin, long gasBudget, String recipient, long amount) {
+      String signer, String coin, Long gasBudget, String recipient, Long amount) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_transferSui", Lists.newArrayList(signer, coin, gasBudget, recipient, amount));
+            "unsafe_transferSui", Lists.newArrayList(signer, coin, gasBudget, recipient, amount));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_transferSui", request, new TypeToken<TransactionBytes>() {}.getType());
+        "/unsafe_transferSui", request, new TypeToken<TransactionBytes>() {}.getType());
   }
 
   @Override
   public CompletableFuture<TransactionBytes> transferObject(
-      String signer, String suiObject, String recipient, String gas, long gasBudget) {
+      String signer, String suiObject, String recipient, String gas, Long gasBudget) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_transferObject", Lists.newArrayList(signer, suiObject, gas, gasBudget, recipient));
+            "unsafe_transferObject",
+            Lists.newArrayList(signer, suiObject, gas, gasBudget, recipient));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_transferObject", request, new TypeToken<TransactionBytes>() {}.getType());
+        "/unsafe_transferObject", request, new TypeToken<TransactionBytes>() {}.getType());
   }
 
   @Override
@@ -177,11 +192,15 @@ public class JsonRpcTransactionBuilder implements TransactionBuilder {
 
   @Override
   public CompletableFuture<TransactionBytes> publish(
-      String signer, List<String> compiledModules, String gas, long gasBudget) {
+      String signer,
+      List<String> compiledModules,
+      List<String> depIds,
+      String gas,
+      Long gasBudget) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_publish", Lists.newArrayList(signer, compiledModules, gas, gasBudget));
+            "unsafe_publish", Lists.newArrayList(signer, compiledModules, depIds, gas, gasBudget));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_publish", request, new TypeToken<TransactionBytes>() {}.getType());
+        "/unsafe_publish", request, new TypeToken<TransactionBytes>() {}.getType());
   }
 }
