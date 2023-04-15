@@ -18,7 +18,7 @@ package io.sui.models.objects;
 
 
 import io.sui.models.objects.ObjectResponse.ObjectResponseDetails;
-import java.util.Map;
+import java.math.BigInteger;
 import java.util.Objects;
 
 /**
@@ -31,7 +31,7 @@ public class SuiObjectData implements ObjectResponseDetails {
 
   private String objectId;
 
-  private Long version;
+  private BigInteger version;
 
   private String digest;
 
@@ -45,9 +45,9 @@ public class SuiObjectData implements ObjectResponseDetails {
 
   private String previousTransaction;
 
-  private Long storageRebate;
+  private BigInteger storageRebate;
 
-  private Map<String, String> display;
+  private DisplayFieldsResponse display;
 
   /**
    * Gets object id.
@@ -72,7 +72,7 @@ public class SuiObjectData implements ObjectResponseDetails {
    *
    * @return the version
    */
-  public Long getVersion() {
+  public BigInteger getVersion() {
     return version;
   }
 
@@ -81,7 +81,7 @@ public class SuiObjectData implements ObjectResponseDetails {
    *
    * @param version the version
    */
-  public void setVersion(Long version) {
+  public void setVersion(BigInteger version) {
     this.version = version;
   }
 
@@ -198,7 +198,7 @@ public class SuiObjectData implements ObjectResponseDetails {
    *
    * @return the storage rebate
    */
-  public Long getStorageRebate() {
+  public BigInteger getStorageRebate() {
     return storageRebate;
   }
 
@@ -207,7 +207,7 @@ public class SuiObjectData implements ObjectResponseDetails {
    *
    * @param storageRebate the storage rebate
    */
-  public void setStorageRebate(Long storageRebate) {
+  public void setStorageRebate(BigInteger storageRebate) {
     this.storageRebate = storageRebate;
   }
 
@@ -216,7 +216,7 @@ public class SuiObjectData implements ObjectResponseDetails {
    *
    * @return the display
    */
-  public Map<String, String> getDisplay() {
+  public DisplayFieldsResponse getDisplay() {
     return display;
   }
 
@@ -225,7 +225,7 @@ public class SuiObjectData implements ObjectResponseDetails {
    *
    * @param display the display
    */
-  public void setDisplay(Map<String, String> display) {
+  public void setDisplay(DisplayFieldsResponse display) {
     this.display = display;
   }
 

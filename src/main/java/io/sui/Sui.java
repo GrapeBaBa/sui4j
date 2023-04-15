@@ -32,13 +32,10 @@ import io.sui.clients.EventClientImpl;
 import io.sui.clients.ExecutionClient;
 import io.sui.clients.ExecutionClientImpl;
 import io.sui.clients.FaucetClient;
-import io.sui.clients.JsonRpcTransactionBuilder;
-import io.sui.clients.LocalTransactionBuilder;
 import io.sui.clients.OkhttpFaucetClient;
 import io.sui.clients.QueryClient;
 import io.sui.clients.QueryClientImpl;
 import io.sui.clients.TransactionBlock;
-import io.sui.clients.TransactionBuilder;
 import io.sui.crypto.FileBasedKeyStore;
 import io.sui.crypto.KeyResponse;
 import io.sui.crypto.KeyStore;
@@ -51,11 +48,11 @@ import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
 import io.sui.models.FaucetResponse;
 import io.sui.models.SuiApiException;
-import io.sui.models.events.EventEnvelope;
 import io.sui.models.events.EventFilter;
 import io.sui.models.events.EventId;
 import io.sui.models.events.EventQuery;
 import io.sui.models.events.PaginatedEvents;
+import io.sui.models.events.SuiEvent;
 import io.sui.models.objects.Balance;
 import io.sui.models.objects.CheckpointContents;
 import io.sui.models.objects.CheckpointSummary;
@@ -79,7 +76,6 @@ import io.sui.models.transactions.PaginatedTransactionResponse;
 import io.sui.models.transactions.TransactionBlockResponse;
 import io.sui.models.transactions.TransactionBlockResponseOptions;
 import io.sui.models.transactions.TransactionBlockResponseQuery;
-import io.sui.models.transactions.TransactionBytes;
 import io.sui.models.transactions.TransactionEffects;
 import io.sui.models.transactions.TypeTag;
 import java.util.List;
@@ -103,8 +99,6 @@ public class Sui {
 
   private final QueryClient queryClient;
 
-  private final TransactionBuilder transactionBuilder;
-
   private final ExecutionClient executionClient;
 
   private final EventClient eventClient;
@@ -119,31 +113,11 @@ public class Sui {
    * @param keyStorePath the key store path
    */
   public Sui(String fullNodeEndpoint, String faucetEndpoint, String keyStorePath) {
-    this(fullNodeEndpoint, faucetEndpoint, keyStorePath, true);
-  }
-
-  /**
-   * Instantiates a new Sui.
-   *
-   * @param fullNodeEndpoint the full node endpoint
-   * @param faucetEndpoint the faucet endpoint
-   * @param keyStorePath the key store path
-   * @param useLocalTransactionBuilder the use local transaction builder
-   */
-  public Sui(
-      String fullNodeEndpoint,
-      String faucetEndpoint,
-      String keyStorePath,
-      boolean useLocalTransactionBuilder) {
     this.keyStore = new FileBasedKeyStore(keyStorePath);
     final JsonHandler jsonHandler = new GsonJsonHandler();
     final JsonRpcClientProvider jsonRpcClientProvider =
         new OkHttpJsonRpcClientProvider(fullNodeEndpoint, jsonHandler);
     this.queryClient = new QueryClientImpl(jsonRpcClientProvider);
-    this.transactionBuilder =
-        useLocalTransactionBuilder
-            ? new LocalTransactionBuilder(this.queryClient)
-            : new JsonRpcTransactionBuilder(jsonRpcClientProvider);
     this.executionClient = new ExecutionClientImpl(jsonRpcClientProvider);
     this.eventClient = new EventClientImpl(jsonRpcClientProvider);
     this.faucetClient = new OkhttpFaucetClient(faucetEndpoint, jsonHandler);
@@ -503,7 +477,7 @@ public class Sui {
    * @return the disposable
    */
   public Disposable subscribeEvent(
-      EventFilter eventFilter, Consumer<EventEnvelope> onNext, Consumer<SuiApiException> onError) {
+      EventFilter eventFilter, Consumer<SuiEvent> onNext, Consumer<SuiApiException> onError) {
     return this.eventClient.subscribeEvent(eventFilter, onNext, onError);
   }
 
@@ -526,16 +500,11 @@ public class Sui {
    * @param query the query
    * @param cursor the cursor
    * @param limit the limit
-   * @param checkpointId the checkpoint id
    * @return the objects owned by address
    */
   public CompletableFuture<PaginatedObjectsResponse> getObjectsOwnedByAddress(
-      String address,
-      ObjectResponseQuery query,
-      String cursor,
-      Integer limit,
-      String checkpointId) {
-    return queryClient.getObjectsOwnedByAddress(address, query, cursor, limit, checkpointId);
+      String address, ObjectResponseQuery query, String cursor, Integer limit) {
+    return queryClient.getObjectsOwnedByAddress(address, query, cursor, limit);
   }
 
   /**
@@ -559,16 +528,52 @@ public class Sui {
     return queryClient.getTransactionBlock(digest, options);
   }
 
+  /**
+   * Query transaction blocks completable future.
+   *
+   * @param query the query
+   * @param cursor the cursor
+   * @param limit the limit
+   * @param isDescOrder the is desc order
+   * @return the completable future
+   */
   public CompletableFuture<PaginatedTransactionResponse> queryTransactionBlocks(
       TransactionBlockResponseQuery query, String cursor, Integer limit, boolean isDescOrder) {
     return queryClient.queryTransactionBlocks(query, cursor, limit, isDescOrder);
   }
 
+  /**
+   * Query objects completable future.
+   *
+   * @param query the query
+   * @param cursor the cursor
+   * @param limit the limit
+   * @return the completable future
+   */
+  public CompletableFuture<PaginatedObjectsResponse> queryObjects(
+      ObjectResponseQuery query, String cursor, Integer limit) {
+    return queryClient.queryObjects(query, cursor, limit);
+  }
+
+  /**
+   * Multi get transaction blocks completable future.
+   *
+   * @param digests the digests
+   * @param options the options
+   * @return the completable future
+   */
   public CompletableFuture<List<TransactionBlockResponse>> multiGetTransactionBlocks(
       List<String> digests, TransactionBlockResponseOptions options) {
     return queryClient.multiGetTransactionBlocks(digests, options);
   }
 
+  /**
+   * Multi get objects completable future.
+   *
+   * @param objectIds the object ids
+   * @param options the options
+   * @return the completable future
+   */
   public CompletableFuture<List<SuiObjectResponse>> multiGetObjects(
       List<String> objectIds, ObjectDataOptions options) {
     return queryClient.multiGetObjects(objectIds, options);
@@ -752,7 +757,8 @@ public class Sui {
    * @param limit the limit
    * @return the completable future
    */
-  public CompletableFuture<PaginatedCoins> getAllCoins(String address, String cursor, long limit) {
+  public CompletableFuture<PaginatedCoins> getAllCoins(
+      String address, String cursor, Integer limit) {
     return queryClient.getAllCoins(address, cursor, limit);
   }
 
@@ -853,15 +859,6 @@ public class Sui {
   }
 
   /**
-   * Gets transaction builder.
-   *
-   * @return the transaction builder
-   */
-  public TransactionBuilder getTransactionBuilder() {
-    return transactionBuilder;
-  }
-
-  /**
    * Execute transaction completable future.
    *
    * @param signer the signer
@@ -881,6 +878,31 @@ public class Sui {
         transactionDataIntent(),
         transactionBlockResponseOptions,
         requestType);
+  }
+
+  /**
+   * Execute transaction completable future.
+   *
+   * @param transactionData the transaction data
+   * @param signatures the signatures
+   * @param transactionBlockResponseOptions the transaction block response options
+   * @param requestType the request type
+   * @return the completable future
+   */
+  public CompletableFuture<TransactionBlockResponse> executeTransaction(
+      TransactionData transactionData,
+      List<String> signatures,
+      TransactionBlockResponseOptions transactionBlockResponseOptions,
+      ExecuteTransactionRequestType requestType) {
+    try {
+      return executionClient.executeTransaction(
+          Base64.toBase64String(transactionData.bcsSerialize()),
+          signatures,
+          transactionBlockResponseOptions,
+          requestType);
+    } catch (SerializationError e) {
+      throw new BcsSerializationException(e);
+    }
   }
 
   /**
@@ -924,6 +946,40 @@ public class Sui {
         signatureScheme);
   }
 
+  /**
+   * Sign transaction block string.
+   *
+   * @param signer the signer
+   * @param transactionData the transaction data
+   * @param intent the intent
+   * @return the string
+   * @throws SigningException the signing exception
+   */
+  public String signTransactionBlock(String signer, TransactionData transactionData, Intent intent)
+      throws SigningException {
+    final SuiKeyPair<?> suiKeyPair = keyStore.getByAddress(signer);
+    final byte[] publicKey = suiKeyPair.publicKeyBytes();
+    final SignatureScheme signatureScheme = suiKeyPair.signatureScheme();
+
+    final byte[] txBytes;
+    final byte[] intentBytes;
+    try {
+      txBytes = transactionData.bcsSerialize();
+      intentBytes = intent.bcsSerialize();
+
+      final byte[] signature;
+      final Blake2b256 blake2b256 = new Blake2b256();
+      final byte[] hash = blake2b256.digest(Arrays.concatenate(intentBytes, txBytes));
+      signature = suiKeyPair.sign(hash);
+
+      final byte[] serializedSignatureBytes =
+          Arrays.concatenate(new byte[] {signatureScheme.getScheme()}, signature, publicKey);
+      return Base64.toBase64String(serializedSignatureBytes);
+    } catch (SerializationError e) {
+      throw new BcsSerializationException(e);
+    }
+  }
+
   private CompletableFuture<TransactionBlockResponse> signAndExecuteTransaction(
       byte[] transactionData,
       byte[] intentBytes,
@@ -934,13 +990,9 @@ public class Sui {
       SignatureScheme signatureScheme) {
     final byte[] signature;
     try {
-      if ("0.28.0".equals(System.getenv("SUI_VERSION"))) {
-        signature = suiKeyPair.sign(Arrays.concatenate(intentBytes, transactionData));
-      } else {
-        final Blake2b256 blake2b256 = new Blake2b256();
-        final byte[] hash = blake2b256.digest(Arrays.concatenate(intentBytes, transactionData));
-        signature = suiKeyPair.sign(hash);
-      }
+      final Blake2b256 blake2b256 = new Blake2b256();
+      final byte[] hash = blake2b256.digest(Arrays.concatenate(intentBytes, transactionData));
+      signature = suiKeyPair.sign(hash);
 
     } catch (SigningException e) {
       CompletableFuture<TransactionBlockResponse> future = new CompletableFuture<>();
@@ -959,44 +1011,12 @@ public class Sui {
         requestType);
   }
 
-  private Function<TransactionBytes, CompletableFuture<TransactionBlockResponse>>
-      signAndExecuteTransactionFunction(
-          String signer,
-          Intent intent,
-          TransactionBlockResponseOptions transactionBlockResponseOptions,
-          ExecuteTransactionRequestType requestType) {
-    return transactionBytes -> {
-      final SuiKeyPair<?> suiKeyPair = keyStore.getByAddress(signer);
-      final byte[] publicKey = suiKeyPair.publicKeyBytes();
-      final SignatureScheme signatureScheme = suiKeyPair.signatureScheme();
-      final TransactionData transactionData = transactionBytes.getLocalTxBytes();
-
-      final byte[] txBytes;
-      final byte[] intentBytes;
-      try {
-        txBytes =
-            null != transactionData
-                ? transactionData.bcsSerialize()
-                : Base64.decode(transactionBytes.getTxBytes());
-        intentBytes = intent.bcsSerialize();
-      } catch (SerializationError e) {
-        CompletableFuture<TransactionBlockResponse> future = new CompletableFuture<>();
-        future.completeExceptionally(new SuiApiException(new BcsSerializationException(e)));
-        return future;
-      }
-
-      return signAndExecuteTransaction(
-          txBytes,
-          intentBytes,
-          transactionBlockResponseOptions,
-          requestType,
-          suiKeyPair,
-          publicKey,
-          signatureScheme);
-    };
-  }
-
-  private Intent transactionDataIntent() {
+  /**
+   * Transaction data intent intent.
+   *
+   * @return the intent
+   */
+  public Intent transactionDataIntent() {
     final Intent.Builder intentBuilder = new Intent.Builder();
     intentBuilder.app_id = 0;
     intentBuilder.scope = 0;

@@ -106,7 +106,6 @@ class QueryClientImplIntTests {
             "0xb43d0468fbc80c81931b73a4b9ef4663e671b65a07ae5b336a0e7d8a70ac0646",
             query,
             null,
-            null,
             null);
     CompletableFuture<Object> future = new CompletableFuture<>();
     res.whenComplete(
@@ -131,7 +130,6 @@ class QueryClientImplIntTests {
         client.getObjectsOwnedByAddress(
             "0xb43d0468fbc80c81931b73a4b9ef4663e671b65a07ae5b336a0e7d8a70ac0646",
             query1,
-            null,
             null,
             null);
     CompletableFuture<Object> future1 = new CompletableFuture<>();

@@ -29,6 +29,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.ToNumberPolicy;
+import com.google.gson.internal.bind.TypeAdapters;
 import com.google.gson.reflect.TypeToken;
 import io.sui.models.FaucetResponse;
 import io.sui.models.events.EventFilter;
@@ -92,6 +93,7 @@ import io.sui.models.transactions.TypeTag;
 import io.sui.models.transactions.TypeTag.StructType;
 import io.sui.models.transactions.TypeTag.VectorType;
 import java.lang.reflect.Type;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -274,9 +276,9 @@ public class GsonJsonHandler implements JsonHandler {
         } else if (json.getAsJsonObject()
             .get("status")
             .getAsString()
-            .equals(ObjectStatus.NotExists.name())) {
+            .equals(ObjectStatus.notExists.name())) {
           ObjectResponse objectResponse = new ObjectResponse();
-          objectResponse.setStatus(ObjectStatus.NotExists);
+          objectResponse.setStatus(ObjectStatus.notExists);
           objectResponse.setDetails(
               gson.fromJson(
                   json.getAsJsonObject().get("details"),
@@ -767,6 +769,7 @@ public class GsonJsonHandler implements JsonHandler {
             .registerTypeAdapter(Command.class, new SuiCommandDeserializer())
             .registerTypeAdapter(ObjectChange.class, new ObjectChangeDeserializer())
             .registerTypeAdapter(SuiParsedData.class, new SuiParsedDataDeserializer())
+            .registerTypeAdapter(BigInteger.class, TypeAdapters.BIG_INTEGER)
             .create();
   }
 

@@ -30,7 +30,7 @@ public class PaginatedObjectsResponse {
 
   private List<SuiObjectResponse> data;
 
-  private CheckpointedObjectId nextCursor;
+  private String nextCursor;
 
   private boolean hasNextPage;
 
@@ -57,7 +57,7 @@ public class PaginatedObjectsResponse {
    *
    * @return the next cursor
    */
-  public CheckpointedObjectId getNextCursor() {
+  public String getNextCursor() {
     return nextCursor;
   }
 
@@ -66,7 +66,7 @@ public class PaginatedObjectsResponse {
    *
    * @param nextCursor the next cursor
    */
-  public void setNextCursor(CheckpointedObjectId nextCursor) {
+  public void setNextCursor(String nextCursor) {
     this.nextCursor = nextCursor;
   }
 

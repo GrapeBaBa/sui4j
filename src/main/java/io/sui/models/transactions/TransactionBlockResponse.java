@@ -19,6 +19,7 @@ package io.sui.models.transactions;
 
 import io.sui.models.events.SuiEvent;
 import io.sui.models.objects.ObjectChange;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,9 +40,9 @@ public class TransactionBlockResponse {
   private List<SuiEvent> events;
 
   @SuppressWarnings("checkstyle:MemberName")
-  private Long timestampMs;
+  private BigInteger timestampMs;
 
-  private Long checkpoint;
+  private BigInteger checkpoint;
 
   private boolean confirmedLocalExecution;
 
@@ -126,7 +127,7 @@ public class TransactionBlockResponse {
    *
    * @return the timestamp ms
    */
-  public Long getTimestampMs() {
+  public BigInteger getTimestampMs() {
     return timestampMs;
   }
 
@@ -135,7 +136,7 @@ public class TransactionBlockResponse {
    *
    * @param timestampMs the timestamp ms
    */
-  public void setTimestampMs(Long timestampMs) {
+  public void setTimestampMs(BigInteger timestampMs) {
     this.timestampMs = timestampMs;
   }
 
@@ -144,7 +145,7 @@ public class TransactionBlockResponse {
    *
    * @return the checkpoint
    */
-  public Long getCheckpoint() {
+  public BigInteger getCheckpoint() {
     return checkpoint;
   }
 
@@ -153,7 +154,7 @@ public class TransactionBlockResponse {
    *
    * @param checkpoint the checkpoint
    */
-  public void setCheckpoint(Long checkpoint) {
+  public void setCheckpoint(BigInteger checkpoint) {
     this.checkpoint = checkpoint;
   }
 

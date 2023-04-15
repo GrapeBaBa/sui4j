@@ -18,7 +18,7 @@ upcoming TestNet launch.
 
 ## Using
 
-The latest 0.4.2 version tested with sui devnet-0.24.0 version.
+The latest 0.4.3 version tested with sui devnet-0.24.0 version.
 
 ### Maven
 
@@ -27,7 +27,7 @@ The latest 0.4.2 version tested with sui devnet-0.24.0 version.
 <dependency>
 <groupId>me.grapebaba</groupId>
 <artifactId>sui4j</artifactId>
-<version>0.4.2</version>
+<version>0.4.3</version>
 </dependency>
 ```
 
@@ -35,7 +35,7 @@ The latest 0.4.2 version tested with sui devnet-0.24.0 version.
 
 ```groovy
 // https://mvnrepository.com/artifact/me.grapebaba/sui4j
-implementation 'me.grapebaba:sui4j:0.4.2'
+implementation 'me.grapebaba:sui4j:0.4.3'
 ```
 
 ## Building Locally
@@ -70,10 +70,7 @@ doc.
 ```
 git clone git@github.com:MystenLabs/sui.git
 cd sui
-cargo build --release
-cd sui/target/release
-./sui genesis
-./sui start
+RUST_LOG="consensus=off" cargo run --bin sui-test-validator
 ```
 
 #### To run Integration tests
@@ -82,104 +79,133 @@ cd sui/target/release
 ./gradlew integrationTest
 ```
 
-## Supported APIs (sui SDK 0.25.0)
+## How to use it
 
-- [x] sui_batchTransaction
-- [ ] sui_devInspectTransaction
-- [x] sui_dryRunTransaction
-- [x] sui_executeTransaction
-- [x] sui_executeTransactionSerializedSig(same with sui_executeTransaction)
-- [x] sui_getAllBalances
-- [x] sui_getAllCoins
-- [x] sui_getBalance
-- [x] sui_getCheckpointContents
-- [x] sui_getCheckpointContentsByDigest
-- [x] sui_getCheckpointSummary
-- [x] sui_getCheckpointSummaryByDigest
-- [x] sui_getCoinMetadata
-- [x] sui_getCoins
-- [x] sui_getCommitteeInfo
-- [ ] sui_getDelegatedStakes
-- [ ] sui_getDynamicFieldObject
-- [ ] sui_getDynamicFields
-- [x] sui_getEvents
-- [ ] sui_getLatestCheckpointSequenceNumber
-- [x] sui_getMoveFunctionArgTypes
-- [x] sui_getNormalizedMoveFunction
-- [x] sui_getNormalizedMoveModule
-- [x] sui_getNormalizedMoveModulesByPackage
-- [x] sui_getNormalizedMoveStruct
-- [x] sui_getObject
-- [x] sui_getObjectsOwnedByAddress
-- [x] sui_getObjectsOwnedByObject
-- [x] sui_getRawObject
-- [x] sui_getReferenceGasPrice
-- [x] sui_getSuiSystemState
-- [ ] sui_getTotalSupply
-- [x] sui_getTotalTransactionNumber
-- [x] sui_getTransaction
-- [ ] sui_getTransactionAuthSigners
-- [x] sui_getTransactions
-- [x] sui_getTransactionsInRange
-- [ ] sui_getValidators
-- [x] sui_mergeCoins
-- [x] sui_moveCall
-- [x] sui_pay
-- [x] sui_payAllSui
-- [x] sui_paySui
-- [x] sui_publish
-- [ ] sui_requestAddDelegation
-- [ ] sui_requestSwitchDelegation
-- [ ] sui_requestWithdrawDelegation
-- [x] sui_splitCoin
-- [x] sui_splitCoinEqual
-- [x] sui_subscribeEvent
-- [ ] sui_tblsSignRandomnessObject
-- [x] sui_transferObject
-- [x] sui_transferSui
-- [x] sui_tryGetPastObject
+- local-fullnode:http://127.0.0.1:9000
+- local-faucet:http://localhost:9123
+- devnet-fullnode:https://fullnode.devnet.sui.io
+- devnet-faucet:https://faucet.devnet.sui.io
 
-
-## Examples
-
+### Connecting to Sui Network
 ```java
-	String BASE_URL="http://localhost:9000";
-	// It must be a absolute path
-	String TEST_KEY_STORE_PATH=
-	System.getProperty("user.home")+"/.sui/sui_config/sui.keystore";
-	Sui sui=new Sui(BASE_URL,TEST_KEY_STORE_PATH);
+Sui sui = new Sui("<full_node_url>","<faucet_url>","<your_keystore_path>");
+```
 
-	// query objects
-	CompletableFuture<List<SuiObjectInfo>>res=
-	sui.getObjectsOwnedByAddress("0xea79464d86786b7a7a63e3f13f798f29f5e65947");
-	List<SuiObjectInfo> objects=res.get();
-	String coinObjectId=objects.get(0).getObjectId();
-	List<String> addresses=new ArrayList<>(sui.addresses());
+### New Address
+```java
+KeyResponse keyRes = sui.newAddress(SignatureScheme.ED25519);
+```
 
-	// Transfer sui
-	CompletableFuture<ExecuteTransactionResponse> res1=
-	sui.transferSui(
-	"0xea79464d86786b7a7a63e3f13f798f29f5e65947",
-	coinObjectId,
-	100L,
-	addresses.get(0),
-	2000L,
-	ExecuteTransactionRequestType.WaitForLocalExecution);
+### Request Faucet
+```java
+CompletableFuture<FaucetResponse> faucetRes = sui.requestSuiFromFaucet(s);
+```
 
-	CompletableFuture<ExecuteTransactionResponse> res2=
+### Writing APIs
+
+#### Move Call
+```java
+CompletableFuture<TransactionBlockResponse> callRes =
 	sui.moveCall(
-	"0xea79464d86786b7a7a63e3f13f798f29f5e65947",
-	"0x0000000000000000000000000000000000000002",
-	"devnet_nft",
-	"mint",
-	Lists.newArrayList(),
-	Lists.newArrayList(
-	"Example NFT",
-	"An example NFT.",
-	"ipfs://bafkreibngqhl3gaa7daob4i2vccziay2jjlp435cf66vhono7nrvww53ty"),
-	null,
-	2000L,
-	ExecuteTransactionRequestType.WaitForLocalExecution);
+		"0x0a7421363a1f6a82800f7c9340ac02b5905798cb",
+		"0x02",
+		"pay",
+		"split",
+		Lists.newArrayList(structType),
+		Lists.newArrayList("0x4b89576d18d500194f14c935bc8b297a8e1556f3217e5f125ae3d1c0f13408f9", 10000L),
+		null,
+		3000000L,
+		null,
+		null,
+		transactionBlockResponseOptions,
+		ExecuteTransactionRequestType.WaitForLocalExecution);
+```
+
+#### Transfer Object
+```java
+CompletableFuture<TransactionBlockResponse> res =
+	sui.transferObjects(
+		sender.get(),
+		Lists.newArrayList(objects.get(0).getData().getObjectId()),
+		recipient.get(),
+		null,
+		3000000L,
+		null,
+		null,
+		transactionBlockResponseOptions,
+		ExecuteTransactionRequestType.WaitForLocalExecution);
+```
+
+#### Publish
+```java
+CompletableFuture<TransactionBlockResponse> res =
+	sui.publish(
+		sender.get(),
+		Lists.newArrayList(
+			"oRzrCwYAAAAKAQAUAhQsA0BJBIkBEgWbAWcHggLNAgjPBGAGrwXCAwrxCC0MngnUAQAMAR4B"
+				+ "JAIRAh0CHwIlAiYCJwIoAAACAAABDAAAAwQAAQQHAQAAAgYHAAMCDAEIAQQIBAAFBQwABwcCAAkJ"
+				+ "BwAAFgABAAEcARUBAAEjFBUBAAIpCwwAAwoNAQEIAxoJCgEIBBoSEwAFDgYHAQIGIREBAQwGJREB"
+				+ "AQgHIg4PAAgXBAUBAgkbCxYACwMHAwUIBAgIEAgHAgwBDAkIAggABwgIAAILBQEIAQgHAQgAAQYJ"
+				+ "AAEBAgkABwgIAQgHAQgBAgYIBwcICAELBQEJAAEKAgEIBAMHCwUBCQAKCAQKCAQBBggIAQUBCwUB"
+				+ "CAECCQAFAQcICAEIBgEJAAELAwEJAAEICQVCT0FSUwRCb2FyB0Rpc3BsYXkITWV0YWRhdGEGT3B0"
+				+ "aW9uCVB1Ymxpc2hlcgZTdHJpbmcJVHhDb250ZXh0A1VJRANVcmwMYWRkX211bHRpcGxlA2FnZQVi"
+				+ "b2FycwVidXllcgVjbGFpbQdjcmVhdG9yC2Rlc2NyaXB0aW9uB2Rpc3BsYXkLZHVtbXlfZmllbGQI"
+				+ "ZnVsbF91cmwCaWQHaW1nX3VybARpbml0E2lzX29uZV90aW1lX3dpdG5lc3MIbWV0YWRhdGEEbmFt"
+				+ "ZQNuZXcVbmV3X3Vuc2FmZV9mcm9tX2J5dGVzBG5vbmUGb2JqZWN0Bm9wdGlvbgdwYWNrYWdlBXBy"
+				+ "aWNlD3B1YmxpY190cmFuc2ZlcgZzZW5kZXIEc29tZQZzdHJpbmcIdHJhbnNmZXIKdHhfY29udGV4"
+				+ "dAV0eXBlcwN1cmwEdXRmOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+				+ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgMI"
+				+ "AAAAAAAAAAAKAgUEbmFtZQoCDAtkZXNjcmlwdGlvbgoCCAdpbWdfdXJsCgIIB2NyZWF0b3IKAgYF"
+				+ "cHJpY2UKAgwLcHJvamVjdF91cmwKAgQDYWdlCgIGBWJ1eWVyCgIJCGZ1bGxfdXJsCgIODWVzY2Fw"
+				+ "ZV9zeW50YXgKAgcGe25hbWV9CgI7OlVuaXF1ZSBCb2FyIGZyb20gdGhlIEJvYXJzIGNvbGxlY3Rp"
+				+ "b24gd2l0aCB7bmFtZX0gYW5kIHtpZH0KAiEgaHR0cHM6Ly9nZXQtYS1ib2FyLmNvbS97aW1nX3Vy"
+				+ "bH0KAgoJe2NyZWF0b3J9CgIIB3twcmljZX0KAhgXaHR0cHM6Ly9nZXQtYS1ib2FyLmNvbS8KAg8O"
+				+ "e21ldGFkYXRhLmFnZX0KAggHe2J1eWVyfQoCCwp7ZnVsbF91cmx9CgIJCFx7bmFtZVx9CgIKCWZp"
+				+ "cnN0LnBuZwoCCwpGaXJzdCBCb2FyCgImJUZpcnN0IEJvYXIgZnJvbSB0aGUgQm9hcnMgY29sbGVj"
+				+ "dGlvbiEKAgYFQ2hyaXMKAiAfaHR0cHM6Ly9nZXQtYS1ib2FyLmZ1bGx1cmwuY29tLwACARIBAQIJ"
+				+ "FAgGFQgEGQgEEAgEDwsDAQgEIAsDAQgEGAgCDQUTCAkCAgELAwAAAAACXw4AOAAEBAUICwEBBwAn"
+				+ "CwAKATgBDAMOAwoBOAIMAg0CBwERAwcCEQMHAxEDBwQRAwcFEQMHBhEDBwcRAwcIEQMHCREDBwoR"
+				+ "A0AMCgAAAAAAAAAHCxEDBwwRAwcNEQMHDhEDBw8RAwcQEQMHEREDBxIRAwcTEQMHFBEDQAwKAAAA"
+				+ "AAAAADgDCwIKAS4RCjgECwMKAS4RCjgFCgERBgcVEQMHFhEDBxcRAwcYEQM4BjgHBgoAAAAAAAAA"
+				+ "EgIKAS4RCgcZEQwSAQsBLhEKOAgCAA=="),
+		Lists.newArrayList(
+			"0x0000000000000000000000000000000000000000000000000000000000000001",
+			"0x0000000000000000000000000000000000000000000000000000000000000002"),
+		null,
+		30000000L,
+		null,
+		null,
+		transactionBlockResponseOptions,
+		ExecuteTransactionRequestType.WaitForLocalExecution);
+```
+
+### Reading APIs
+
+#### Get Owned Objects
+```java
+CompletableFuture<PaginatedObjectsResponse> res =
+	sui.getObjectsOwnedByAddress(sender.get(), null, null, null);
+```
+
+#### Get Coins
+```java
+CompletableFuture<PaginatedCoins> res = sui.getAllCoins(sender.get(), null, null);
+```
+
+#### Get Transaction Block
+```java
+CompletableFuture<PaginatedTransactionResponse> res =
+	sui.queryTransactionBlocks(query, null, 10, false);
+```
+
+### Event APIs
+
+#### Subscribe
+```java
+Disposable disposable =
+	sui.subscribeEvent(eventFilter, System.out::println, System.out::println);
+
+disposable.dispose();
 ```
 
 For more examples, you can see [SuiIntTests](src/integrationTest/java/io/sui/SuiIntTests.java)

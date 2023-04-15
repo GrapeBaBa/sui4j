@@ -23,8 +23,8 @@ import io.reactivex.rxjava3.functions.Consumer;
 import io.sui.jsonrpc.JsonRpc20Request;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.models.SuiApiException;
-import io.sui.models.events.EventEnvelope;
 import io.sui.models.events.EventFilter;
+import io.sui.models.events.SuiEvent;
 
 /**
  * The type Event client.
@@ -42,10 +42,10 @@ public class EventClientImpl implements EventClient {
 
   @Override
   public Disposable subscribeEvent(
-      EventFilter eventFilter, Consumer<EventEnvelope> onNext, Consumer<SuiApiException> onError) {
+      EventFilter eventFilter, Consumer<SuiEvent> onNext, Consumer<SuiApiException> onError) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_subscribeEvent", Lists.newArrayList(eventFilter));
+            "suix_subscribeEvent", Lists.newArrayList(eventFilter));
     return this.jsonRpcClientProvider.subscribe(request, onNext, onError);
   }
 }

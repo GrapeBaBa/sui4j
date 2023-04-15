@@ -18,6 +18,7 @@ package io.sui.models.objects;
 
 
 import com.google.common.base.Objects;
+import java.math.BigInteger;
 
 /**
  * the coin info.
@@ -31,13 +32,13 @@ public class Coin {
 
   private String coinObjectId;
 
-  private Long version;
+  private BigInteger version;
 
   private String digest;
 
-  private Long balance;
+  private BigInteger balance;
 
-  private String lockedUtilEpoch;
+  private BigInteger lockedUtilEpoch;
 
   private String previousTransaction;
 
@@ -57,11 +58,11 @@ public class Coin {
     this.coinObjectId = coinObjectId;
   }
 
-  public Long getVersion() {
+  public BigInteger getVersion() {
     return version;
   }
 
-  public void setVersion(Long version) {
+  public void setVersion(BigInteger version) {
     this.version = version;
   }
 
@@ -73,19 +74,19 @@ public class Coin {
     this.digest = digest;
   }
 
-  public Long getBalance() {
+  public BigInteger getBalance() {
     return balance;
   }
 
-  public void setBalance(Long balance) {
+  public void setBalance(BigInteger balance) {
     this.balance = balance;
   }
 
-  public String getLockedUtilEpoch() {
+  public BigInteger getLockedUtilEpoch() {
     return lockedUtilEpoch;
   }
 
-  public void setLockedUtilEpoch(String lockedUtilEpoch) {
+  public void setLockedUtilEpoch(BigInteger lockedUtilEpoch) {
     this.lockedUtilEpoch = lockedUtilEpoch;
   }
 

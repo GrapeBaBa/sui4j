@@ -3,53 +3,49 @@
 ### TransferSui
 
 ```java
-        CompletableFuture<ExecuteTransactionResponse> res =
-          sui.transferSui(
-                "<sender_address>",   
-                "<coin_object_id>",
-                <gas_budget>,
-                "<receiver_address>",
-                <amount>,
-                ExecuteTransactionRequestType.WaitForLocalExecution);
-```
+TransactionBlockResponseOptions transactionBlockResponseOptions =
+new TransactionBlockResponseOptions();
+transactionBlockResponseOptions.setShowEffects(true);
+transactionBlockResponseOptions.setShowEvents(true);
+transactionBlockResponseOptions.setShowInput(true);
+transactionBlockResponseOptions.setShowObjectChanges(true);
 
-### PaySui
+CompletableFuture<TransactionBlockResponse> res =
+    sui.transferSui(
+    sender.get(),
+    null,
+    recipient.get(),
+    20000L,
+    null,
+    3000000L,
+    null,
+    null,
+    transactionBlockResponseOptions,
+    ExecuteTransactionRequestType.WaitForLocalExecution);
 
-```java
-        CompletableFuture<ExecuteTransactionResponse> res =
-          sui.paySui(
-                "<sender_address>",
-                ["<coin_object_id>"],
-                ["<receiver_address>"],
-                [<amount>],
-                <gas_budget>,
-                ExecuteTransactionRequestType.WaitForLocalExecution);
-```
-
-### SplitCoin
-
-```java
-        CompletableFuture<ExecuteTransactionResponse> res =
-          sui.splitCoin(
-                "<sender_address>",
-                "<coin_object_id>",
-                [<amount>],
-                "<gas_object_id>",
-                <gas_budget>,
-                ExecuteTransactionRequestType.WaitForLocalExecution);
 ```
 
 ### MergeCoins
 
 ```java
-        CompletableFuture<ExecuteTransactionResponse> res =
-          sui.mergeCoins(
-                "<sender_address>",
-                "<primary_coin_object_id>",
-                "<to_merge_coin_object_id>",
-                "<gas_object_id>",
-                <gas_budget>,
-                ExecuteTransactionRequestType.WaitForLocalExecution);
+TransactionBlockResponseOptions transactionBlockResponseOptions =
+    new TransactionBlockResponseOptions();
+    transactionBlockResponseOptions.setShowEffects(true);
+    transactionBlockResponseOptions.setShowEvents(true);
+    transactionBlockResponseOptions.setShowInput(true);
+    transactionBlockResponseOptions.setShowObjectChanges(true);
+
+CompletableFuture<TransactionBlockResponse> res =
+    sui.mergeCoin(
+    sender.get(),
+    dest,
+    source,
+    null,
+    3000000L,
+    null,
+    null,
+    transactionBlockResponseOptions,
+    ExecuteTransactionRequestType.WaitForLocalExecution);
 ```
 
 For more examples, you can see [SuiIntTests](https://github.com/GrapeBaBa/sui4j/blob/main/src/integrationTest/java/io/sui/SuiIntTests.java)

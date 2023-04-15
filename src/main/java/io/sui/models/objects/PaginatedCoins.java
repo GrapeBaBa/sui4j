@@ -17,8 +17,8 @@
 package io.sui.models.objects;
 
 
-import com.google.common.base.Objects;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * the paginated coins.
@@ -31,6 +31,8 @@ public class PaginatedCoins {
   private List<Coin> data;
 
   private String nextCursor;
+
+  private boolean hasNextPage;
 
   public List<Coin> getData() {
     return data;
@@ -48,25 +50,47 @@ public class PaginatedCoins {
     this.nextCursor = nextCursor;
   }
 
+  public void setNextCursor(String nextCursor) {
+    this.nextCursor = nextCursor;
+  }
+
+  public boolean isHasNextPage() {
+    return hasNextPage;
+  }
+
+  public void setHasNextPage(boolean hasNextPage) {
+    this.hasNextPage = hasNextPage;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (!(o instanceof PaginatedCoins)) {
       return false;
     }
     PaginatedCoins that = (PaginatedCoins) o;
-    return Objects.equal(data, that.data) && Objects.equal(nextCursor, that.nextCursor);
+    return hasNextPage == that.hasNextPage
+        && data.equals(that.data)
+        && nextCursor.equals(that.nextCursor);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(data, nextCursor);
+    return Objects.hash(data, nextCursor, hasNextPage);
   }
 
   @Override
   public String toString() {
-    return "PaginatedCoins{" + "data=" + data + ", nextCursor=" + nextCursor + '}';
+    return "PaginatedCoins{"
+        + "data="
+        + data
+        + ", nextCursor='"
+        + nextCursor
+        + '\''
+        + ", hasNextPage="
+        + hasNextPage
+        + '}';
   }
 }

@@ -17,7 +17,7 @@
 package io.sui.jsonrpc;
 
 
-import io.sui.models.events.EventEnvelope;
+import io.sui.models.events.SuiEvent;
 import java.util.Objects;
 
 /**
@@ -34,7 +34,7 @@ public class JsonRpc20WSResponse {
 
     private Long subscription;
 
-    private EventEnvelope result;
+    private SuiEvent result;
 
     /**
      * Gets subscription.
@@ -59,7 +59,7 @@ public class JsonRpc20WSResponse {
      *
      * @return the result
      */
-    public EventEnvelope getResult() {
+    public SuiEvent getResult() {
       return result;
     }
 
@@ -68,7 +68,7 @@ public class JsonRpc20WSResponse {
      *
      * @param result the result
      */
-    public void setResult(EventEnvelope result) {
+    public void setResult(SuiEvent result) {
       this.result = result;
     }
 

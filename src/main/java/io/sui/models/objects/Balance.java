@@ -35,7 +35,7 @@ public class Balance {
 
   private BigInteger totalBalance;
 
-  private Map<Long, BigInteger> lockedBalance;
+  private Map<BigInteger, BigInteger> lockedBalance;
 
   public String getCoinType() {
     return coinType;
@@ -61,11 +61,11 @@ public class Balance {
     this.totalBalance = totalBalance;
   }
 
-  public Map<Long, BigInteger> getLockedBalance() {
+  public Map<BigInteger, BigInteger> getLockedBalance() {
     return lockedBalance;
   }
 
-  public void setLockedBalance(Map<Long, BigInteger> lockedBalance) {
+  public void setLockedBalance(Map<BigInteger, BigInteger> lockedBalance) {
     this.lockedBalance = lockedBalance;
   }
 

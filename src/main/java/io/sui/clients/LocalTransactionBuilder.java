@@ -1129,7 +1129,7 @@ public class LocalTransactionBuilder implements TransactionBuilder {
       objectDataOptions.setShowBcs(true);
       objectResponseQuery.setOptions(objectDataOptions);
       return queryClient
-          .getObjectsOwnedByAddress(signer, objectResponseQuery, null, null, null)
+          .getObjectsOwnedByAddress(signer, objectResponseQuery, null, null)
           .thenCompose(
               (Function<PaginatedObjectsResponse, CompletableFuture<SuiObjectRef>>)
                   paginatedObjectsResponse -> {
@@ -1546,7 +1546,7 @@ public class LocalTransactionBuilder implements TransactionBuilder {
     objectIdBuilder.value = coinAddressBuilder.build();
 
     SequenceNumber.Builder sequenceNumberBuilder = new SequenceNumber.Builder();
-    sequenceNumberBuilder.value = objRef.getVersion();
+    sequenceNumberBuilder.value = objRef.getVersion().longValue();
     Digest.Builder digestBuilder = new Digest.Builder();
     digestBuilder.value = Bytes.valueOf(Base58.decode(objRef.getDigest()));
     ObjectDigest.Builder objectDigestBuilder = new ObjectDigest.Builder();

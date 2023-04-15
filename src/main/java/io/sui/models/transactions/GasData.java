@@ -18,6 +18,7 @@ package io.sui.models.transactions;
 
 
 import io.sui.models.objects.SuiObjectRef;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,9 +29,9 @@ public class GasData {
 
   private String owner;
 
-  private long price;
+  private BigInteger price;
 
-  private long budget;
+  private BigInteger budget;
 
   /**
    * Gets payment.
@@ -73,7 +74,7 @@ public class GasData {
    *
    * @return the price
    */
-  public long getPrice() {
+  public BigInteger getPrice() {
     return price;
   }
 
@@ -82,7 +83,7 @@ public class GasData {
    *
    * @param price the price
    */
-  public void setPrice(long price) {
+  public void setPrice(BigInteger price) {
     this.price = price;
   }
 
@@ -91,7 +92,7 @@ public class GasData {
    *
    * @return the budget
    */
-  public long getBudget() {
+  public BigInteger getBudget() {
     return budget;
   }
 
@@ -100,7 +101,7 @@ public class GasData {
    *
    * @param budget the budget
    */
-  public void setBudget(long budget) {
+  public void setBudget(BigInteger budget) {
     this.budget = budget;
   }
 

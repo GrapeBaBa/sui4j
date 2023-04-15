@@ -17,6 +17,7 @@
 package io.sui.models.events;
 
 
+import java.math.BigInteger;
 import java.util.Objects;
 
 /**
@@ -29,14 +30,14 @@ public class EventId {
 
   private String txDigest;
 
-  private Long eventSeq;
+  private BigInteger eventSeq;
 
   /**
    * Gets event seq.
    *
    * @return the event seq
    */
-  public Long getEventSeq() {
+  public BigInteger getEventSeq() {
     return eventSeq;
   }
 
@@ -45,7 +46,7 @@ public class EventId {
    *
    * @param eventSeq the event seq
    */
-  public void setEventSeq(Long eventSeq) {
+  public void setEventSeq(BigInteger eventSeq) {
     this.eventSeq = eventSeq;
   }
 

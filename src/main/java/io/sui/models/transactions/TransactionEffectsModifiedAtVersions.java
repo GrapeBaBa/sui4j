@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 281165273grape@gmail.com
+ * Copyright 2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -14,44 +14,23 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models.objects;
+package io.sui.models.transactions;
 
 
-import io.sui.models.objects.ObjectResponse.ObjectResponseDetails;
 import java.math.BigInteger;
 import java.util.Objects;
 
 /**
- * The type Sui object ref.
+ * The type Transaction effects modified at versions.
  *
  * @author grapebaba
- * @since 2022.11
+ * @since 2023.04
  */
-public class SuiObjectRef implements ObjectResponseDetails {
-
-  private String digest;
+public class TransactionEffectsModifiedAtVersions {
 
   private String objectId;
 
-  private BigInteger version;
-
-  /**
-   * Gets digest.
-   *
-   * @return the digest
-   */
-  public String getDigest() {
-    return digest;
-  }
-
-  /**
-   * Sets digest.
-   *
-   * @param digest the digest
-   */
-  public void setDigest(String digest) {
-    this.digest = digest;
-  }
+  private BigInteger sequenceNumber;
 
   /**
    * Gets object id.
@@ -72,21 +51,21 @@ public class SuiObjectRef implements ObjectResponseDetails {
   }
 
   /**
-   * Gets version.
+   * Gets sequence number.
    *
-   * @return the version
+   * @return the sequence number
    */
-  public BigInteger getVersion() {
-    return version;
+  public BigInteger getSequenceNumber() {
+    return sequenceNumber;
   }
 
   /**
-   * Sets version.
+   * Sets sequence number.
    *
-   * @param version the version
+   * @param sequenceNumber the sequence number
    */
-  public void setVersion(BigInteger version) {
-    this.version = version;
+  public void setSequenceNumber(BigInteger sequenceNumber) {
+    this.sequenceNumber = sequenceNumber;
   }
 
   @Override
@@ -94,31 +73,26 @@ public class SuiObjectRef implements ObjectResponseDetails {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (!(o instanceof TransactionEffectsModifiedAtVersions)) {
       return false;
     }
-    SuiObjectRef that = (SuiObjectRef) o;
-    return digest.equals(that.digest)
-        && objectId.equals(that.objectId)
-        && version.equals(that.version);
+    TransactionEffectsModifiedAtVersions that = (TransactionEffectsModifiedAtVersions) o;
+    return objectId.equals(that.objectId) && sequenceNumber.equals(that.sequenceNumber);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(digest, objectId, version);
+    return Objects.hash(objectId, sequenceNumber);
   }
 
   @Override
   public String toString() {
-    return "SuiObjectRef{"
-        + "digest='"
-        + digest
-        + '\''
-        + ", objectId='"
+    return "TransactionEffectsModifiedAtVersions{"
+        + "objectId='"
         + objectId
         + '\''
-        + ", version="
-        + version
+        + ", sequenceNumber="
+        + sequenceNumber
         + '}';
   }
 }

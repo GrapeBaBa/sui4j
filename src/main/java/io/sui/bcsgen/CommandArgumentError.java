@@ -16,10 +16,9 @@ public abstract class CommandArgumentError {
             case 5: return SecondaryIndexOutOfBounds.load(deserializer);
             case 6: return InvalidResultArity.load(deserializer);
             case 7: return InvalidGasCoinUsage.load(deserializer);
-            case 8: return InvalidUsageOfBorrowedValue.load(deserializer);
-            case 9: return InvalidUsageOfTakenValue.load(deserializer);
-            case 10: return InvalidObjectByValue.load(deserializer);
-            case 11: return InvalidObjectByMutRef.load(deserializer);
+            case 8: return InvalidValueUsage.load(deserializer);
+            case 9: return InvalidObjectByValue.load(deserializer);
+            case 10: return InvalidObjectByMutRef.load(deserializer);
             default: throw new com.novi.serde.DeserializationError("Unknown variant index for CommandArgumentError: " + index);
         }
     }
@@ -388,8 +387,8 @@ public abstract class CommandArgumentError {
         }
     }
 
-    public static final class InvalidUsageOfBorrowedValue extends CommandArgumentError {
-        public InvalidUsageOfBorrowedValue() {
+    public static final class InvalidValueUsage extends CommandArgumentError {
+        public InvalidValueUsage() {
         }
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
@@ -398,7 +397,7 @@ public abstract class CommandArgumentError {
             serializer.decrease_container_depth();
         }
 
-        static InvalidUsageOfBorrowedValue load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+        static InvalidValueUsage load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
             deserializer.increase_container_depth();
             Builder builder = new Builder();
             deserializer.decrease_container_depth();
@@ -409,7 +408,7 @@ public abstract class CommandArgumentError {
             if (this == obj) return true;
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
-            InvalidUsageOfBorrowedValue other = (InvalidUsageOfBorrowedValue) obj;
+            InvalidValueUsage other = (InvalidValueUsage) obj;
             return true;
         }
 
@@ -419,46 +418,8 @@ public abstract class CommandArgumentError {
         }
 
         public static final class Builder {
-            public InvalidUsageOfBorrowedValue build() {
-                return new InvalidUsageOfBorrowedValue(
-                );
-            }
-        }
-    }
-
-    public static final class InvalidUsageOfTakenValue extends CommandArgumentError {
-        public InvalidUsageOfTakenValue() {
-        }
-
-        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
-            serializer.increase_container_depth();
-            serializer.serialize_variant_index(9);
-            serializer.decrease_container_depth();
-        }
-
-        static InvalidUsageOfTakenValue load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            Builder builder = new Builder();
-            deserializer.decrease_container_depth();
-            return builder.build();
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            InvalidUsageOfTakenValue other = (InvalidUsageOfTakenValue) obj;
-            return true;
-        }
-
-        public int hashCode() {
-            int value = 7;
-            return value;
-        }
-
-        public static final class Builder {
-            public InvalidUsageOfTakenValue build() {
-                return new InvalidUsageOfTakenValue(
+            public InvalidValueUsage build() {
+                return new InvalidValueUsage(
                 );
             }
         }
@@ -470,7 +431,7 @@ public abstract class CommandArgumentError {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(10);
+            serializer.serialize_variant_index(9);
             serializer.decrease_container_depth();
         }
 
@@ -508,7 +469,7 @@ public abstract class CommandArgumentError {
 
         public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
             serializer.increase_container_depth();
-            serializer.serialize_variant_index(11);
+            serializer.serialize_variant_index(10);
             serializer.decrease_container_depth();
         }
 

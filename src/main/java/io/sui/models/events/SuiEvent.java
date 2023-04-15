@@ -17,6 +17,7 @@
 package io.sui.models.events;
 
 
+import java.math.BigInteger;
 import java.util.Map;
 import java.util.Objects;
 
@@ -42,7 +43,7 @@ public class SuiEvent {
 
   private String bcs;
 
-  private Long timestampMs;
+  private BigInteger timestampMs;
 
   /**
    * Gets id.
@@ -175,7 +176,7 @@ public class SuiEvent {
    *
    * @return the timestamp ms
    */
-  public Long getTimestampMs() {
+  public BigInteger getTimestampMs() {
     return timestampMs;
   }
 
@@ -184,7 +185,7 @@ public class SuiEvent {
    *
    * @param timestampMs the timestamp ms
    */
-  public void setTimestampMs(Long timestampMs) {
+  public void setTimestampMs(BigInteger timestampMs) {
     this.timestampMs = timestampMs;
   }
 

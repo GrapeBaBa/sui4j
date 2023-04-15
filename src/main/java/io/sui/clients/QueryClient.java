@@ -73,11 +73,10 @@ public interface QueryClient {
    * @param query the query
    * @param cursor the cursor
    * @param limit the limit
-   * @param checkpointId the checkpoint id
    * @return the objects owned by address
    */
   CompletableFuture<PaginatedObjectsResponse> getObjectsOwnedByAddress(
-      String address, ObjectResponseQuery query, String cursor, Integer limit, String checkpointId);
+      String address, ObjectResponseQuery query, String cursor, Integer limit);
 
   /**
    * Gets total transaction number.
@@ -106,6 +105,13 @@ public interface QueryClient {
   CompletableFuture<List<TransactionBlockResponse>> multiGetTransactionBlocks(
       List<String> digests, TransactionBlockResponseOptions options);
 
+  /**
+   * Multi get objects completable future.
+   *
+   * @param objectIds the object ids
+   * @param options the options
+   * @return the completable future
+   */
   CompletableFuture<List<SuiObjectResponse>> multiGetObjects(
       List<String> objectIds, ObjectDataOptions options);
 
@@ -216,6 +222,17 @@ public interface QueryClient {
       TransactionBlockResponseQuery query, String cursor, Integer limit, boolean isDescOrder);
 
   /**
+   * Query objects completable future.
+   *
+   * @param query the query
+   * @param cursor the cursor
+   * @param limit the limit
+   * @return the completable future
+   */
+  CompletableFuture<PaginatedObjectsResponse> queryObjects(
+      ObjectResponseQuery query, String cursor, Integer limit);
+
+  /**
    * Gets coin metadata.
    *
    * @param coinType the coin type
@@ -255,7 +272,7 @@ public interface QueryClient {
    * @param limit the limit
    * @return all Coin objects owned by the address.
    */
-  CompletableFuture<PaginatedCoins> getAllCoins(String address, String cursor, long limit);
+  CompletableFuture<PaginatedCoins> getAllCoins(String address, String cursor, Integer limit);
 
   /**
    * Return all Coin with coin_type objects owned by an address.

@@ -16,37 +16,21 @@
 
 package io.sui;
 
-//
-// import static org.junit.jupiter.api.Assertions.assertNotNull;
-//
-// import com.google.common.collect.Lists;
-// import io.reactivex.rxjava3.disposables.Disposable;
-// import io.reactivex.rxjava3.functions.Consumer;
-// import io.sui.crypto.ED25519KeyPair;
-// import io.sui.crypto.SECP256K1KeyPair;
-// import io.sui.models.events.EventEnvelope;
-// import io.sui.models.events.EventFilter.EventTypeEventFilter;
-// import io.sui.models.events.EventType;
-// import io.sui.models.objects.SuiObjectInfo;
-// import io.sui.models.transactions.ExecuteTransactionRequestType;
-// import io.sui.models.transactions.ExecuteTransactionResponse;
-// import io.sui.models.transactions.RPCTransactionRequestParams;
-// import io.sui.models.transactions.RPCTransactionRequestParams.MoveCallParams;
-// import io.sui.models.transactions.RPCTransactionRequestParams.MoveCallRequestParams;
-// import io.sui.models.transactions.RPCTransactionRequestParams.TransferObjectParams;
-// import io.sui.models.transactions.RPCTransactionRequestParams.TransferObjectRequestParams;
-// import java.util.ArrayList;
-// import java.util.List;
-// import java.util.Optional;
-// import java.util.concurrent.CompletableFuture;
-
 
 import com.google.common.collect.Lists;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.sui.bcsgen.Argument;
+import io.sui.bcsgen.Intent;
+import io.sui.bcsgen.TransactionData;
+import io.sui.clients.TransactionBlock;
 import io.sui.crypto.KeyResponse;
 import io.sui.crypto.SignatureScheme;
 import io.sui.models.FaucetResponse;
+import io.sui.models.events.EventFilter.AllEventFilter;
+import io.sui.models.objects.Balance;
 import io.sui.models.objects.ObjectDataOptions;
 import io.sui.models.objects.ObjectResponseQuery;
+import io.sui.models.objects.PaginatedCoins;
 import io.sui.models.objects.PaginatedObjectsResponse;
 import io.sui.models.objects.SuiObjectResponse;
 import io.sui.models.transactions.ExecuteTransactionRequestType;
@@ -60,9 +44,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -74,47 +59,34 @@ import org.junit.jupiter.api.Test;
  */
 public class SuiIntTests {
 
-  private static final String BASE_URL = "http://localhost:9000";
+  //    private static final String BASE_URL = "http://localhost:9000";
+  private static final String BASE_NODE_URL = "https://fullnode.devnet.sui.io:443";
 
-  private static final String BASE_FAUCET_URL = "http://localhost:9123";
-  //  private static final String BASE_FAUCET_URL = "https://faucet.testnet.sui.io";
+  //    private static final String BASE_FAUCET_URL = "http://localhost:9123";
+  private static final String BASE_FAUCET_URL = "https://faucet.devnet.sui.io";
 
   //  private static final String TEST_KEY_STORE_PATH =
   //      System.getProperty("user.home") + "/.sui/sui_config/sui.keystore";
 
-  private static final String TEST_KEY_STORE_PATH =
+  private static final String KEY_STORE_PATH =
       Paths.get("src/integrationTest/sui.keystore").toAbsolutePath().toString();
 
-  private static Sui sui;
-
-  /** Before all. */
-  @BeforeAll
-  static void beforeAll() {
-    sui = new Sui(BASE_URL, BASE_FAUCET_URL, TEST_KEY_STORE_PATH, true);
-  }
+  private static final Sui SUI = new Sui(BASE_NODE_URL, BASE_FAUCET_URL, KEY_STORE_PATH);
 
   /** New address. */
   @Test
   @DisplayName("Test newAddress.")
   void newAddress() {
-    KeyResponse res1 = sui.newAddress(SignatureScheme.ED25519);
+    KeyResponse res1 = SUI.newAddress(SignatureScheme.ED25519);
     System.out.printf("mnemonic+address:%s%n", res1);
     System.out.println();
 
-    KeyResponse res2 = sui.newAddress(SignatureScheme.ED25519);
+    KeyResponse res2 = SUI.newAddress(SignatureScheme.ED25519);
     System.out.printf("mnemonic+address:%s%n", res2);
     System.out.println();
 
-    KeyResponse res3 = sui.newAddress(SignatureScheme.ED25519);
+    KeyResponse res3 = SUI.newAddress(SignatureScheme.Secp256k1);
     System.out.printf("mnemonic+address:%s%n", res3);
-    System.out.println();
-
-    KeyResponse res4 = sui.newAddress(SignatureScheme.Secp256k1);
-    System.out.printf("mnemonic+address:%s%n", res4);
-    System.out.println();
-
-    KeyResponse res5 = sui.newAddress(SignatureScheme.Secp256k1);
-    System.out.printf("mnemonic+address:%s%n", res5);
     System.out.println();
   }
 
@@ -122,119 +94,20 @@ public class SuiIntTests {
   @Test
   @DisplayName("Test requestSuiFromFaucet.")
   void requestSuiFromFaucet() {
-    sui.addresses()
+    SUI.addresses()
         .forEach(
             s -> {
               System.out.printf("address:%s%n", s);
-              CompletableFuture<FaucetResponse> res = sui.requestSuiFromFaucet(s);
+              CompletableFuture<FaucetResponse> res = SUI.requestSuiFromFaucet(s);
+
               try {
+                TimeUnit.SECONDS.sleep(2);
                 System.out.printf("faucet response: %s%n%n", res.get());
               } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
                 Assertions.fail();
               }
             });
-  }
-
-  /**
-   * Gets objects owned by address.
-   *
-   * @throws ExecutionException the execution exception
-   * @throws InterruptedException the interrupted exception
-   */
-  @Test
-  @DisplayName("Test getObjectsOwnedByAddress.")
-  void getObjectsOwnedByAddress() throws ExecutionException, InterruptedException {
-    final Optional<String> sender =
-        sui.addresses().stream()
-            .filter(
-                s -> {
-                  try {
-                    return sui.getObjectsOwnedByAddress(
-                                s, new ObjectResponseQuery(), null, null, null)
-                            .get()
-                            .getData()
-                            .size()
-                        > 1;
-                  } catch (InterruptedException | ExecutionException e) {
-                    return false;
-                  }
-                })
-            .findFirst();
-    if (!sender.isPresent()) {
-      Assertions.fail();
-    }
-    CompletableFuture<PaginatedObjectsResponse> res =
-        sui.getObjectsOwnedByAddress(sender.get(), new ObjectResponseQuery(), null, null, null);
-    System.out.printf("paginated objects:%s%n", res.get());
-  }
-
-  /**
-   * Transfer sui.
-   *
-   * @throws ExecutionException the execution exception
-   * @throws InterruptedException the interrupted exception
-   */
-  @SuppressWarnings("checkstyle:CommentsIndentation")
-  @Test
-  @DisplayName("Test transferSui.")
-  void transferSui() throws ExecutionException, InterruptedException {
-    ObjectResponseQuery objectResponseQuery = new ObjectResponseQuery();
-    objectResponseQuery.setOptions(new ObjectDataOptions());
-    final Optional<String> sender =
-        sui.addresses().stream()
-            .filter(
-                s -> {
-                  try {
-                    return sui.getObjectsOwnedByAddress(s, objectResponseQuery, null, null, null)
-                            .get()
-                            .getData()
-                            .size()
-                        > 1;
-                  } catch (InterruptedException | ExecutionException e) {
-                    return false;
-                  }
-                })
-            .findFirst();
-    if (!sender.isPresent()) {
-      Assertions.fail();
-    }
-
-    final Optional<String> recipient =
-        sui.addresses().stream().filter(s -> !s.equals(sender.get())).findFirst();
-    if (!recipient.isPresent()) {
-      Assertions.fail();
-    }
-
-    TransactionBlockResponseOptions transactionBlockResponseOptions =
-        new TransactionBlockResponseOptions();
-    transactionBlockResponseOptions.setShowEffects(true);
-    transactionBlockResponseOptions.setShowEvents(true);
-    transactionBlockResponseOptions.setShowInput(true);
-    transactionBlockResponseOptions.setShowObjectChanges(true);
-    CompletableFuture<TransactionBlockResponse> res2 =
-        sui.transferSui(
-            sender.get(),
-            null,
-            recipient.get(),
-            2000L,
-            null,
-            5000L,
-            null,
-            null,
-            transactionBlockResponseOptions,
-            ExecuteTransactionRequestType.WaitForLocalExecution);
-    CompletableFuture<Object> future = new CompletableFuture<>();
-    res2.whenComplete(
-        (transactionResponse, throwable) -> {
-          if (throwable != null) {
-            future.complete(throwable);
-          } else {
-            future.complete(transactionResponse);
-          }
-        });
-
-    System.out.println(future.get());
   }
 
   /**
@@ -248,11 +121,11 @@ public class SuiIntTests {
   void moveCall() throws ExecutionException, InterruptedException {
     ObjectResponseQuery objectResponseQuery = new ObjectResponseQuery();
     final Optional<String> sender =
-        sui.addresses().stream()
+        SUI.addresses().stream()
             .filter(
                 s -> {
                   try {
-                    return sui.getObjectsOwnedByAddress(s, objectResponseQuery, null, null, null)
+                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
                             .get()
                             .getData()
                             .size()
@@ -266,7 +139,7 @@ public class SuiIntTests {
       Assertions.fail();
     }
     final SuiObjectResponse suiObjectResponse =
-        sui.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null, null)
+        SUI.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null)
             .get()
             .getData()
             .get(0);
@@ -285,7 +158,7 @@ public class SuiIntTests {
     structTag.setName("SUI");
     structType.setStructTag(structTag);
     CompletableFuture<TransactionBlockResponse> res =
-        sui.moveCall(
+        SUI.moveCall(
             sender.get(),
             "0x02",
             "pay",
@@ -293,94 +166,13 @@ public class SuiIntTests {
             Lists.newArrayList(structType),
             Lists.newArrayList(suiObjectResponse.getData().getObjectId(), 10000L),
             null,
-            10000L,
+            3000000L,
             null,
             null,
             transactionBlockResponseOptions,
             ExecuteTransactionRequestType.WaitForLocalExecution);
-    CompletableFuture<Object> future = new CompletableFuture<>();
-    res.whenComplete(
-        (transactionResponse, throwable) -> {
-          if (throwable != null) {
-            future.complete(throwable);
-          } else {
-            future.complete(transactionResponse);
-          }
-        });
 
-    System.out.println(future.get());
-  }
-
-  /**
-   * Merge coin.
-   *
-   * @throws ExecutionException the execution exception
-   * @throws InterruptedException the interrupted exception
-   */
-  @Test
-  @DisplayName("Test mergeCoin.")
-  void mergeCoin() throws ExecutionException, InterruptedException {
-    ObjectResponseQuery objectResponseQuery = new ObjectResponseQuery();
-    final Optional<String> sender =
-        sui.addresses().stream()
-            .filter(
-                s -> {
-                  try {
-                    return sui.getObjectsOwnedByAddress(s, objectResponseQuery, null, null, null)
-                            .get()
-                            .getData()
-                            .size()
-                        > 3;
-                  } catch (InterruptedException | ExecutionException e) {
-                    return false;
-                  }
-                })
-            .findFirst();
-    if (!sender.isPresent()) {
-      Assertions.fail();
-    }
-
-    TransactionBlockResponseOptions transactionBlockResponseOptions =
-        new TransactionBlockResponseOptions();
-    transactionBlockResponseOptions.setShowEffects(true);
-    transactionBlockResponseOptions.setShowEvents(true);
-    transactionBlockResponseOptions.setShowInput(true);
-    transactionBlockResponseOptions.setShowObjectChanges(true);
-
-    String dest =
-        sui.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null, null)
-            .get()
-            .getData()
-            .get(0)
-            .getData()
-            .getObjectId();
-    List<String> source =
-        sui.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null, null).get()
-            .getData().subList(1, 2).stream()
-            .map(suiObjectResponse -> suiObjectResponse.getData().getObjectId())
-            .collect(Collectors.toList());
-    CompletableFuture<TransactionBlockResponse> res =
-        sui.mergeCoin(
-            sender.get(),
-            dest,
-            source,
-            null,
-            5000L,
-            null,
-            null,
-            transactionBlockResponseOptions,
-            ExecuteTransactionRequestType.WaitForLocalExecution);
-    CompletableFuture<Object> future = new CompletableFuture<>();
-    res.whenComplete(
-        (transactionResponse, throwable) -> {
-          if (throwable != null) {
-            future.complete(throwable);
-          } else {
-            future.complete(transactionResponse);
-          }
-        });
-
-    System.out.println(future.get());
+    System.out.println(res.get());
   }
 
   /**
@@ -395,11 +187,11 @@ public class SuiIntTests {
     ObjectResponseQuery objectResponseQuery = new ObjectResponseQuery();
     objectResponseQuery.setOptions(new ObjectDataOptions());
     final Optional<String> sender =
-        sui.addresses().stream()
+        SUI.addresses().stream()
             .filter(
                 s -> {
                   try {
-                    return sui.getObjectsOwnedByAddress(s, objectResponseQuery, null, null, null)
+                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
                             .get()
                             .getData()
                             .size()
@@ -411,11 +203,11 @@ public class SuiIntTests {
             .findFirst();
 
     if (sender.isPresent()) {
-      final Optional<String> receipt =
-          sui.addresses().stream().filter(s -> !s.equals(sender.get())).findFirst();
-      if (receipt.isPresent()) {
+      final Optional<String> recipient =
+          SUI.addresses().stream().filter(s -> !s.equals(sender.get())).findFirst();
+      if (recipient.isPresent()) {
         List<SuiObjectResponse> objects =
-            sui.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null, null)
+            SUI.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null)
                 .get()
                 .getData();
         TransactionBlockResponseOptions transactionBlockResponseOptions =
@@ -425,12 +217,12 @@ public class SuiIntTests {
         transactionBlockResponseOptions.setShowInput(true);
         transactionBlockResponseOptions.setShowObjectChanges(true);
         CompletableFuture<TransactionBlockResponse> res =
-            sui.transferObjects(
+            SUI.transferObjects(
                 sender.get(),
                 Lists.newArrayList(objects.get(0).getData().getObjectId()),
-                receipt.get(),
+                recipient.get(),
                 null,
-                3000L,
+                3000000L,
                 null,
                 null,
                 transactionBlockResponseOptions,
@@ -466,11 +258,11 @@ public class SuiIntTests {
     ObjectResponseQuery objectResponseQuery = new ObjectResponseQuery();
     objectResponseQuery.setOptions(new ObjectDataOptions());
     final Optional<String> sender =
-        sui.addresses().stream()
+        SUI.addresses().stream()
             .filter(
                 s -> {
                   try {
-                    return sui.getObjectsOwnedByAddress(s, objectResponseQuery, null, null, null)
+                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
                             .get()
                             .getData()
                             .size()
@@ -489,8 +281,8 @@ public class SuiIntTests {
     transactionBlockResponseOptions.setShowEvents(true);
     transactionBlockResponseOptions.setShowInput(true);
     transactionBlockResponseOptions.setShowObjectChanges(true);
-    CompletableFuture<TransactionBlockResponse> res1 =
-        sui.publish(
+    CompletableFuture<TransactionBlockResponse> res =
+        SUI.publish(
             sender.get(),
             Lists.newArrayList(
                 "oRzrCwYAAAAKAQAUAhQsA0BJBIkBEgWbAWcHggLNAgjPBGAGrwXCAwrxCC0MngnUAQAMAR4B"
@@ -523,22 +315,303 @@ public class SuiIntTests {
                 "0x0000000000000000000000000000000000000000000000000000000000000001",
                 "0x0000000000000000000000000000000000000000000000000000000000000002"),
             null,
-            10000L,
+            30000000L,
             null,
             null,
             transactionBlockResponseOptions,
             ExecuteTransactionRequestType.WaitForLocalExecution);
-    CompletableFuture<Object> future = new CompletableFuture<>();
-    res1.whenComplete(
-        (transactionResponse, throwable) -> {
-          if (throwable != null) {
-            future.complete(throwable);
-          } else {
-            future.complete(transactionResponse);
-          }
-        });
 
-    System.out.println(future.get());
+    System.out.println(res.get());
+  }
+
+  @Test
+  @DisplayName("Test subscribeEvent.")
+  void subscribeEvent() throws InterruptedException {
+    AllEventFilter eventFilter = new AllEventFilter();
+
+    Disposable disposable =
+        SUI.subscribeEvent(eventFilter, System.out::println, System.out::println);
+
+    TimeUnit.SECONDS.sleep(10);
+
+    disposable.dispose();
+  }
+
+  @Test
+  @DisplayName("Test sponsoredTransaction.")
+  void sponsoredTransaction() throws ExecutionException, InterruptedException {
+    ObjectResponseQuery objectResponseQuery = new ObjectResponseQuery();
+    objectResponseQuery.setOptions(new ObjectDataOptions());
+    final Optional<String> sender =
+        SUI.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                            .get()
+                            .getData()
+                            .size()
+                        > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+
+    final Optional<String> recipient =
+        SUI.addresses().stream().filter(s -> !s.equals(sender.get())).findFirst();
+    if (!recipient.isPresent()) {
+      Assertions.fail();
+    }
+
+    final Optional<String> sponsor =
+        SUI.addresses().stream()
+            .filter(s -> !s.equals(sender.get()) && !s.equals(recipient.get()))
+            .findFirst();
+    if (!sponsor.isPresent()) {
+      Assertions.fail();
+    }
+
+    List<SuiObjectResponse> objects =
+        SUI.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null).get().getData();
+
+    CompletableFuture<TransactionBlockResponse> res =
+        SUI.newTransactionBlock()
+            .thenCompose(
+                (Function<TransactionBlock, CompletableFuture<TransactionBlockResponse>>)
+                    transactionBlock -> {
+                      transactionBlock.setExpiration(null);
+                      transactionBlock.setSender(sender.get());
+                      return transactionBlock
+                          .transferObjects(
+                              Lists.newArrayList(objects.get(0).getData().getObjectId()),
+                              recipient.get())
+                          .thenCompose(
+                              (Function<Argument, CompletableFuture<TransactionBlockResponse>>)
+                                  argument -> {
+                                    final CompletableFuture<TransactionData>
+                                        transactionDataCompletableFuture =
+                                            transactionBlock
+                                                .setGasData(
+                                                    Lists.newArrayList(),
+                                                    sponsor.get(),
+                                                    3000000L,
+                                                    null)
+                                                .thenCompose(
+                                                    (Function<
+                                                            Void,
+                                                            CompletableFuture<TransactionData>>)
+                                                        unused -> transactionBlock.build());
+
+                                    TransactionBlockResponseOptions
+                                        transactionBlockResponseOptions =
+                                            new TransactionBlockResponseOptions();
+                                    transactionBlockResponseOptions.setShowEffects(true);
+                                    transactionBlockResponseOptions.setShowEvents(true);
+                                    transactionBlockResponseOptions.setShowInput(true);
+                                    transactionBlockResponseOptions.setShowObjectChanges(true);
+                                    return transactionDataCompletableFuture.thenCompose(
+                                        (Function<
+                                                TransactionData,
+                                                CompletableFuture<TransactionBlockResponse>>)
+                                            transactionData -> {
+                                              Intent intent = SUI.transactionDataIntent();
+                                              String sponsorSig =
+                                                  SUI.signTransactionBlock(
+                                                      sponsor.get(), transactionData, intent);
+                                              String senderSig =
+                                                  SUI.signTransactionBlock(
+                                                      sender.get(), transactionData, intent);
+                                              return SUI.executeTransaction(
+                                                  transactionData,
+                                                  Lists.newArrayList(senderSig, sponsorSig),
+                                                  transactionBlockResponseOptions,
+                                                  ExecuteTransactionRequestType
+                                                      .WaitForLocalExecution);
+                                            });
+                                  });
+                    });
+
+    System.out.println(res.get());
+  }
+
+  @Test
+  @DisplayName("Test getAllCoins.")
+  void getAllCoins() throws ExecutionException, InterruptedException {
+    ObjectResponseQuery objectResponseQuery = new ObjectResponseQuery();
+    objectResponseQuery.setOptions(new ObjectDataOptions());
+    final Optional<String> sender =
+        SUI.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                            .get()
+                            .getData()
+                            .size()
+                        > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+    CompletableFuture<PaginatedCoins> res = SUI.getAllCoins(sender.get(), null, null);
+    System.out.printf("paginated coins:%s%n", res.get());
+  }
+
+  @Test
+  @DisplayName("Test getBalance.")
+  void getBalance() throws ExecutionException, InterruptedException {
+    ObjectResponseQuery objectResponseQuery = new ObjectResponseQuery();
+    objectResponseQuery.setOptions(new ObjectDataOptions());
+    final Optional<String> sender =
+        SUI.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                            .get()
+                            .getData()
+                            .size()
+                        > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+    CompletableFuture<Balance> res = SUI.getBalance(sender.get(), null);
+    System.out.printf("balance:%s%n", res.get());
+  }
+
+  /**
+   * Transfer sui.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @SuppressWarnings("checkstyle:CommentsIndentation")
+  @Test
+  @DisplayName("Test transferSui.")
+  void transferSui() throws ExecutionException, InterruptedException {
+    ObjectResponseQuery objectResponseQuery = new ObjectResponseQuery();
+    objectResponseQuery.setOptions(new ObjectDataOptions());
+    final Optional<String> sender =
+        SUI.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                            .get()
+                            .getData()
+                            .size()
+                        > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+
+    final Optional<String> recipient =
+        SUI.addresses().stream().filter(s -> !s.equals(sender.get())).findFirst();
+    if (!recipient.isPresent()) {
+      Assertions.fail();
+    }
+
+    TransactionBlockResponseOptions transactionBlockResponseOptions =
+        new TransactionBlockResponseOptions();
+    transactionBlockResponseOptions.setShowEffects(true);
+    transactionBlockResponseOptions.setShowEvents(true);
+    transactionBlockResponseOptions.setShowInput(true);
+    transactionBlockResponseOptions.setShowObjectChanges(true);
+    CompletableFuture<TransactionBlockResponse> res =
+        SUI.transferSui(
+            sender.get(),
+            null,
+            recipient.get(),
+            20000L,
+            null,
+            3000000L,
+            null,
+            null,
+            transactionBlockResponseOptions,
+            ExecuteTransactionRequestType.WaitForLocalExecution);
+
+    System.out.println(res.get());
+  }
+
+  /**
+   * Merge coin.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test mergeCoin.")
+  void mergeCoin() throws ExecutionException, InterruptedException {
+    ObjectResponseQuery objectResponseQuery = new ObjectResponseQuery();
+    final Optional<String> sender =
+        SUI.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                            .get()
+                            .getData()
+                            .size()
+                        > 3;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+
+    TransactionBlockResponseOptions transactionBlockResponseOptions =
+        new TransactionBlockResponseOptions();
+    transactionBlockResponseOptions.setShowEffects(true);
+    transactionBlockResponseOptions.setShowEvents(true);
+    transactionBlockResponseOptions.setShowInput(true);
+    transactionBlockResponseOptions.setShowObjectChanges(true);
+
+    String dest =
+        SUI.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null)
+            .get()
+            .getData()
+            .get(0)
+            .getData()
+            .getObjectId();
+    List<String> source =
+        SUI.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null).get().getData()
+            .subList(1, 2).stream()
+            .map(suiObjectResponse -> suiObjectResponse.getData().getObjectId())
+            .collect(Collectors.toList());
+    CompletableFuture<TransactionBlockResponse> res =
+        SUI.mergeCoin(
+            sender.get(),
+            dest,
+            source,
+            null,
+            3000000L,
+            null,
+            null,
+            transactionBlockResponseOptions,
+            ExecuteTransactionRequestType.WaitForLocalExecution);
+
+    System.out.println(res.get());
   }
 
   /**
@@ -550,8 +623,41 @@ public class SuiIntTests {
   @Test
   @DisplayName("Test getTotalTransactionBlocks.")
   void getTotalTransactionBlocks() throws ExecutionException, InterruptedException {
-    CompletableFuture<Long> res = sui.getTotalTransactionBlocks();
+    CompletableFuture<Long> res = SUI.getTotalTransactionBlocks();
     System.out.printf("total transaction blocks:%d%n", res.get());
+  }
+
+  /**
+   * Gets objects owned by address.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getObjectsOwnedByAddress.")
+  void getObjectsOwnedByAddress() throws ExecutionException, InterruptedException {
+    final Optional<String> sender =
+        SUI.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return SUI.getObjectsOwnedByAddress(s, new ObjectResponseQuery(), null, null)
+                            .get()
+                            .getData()
+                            .size()
+                        > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+    System.out.println(sender.get());
+    CompletableFuture<PaginatedObjectsResponse> res =
+        SUI.getObjectsOwnedByAddress(sender.get(), null, null, null);
+    System.out.printf("paginated objects:%s%n", res.get());
   }
 
   /**
@@ -565,7 +671,7 @@ public class SuiIntTests {
   void queryTransactionBlocks() throws ExecutionException, InterruptedException {
     TransactionBlockResponseQuery query = new TransactionBlockResponseQuery();
     CompletableFuture<PaginatedTransactionResponse> res =
-        sui.queryTransactionBlocks(query, null, 10, false);
+        SUI.queryTransactionBlocks(query, null, 10, false);
 
     System.out.printf("paginated transaction blocks:%s%n", res.get());
   }
@@ -581,13 +687,13 @@ public class SuiIntTests {
   void getTransactionBlock() throws ExecutionException, InterruptedException {
     TransactionBlockResponseQuery query = new TransactionBlockResponseQuery();
     CompletableFuture<PaginatedTransactionResponse> res =
-        sui.queryTransactionBlocks(query, null, 10, false);
+        SUI.queryTransactionBlocks(query, null, 10, false);
 
     TransactionBlockResponseOptions options = new TransactionBlockResponseOptions();
     options.setShowInput(true);
     options.setShowEffects(true);
     CompletableFuture<TransactionBlockResponse> res1 =
-        sui.getTransactionBlock(res.get().getData().get(2).getDigest(), options);
+        SUI.getTransactionBlock(res.get().getData().get(2).getDigest(), options);
     System.out.printf("transaction block:%s%n", res1.get());
   }
 
@@ -602,13 +708,13 @@ public class SuiIntTests {
   void multiGetTransactionBlocks() throws ExecutionException, InterruptedException {
     TransactionBlockResponseQuery query = new TransactionBlockResponseQuery();
     CompletableFuture<PaginatedTransactionResponse> res =
-        sui.queryTransactionBlocks(query, null, 10, false);
+        SUI.queryTransactionBlocks(query, null, 10, false);
 
     TransactionBlockResponseOptions options = new TransactionBlockResponseOptions();
     options.setShowInput(true);
     options.setShowEffects(true);
     CompletableFuture<List<TransactionBlockResponse>> res1 =
-        sui.multiGetTransactionBlocks(
+        SUI.multiGetTransactionBlocks(
             Lists.newArrayList(
                 res.get().getData().get(0).getDigest(), res.get().getData().get(1).getDigest()),
             options);
@@ -627,11 +733,11 @@ public class SuiIntTests {
     ObjectResponseQuery objectResponseQuery = new ObjectResponseQuery();
     objectResponseQuery.setOptions(new ObjectDataOptions());
     final Optional<String> sender =
-        sui.addresses().stream()
+        SUI.addresses().stream()
             .filter(
                 s -> {
                   try {
-                    return sui.getObjectsOwnedByAddress(s, objectResponseQuery, null, null, null)
+                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
                             .get()
                             .getData()
                             .size()
@@ -645,27 +751,12 @@ public class SuiIntTests {
       Assertions.fail();
     }
     List<String> objects =
-        sui.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null, null).get()
-            .getData().stream()
+        SUI.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null).get().getData()
+            .stream()
             .map(suiObjectResponse -> suiObjectResponse.getData().getObjectId())
             .collect(Collectors.toList());
     CompletableFuture<List<SuiObjectResponse>> res1 =
-        sui.multiGetObjects(objects, new ObjectDataOptions());
+        SUI.multiGetObjects(objects, new ObjectDataOptions());
     System.out.printf("object responses:%s%n", res1.get());
   }
-
-  //  @Test
-  //  @DisplayName("Test subscribeEvent.")
-  //  void subscribeEvent() throws ExecutionException, InterruptedException {
-  //    EventTypeEventFilter eventFilter = new EventTypeEventFilter();
-  //    eventFilter.setEventType(EventType.CoinBalanceChange);
-  //    Disposable disposable =
-  //        sui.subscribeEvent(
-  //            eventFilter,
-  //            System.out::println,
-  //            System.out::println);
-  //    moveCall();
-  //
-  //    disposable.dispose();
-  //  }
 }

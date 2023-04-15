@@ -7,7 +7,7 @@
 <dependency>
 <groupId>me.grapebaba</groupId>
 <artifactId>sui4j</artifactId>
-<version>0.4.2</version>
+<version>0.4.3</version>
 </dependency>
 ```
 
@@ -15,42 +15,34 @@
 
 ```groovy
 // https://mvnrepository.com/artifact/me.grapebaba/sui4j
-implementation 'me.grapebaba:sui4j:0.4.2'
+implementation 'me.grapebaba:sui4j:0.4.3'
 ```
 
 ## Use Sui4j
 
-### Mint an example NFT
-
-```java
-  Sui sui = new Sui("<your_node_url>", "<your_keystore_path>", true);
-  CompletableFuture<ExecuteTransactionResponse> res =
-    sui.moveCall(
-        "0x0a7421363a1f6a82800f7c9340ac02b5905798cb",
-        "0x0000000000000000000000000000000000000002",
-        "devnet_nft",
-        "mint",
-        Lists.newArrayList(),
-        Lists.newArrayList(
-        "Example NFT",
-        "An example NFT.",
-        "ipfs://bafkreibngqhl3gaa7daob4i2vccziay2jjlp435cf66vhono7nrvww53ty"),
-        null,
-        2000L,
-        ExecuteTransactionRequestType.WaitForLocalExecution);
-```
-
 ### Transfer coin
 
 ```java
- Sui sui = new Sui("<your_node_url>", "<your_keystore_path>", true);
- CompletableFuture<ExecuteTransactionResponse> res =
+Sui sui = new Sui("<full_node_url>","<faucet_url>","<your_keystore_path>");
+
+TransactionBlockResponseOptions transactionBlockResponseOptions =
+new TransactionBlockResponseOptions();
+transactionBlockResponseOptions.setShowEffects(true);
+transactionBlockResponseOptions.setShowEvents(true);
+transactionBlockResponseOptions.setShowInput(true);
+transactionBlockResponseOptions.setShowObjectChanges(true);
+
+CompletableFuture<TransactionBlockResponse> res =
     sui.transferSui(
-        "0x4a2a5a8e193b608a802cd733158ccb63c2092bdb",
-        "0x42f92e4c7ceec704941b48dd8919afa991913db8",
-        2000L,
-        "0xa0fd2a6814cff90d4463fb7e5b5b81d01d763472",
-        20000L,
-        ExecuteTransactionRequestType.WaitForLocalExecution);
+    "0x490174dbcac203f199d9dc50780f95c3a772a3c7357c5d98924885cd818f6980",
+    null,
+    "0x4543a8d956875317817c0c794c41c4b2e9a223faf2c1be0aa2c35e48acd8be42",
+    20000L,
+    null,
+    3000000L,
+    null,
+    null,
+    transactionBlockResponseOptions,
+    ExecuteTransactionRequestType.WaitForLocalExecution); 
 ```
     

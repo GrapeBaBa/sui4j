@@ -137,7 +137,7 @@ class ExecutionClientImplTest {
     System.out.println(res.get());
 
     assertEquals(success, res.get().getStatus().getStatus());
-    assertEquals(793L, res.get().getGasUsed().getComputationCost());
+    assertEquals(793L, res.get().getGasUsed().getComputationCost().longValue());
     assertEquals(
         "uZnJ/TEjGRaJ29KC5QY+mz7KN/EV4cdeJVLc64KJtZ4=",
         res.get().getMutated().get(0).getReference().getDigest());

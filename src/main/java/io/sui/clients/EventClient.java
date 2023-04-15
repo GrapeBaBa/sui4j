@@ -20,8 +20,8 @@ package io.sui.clients;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.sui.models.SuiApiException;
-import io.sui.models.events.EventEnvelope;
 import io.sui.models.events.EventFilter;
+import io.sui.models.events.SuiEvent;
 
 /**
  * The interface Event client.
@@ -40,5 +40,5 @@ public interface EventClient {
    * @return the disposable
    */
   Disposable subscribeEvent(
-      EventFilter eventFilter, Consumer<EventEnvelope> onNext, Consumer<SuiApiException> onError);
+      EventFilter eventFilter, Consumer<SuiEvent> onNext, Consumer<SuiApiException> onError);
 }

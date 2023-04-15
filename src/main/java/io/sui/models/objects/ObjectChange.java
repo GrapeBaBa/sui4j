@@ -17,6 +17,7 @@
 package io.sui.models.objects;
 
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
 
@@ -53,7 +54,7 @@ public abstract class ObjectChange {
 
     private String packageId;
 
-    private Long version;
+    private BigInteger version;
 
     private String digest;
 
@@ -84,7 +85,7 @@ public abstract class ObjectChange {
      *
      * @return the version
      */
-    public Long getVersion() {
+    public BigInteger getVersion() {
       return version;
     }
 
@@ -93,7 +94,7 @@ public abstract class ObjectChange {
      *
      * @param version the version
      */
-    public void setVersion(Long version) {
+    public void setVersion(BigInteger version) {
       this.version = version;
     }
 
@@ -202,7 +203,7 @@ public abstract class ObjectChange {
 
     private String objectId;
 
-    private Long version;
+    private BigInteger version;
 
     private String digest;
 
@@ -285,7 +286,7 @@ public abstract class ObjectChange {
      *
      * @return the version
      */
-    public Long getVersion() {
+    public BigInteger getVersion() {
       return version;
     }
 
@@ -294,7 +295,7 @@ public abstract class ObjectChange {
      *
      * @param version the version
      */
-    public void setVersion(Long version) {
+    public void setVersion(BigInteger version) {
       this.version = version;
     }
 
@@ -393,7 +394,9 @@ public abstract class ObjectChange {
 
     private String objectId;
 
-    private Long version;
+    private BigInteger version;
+
+    private BigInteger previousVersion;
 
     private String digest;
 
@@ -476,7 +479,7 @@ public abstract class ObjectChange {
      *
      * @return the version
      */
-    public Long getVersion() {
+    public BigInteger getVersion() {
       return version;
     }
 
@@ -485,7 +488,7 @@ public abstract class ObjectChange {
      *
      * @param version the version
      */
-    public void setVersion(Long version) {
+    public void setVersion(BigInteger version) {
       this.version = version;
     }
 
@@ -525,6 +528,24 @@ public abstract class ObjectChange {
       this.type = type;
     }
 
+    /**
+     * Gets previous version.
+     *
+     * @return the previous version
+     */
+    public BigInteger getPreviousVersion() {
+      return previousVersion;
+    }
+
+    /**
+     * Sets previous version.
+     *
+     * @param previousVersion the previous version
+     */
+    public void setPreviousVersion(BigInteger previousVersion) {
+      this.previousVersion = previousVersion;
+    }
+
     @Override
     public boolean equals(Object o) {
       if (this == o) {
@@ -539,13 +560,15 @@ public abstract class ObjectChange {
           && objectType.equals(that.objectType)
           && objectId.equals(that.objectId)
           && version.equals(that.version)
+          && previousVersion.equals(that.previousVersion)
           && digest.equals(that.digest)
           && type == that.type;
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(sender, owner, objectType, objectId, version, digest, type);
+      return Objects.hash(
+          sender, owner, objectType, objectId, version, previousVersion, digest, type);
     }
 
     @Override
@@ -564,6 +587,8 @@ public abstract class ObjectChange {
           + '\''
           + ", version="
           + version
+          + ", previousVersion="
+          + previousVersion
           + ", digest='"
           + digest
           + '\''
@@ -582,7 +607,7 @@ public abstract class ObjectChange {
 
     private String objectId;
 
-    private Long version;
+    private BigInteger version;
 
     private ObjectChangeType type = ObjectChangeType.deleted;
 
@@ -645,7 +670,7 @@ public abstract class ObjectChange {
      *
      * @return the version
      */
-    public Long getVersion() {
+    public BigInteger getVersion() {
       return version;
     }
 
@@ -654,7 +679,7 @@ public abstract class ObjectChange {
      *
      * @param version the version
      */
-    public void setVersion(Long version) {
+    public void setVersion(BigInteger version) {
       this.version = version;
     }
 
@@ -726,7 +751,7 @@ public abstract class ObjectChange {
 
     private String objectId;
 
-    private Long version;
+    private BigInteger version;
 
     private ObjectChangeType type = ObjectChangeType.wrapped;
 
@@ -789,7 +814,7 @@ public abstract class ObjectChange {
      *
      * @return the version
      */
-    public Long getVersion() {
+    public BigInteger getVersion() {
       return version;
     }
 
@@ -798,7 +823,7 @@ public abstract class ObjectChange {
      *
      * @param version the version
      */
-    public void setVersion(Long version) {
+    public void setVersion(BigInteger version) {
       this.version = version;
     }
 
@@ -872,7 +897,7 @@ public abstract class ObjectChange {
 
     private String objectId;
 
-    private Long version;
+    private BigInteger version;
 
     private String digest;
 
@@ -955,7 +980,7 @@ public abstract class ObjectChange {
      *
      * @return the version
      */
-    public Long getVersion() {
+    public BigInteger getVersion() {
       return version;
     }
 
@@ -964,7 +989,7 @@ public abstract class ObjectChange {
      *
      * @param version the version
      */
-    public void setVersion(Long version) {
+    public void setVersion(BigInteger version) {
       this.version = version;
     }
 

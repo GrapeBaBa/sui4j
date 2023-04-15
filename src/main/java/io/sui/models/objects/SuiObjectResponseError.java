@@ -17,6 +17,7 @@
 package io.sui.models.objects;
 
 
+import java.math.BigInteger;
 import java.util.Objects;
 
 /**
@@ -27,32 +28,16 @@ import java.util.Objects;
  */
 public class SuiObjectResponseError {
 
-  private String tag;
+  private String code;
+
+  private String error;
 
   @SuppressWarnings("checkstyle:MemberName")
   private String object_id;
 
-  private Long version;
+  private BigInteger version;
 
   private String digest;
-
-  /**
-   * Gets tag.
-   *
-   * @return the tag
-   */
-  public String getTag() {
-    return tag;
-  }
-
-  /**
-   * Sets tag.
-   *
-   * @param tag the tag
-   */
-  public void setTag(String tag) {
-    this.tag = tag;
-  }
 
   /**
    * Gets object id.
@@ -78,7 +63,7 @@ public class SuiObjectResponseError {
    *
    * @return the version
    */
-  public Long getVersion() {
+  public BigInteger getVersion() {
     return version;
   }
 
@@ -87,7 +72,7 @@ public class SuiObjectResponseError {
    *
    * @param version the version
    */
-  public void setVersion(Long version) {
+  public void setVersion(BigInteger version) {
     this.version = version;
   }
 
@@ -109,6 +94,42 @@ public class SuiObjectResponseError {
     this.digest = digest;
   }
 
+  /**
+   * Gets code.
+   *
+   * @return the code
+   */
+  public String getCode() {
+    return code;
+  }
+
+  /**
+   * Sets code.
+   *
+   * @param code the code
+   */
+  public void setCode(String code) {
+    this.code = code;
+  }
+
+  /**
+   * Gets error.
+   *
+   * @return the error
+   */
+  public String getError() {
+    return error;
+  }
+
+  /**
+   * Sets error.
+   *
+   * @param error the error
+   */
+  public void setError(String error) {
+    this.error = error;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -118,7 +139,8 @@ public class SuiObjectResponseError {
       return false;
     }
     SuiObjectResponseError that = (SuiObjectResponseError) o;
-    return tag.equals(that.tag)
+    return code.equals(that.code)
+        && error.equals(that.error)
         && object_id.equals(that.object_id)
         && version.equals(that.version)
         && digest.equals(that.digest);
@@ -126,14 +148,17 @@ public class SuiObjectResponseError {
 
   @Override
   public int hashCode() {
-    return Objects.hash(tag, object_id, version, digest);
+    return Objects.hash(code, error, object_id, version, digest);
   }
 
   @Override
   public String toString() {
     return "SuiObjectResponseError{"
-        + "tag='"
-        + tag
+        + "code='"
+        + code
+        + '\''
+        + ", error='"
+        + error
         + '\''
         + ", object_id='"
         + object_id

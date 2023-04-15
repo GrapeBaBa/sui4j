@@ -614,6 +614,9 @@ public class TransactionBlock {
   @SuppressWarnings("unchecked")
   private CompletableFuture<SuiObjectRef> selectGas(
       String signer, Long budget, Long gasPrice, List<String> excludeObjects) {
+    if (budget < gasPrice) {
+      throw new GasBudgetLessThanGasPriceException(budget, gasPrice);
+    }
     final ObjectResponseQuery objectResponseQuery = new ObjectResponseQuery();
     ObjectDataOptions objectDataOptions = new ObjectDataOptions();
     objectDataOptions.setShowPreviousTransaction(true);
@@ -623,7 +626,7 @@ public class TransactionBlock {
     objectDataOptions.setShowBcs(true);
     objectResponseQuery.setOptions(objectDataOptions);
     return queryClient
-        .getObjectsOwnedByAddress(signer, objectResponseQuery, null, null, null)
+        .getObjectsOwnedByAddress(signer, objectResponseQuery, null, null)
         .thenCompose(
             (Function<PaginatedObjectsResponse, CompletableFuture<SuiObjectRef>>)
                 paginatedObjectsResponse -> {
@@ -648,14 +651,10 @@ public class TransactionBlock {
                                       } catch (DeserializationError e) {
                                         throw new BcsSerializationException(e);
                                       }
-                                      final long requiredGasAmount =
-                                          BigInteger.valueOf(budget)
-                                              .multiply(BigInteger.valueOf(gasPrice))
-                                              .longValue();
 
                                       if (!excludeObjects.contains(
                                               objectResponse.getData().getObjectId())
-                                          && gasCoin.value.balance.value >= requiredGasAmount) {
+                                          && gasCoin.value.balance.value >= budget) {
                                         return CompletableFuture.completedFuture(
                                             Optional.of(objectResponse.getData().getRef()));
                                       }
@@ -1000,7 +999,10 @@ public class TransactionBlock {
                 objectIdBuilder.value = accountAddressBuilder.build();
                 SequenceNumber.Builder seqBuilder = new SequenceNumber.Builder();
                 seqBuilder.value =
-                    ((SuiObjectOwner.SharedOwner) owner).getShared().getInitial_shared_version();
+                    ((SuiObjectOwner.SharedOwner) owner)
+                        .getShared()
+                        .getInitial_shared_version()
+                        .longValue();
                 SharedObject.Builder sharedObjectBuilder = new SharedObject.Builder();
                 sharedObjectBuilder.id = objectIdBuilder.build();
                 sharedObjectBuilder.initial_shared_version = seqBuilder.build();
@@ -1060,7 +1062,7 @@ public class TransactionBlock {
     objectIdBuilder.value = addressBuilder.build();
 
     SequenceNumber.Builder sequenceNumberBuilder = new SequenceNumber.Builder();
-    sequenceNumberBuilder.value = objRef.getVersion();
+    sequenceNumberBuilder.value = objRef.getVersion().longValue();
     Digest.Builder digestBuilder = new Digest.Builder();
     digestBuilder.value = Bytes.valueOf(Base58.decode(objRef.getDigest()));
     ObjectDigest.Builder objectDigestBuilder = new ObjectDigest.Builder();

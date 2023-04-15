@@ -87,15 +87,10 @@ public class QueryClientImpl implements QueryClient {
 
   @Override
   public CompletableFuture<PaginatedObjectsResponse> getObjectsOwnedByAddress(
-      String address,
-      ObjectResponseQuery query,
-      String cursor,
-      Integer limit,
-      String checkpointId) {
+      String address, ObjectResponseQuery query, String cursor, Integer limit) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "suix_getOwnedObjects",
-            Lists.newArrayList(address, query, cursor, limit, checkpointId));
+            "suix_getOwnedObjects", Lists.newArrayList(address, query, cursor, limit));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
         "/suix_getOwnedObjects", request, new TypeToken<PaginatedObjectsResponse>() {}.getType());
   }
@@ -262,6 +257,16 @@ public class QueryClientImpl implements QueryClient {
   }
 
   @Override
+  public CompletableFuture<PaginatedObjectsResponse> queryObjects(
+      ObjectResponseQuery query, String cursor, Integer limit) {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "suix_queryObjects", Lists.newArrayList(query, cursor, limit));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/suix_queryObjects", request, new TypeToken<PaginatedObjectsResponse>() {}.getType());
+  }
+
+  @Override
   public CompletableFuture<CoinMetadata> getCoinMetadata(String coinType) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
@@ -289,12 +294,13 @@ public class QueryClientImpl implements QueryClient {
   }
 
   @Override
-  public CompletableFuture<PaginatedCoins> getAllCoins(String address, String cursor, long limit) {
+  public CompletableFuture<PaginatedCoins> getAllCoins(
+      String address, String cursor, Integer limit) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_getAllCoins", Lists.newArrayList(address, cursor, limit));
+            "suix_getAllCoins", Lists.newArrayList(address, cursor, limit));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getAllCoins", request, new TypeToken<PaginatedCoins>() {}.getType());
+        "/suix_getAllCoins", request, new TypeToken<PaginatedCoins>() {}.getType());
   }
 
   @Override
@@ -317,9 +323,9 @@ public class QueryClientImpl implements QueryClient {
     }
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_getBalance", Lists.newArrayList(address, coinType));
+            "suix_getBalance", Lists.newArrayList(address, coinType));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getBalance", request, new TypeToken<Balance>() {}.getType());
+        "/suix_getBalance", request, new TypeToken<Balance>() {}.getType());
   }
 
   @Override

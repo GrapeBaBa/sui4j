@@ -36,6 +36,7 @@ public abstract class ExecutionFailureStatus {
             case 25: return PublishUpgradeMissingDependency.load(deserializer);
             case 26: return PublishUpgradeDependencyDowngrade.load(deserializer);
             case 27: return PackageUpgradeError.load(deserializer);
+            case 28: return WrittenObjectsTooLarge.load(deserializer);
             default: throw new com.novi.serde.DeserializationError("Unknown variant index for ExecutionFailureStatus: " + index);
         }
     }
@@ -1301,6 +1302,64 @@ public abstract class ExecutionFailureStatus {
             public PackageUpgradeError build() {
                 return new PackageUpgradeError(
                     upgrade_error
+                );
+            }
+        }
+    }
+
+    public static final class WrittenObjectsTooLarge extends ExecutionFailureStatus {
+        public final @com.novi.serde.Unsigned Long current_size;
+        public final @com.novi.serde.Unsigned Long max_size;
+
+        public WrittenObjectsTooLarge(@com.novi.serde.Unsigned Long current_size, @com.novi.serde.Unsigned Long max_size) {
+            java.util.Objects.requireNonNull(current_size, "current_size must not be null");
+            java.util.Objects.requireNonNull(max_size, "max_size must not be null");
+            this.current_size = current_size;
+            this.max_size = max_size;
+        }
+
+        public void serialize(com.novi.serde.Serializer serializer) throws com.novi.serde.SerializationError {
+            serializer.increase_container_depth();
+            serializer.serialize_variant_index(28);
+            serializer.serialize_u64(current_size);
+            serializer.serialize_u64(max_size);
+            serializer.decrease_container_depth();
+        }
+
+        static WrittenObjectsTooLarge load(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
+            deserializer.increase_container_depth();
+            Builder builder = new Builder();
+            builder.current_size = deserializer.deserialize_u64();
+            builder.max_size = deserializer.deserialize_u64();
+            deserializer.decrease_container_depth();
+            return builder.build();
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            WrittenObjectsTooLarge other = (WrittenObjectsTooLarge) obj;
+            if (!java.util.Objects.equals(this.current_size, other.current_size)) { return false; }
+            if (!java.util.Objects.equals(this.max_size, other.max_size)) { return false; }
+            return true;
+        }
+
+        public int hashCode() {
+            int value = 7;
+            value = 31 * value + (this.current_size != null ? this.current_size.hashCode() : 0);
+            value = 31 * value + (this.max_size != null ? this.max_size.hashCode() : 0);
+            return value;
+        }
+
+        public static final class Builder {
+            public @com.novi.serde.Unsigned Long current_size;
+            public @com.novi.serde.Unsigned Long max_size;
+
+            public WrittenObjectsTooLarge build() {
+                return new WrittenObjectsTooLarge(
+                    current_size,
+                    max_size
                 );
             }
         }

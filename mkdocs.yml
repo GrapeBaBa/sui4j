@@ -37,33 +37,33 @@ theme:
     # - toc.integrate
   palette:
     - scheme: default
-      primary: indigo
-      accent: indigo
+      primary: white
+      accent: white
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     - scheme: slate
-      primary: indigo
-      accent: indigo
+      primary: white
+      accent: white
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
   font:
     text: Roboto
     code: Roboto Mono
-  logo: SuiLogo.png
-  favicon: favicon16x16.png
+  logo: sui4j.png
+  favicon: sui4j.png
 
 nav:
   - Home: index.md
   - Quickstart: quickstart.md
   - Getting Started:
       - Init sui client: initsui.md
+      - New address: address.md
       - Coin transaction: coin.md
       - Object and Smart Contract: call.md
       - Subscribe Events: event.md
   - Build: build.md
-#      - Manual Configuration: getting_started/manual_configuration.md
 
 markdown_extensions:
   - abbr

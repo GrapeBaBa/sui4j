@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -17,6 +17,7 @@
 package io.sui.models.objects;
 
 
+import java.math.BigInteger;
 import java.util.Objects;
 
 /**
@@ -134,14 +135,14 @@ public interface SuiObjectOwner {
     public static class Shared {
 
       @SuppressWarnings("checkstyle:MemberName")
-      private Long initial_shared_version;
+      private BigInteger initial_shared_version;
 
       /**
        * Gets initial shared version.
        *
        * @return the initial shared version
        */
-      public Long getInitial_shared_version() {
+      public BigInteger getInitial_shared_version() {
         return initial_shared_version;
       }
 
@@ -151,7 +152,7 @@ public interface SuiObjectOwner {
        * @param initial_shared_version the initial shared version
        */
       @SuppressWarnings("checkstyle:ParameterName")
-      public void setInitial_shared_version(Long initial_shared_version) {
+      public void setInitial_shared_version(BigInteger initial_shared_version) {
         this.initial_shared_version = initial_shared_version;
       }
 

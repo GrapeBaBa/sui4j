@@ -25,12 +25,11 @@ import io.sui.jsonrpc.JsonHandler;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
 import io.sui.models.SuiApiException;
-import io.sui.models.events.EventEnvelope;
 import io.sui.models.events.EventFilter;
 import io.sui.models.events.EventFilter.AllEventFilter;
-import io.sui.models.events.EventFilter.EventTypeEventFilter;
-import io.sui.models.events.EventFilter.ModuleEventFilter;
-import io.sui.models.events.EventType;
+import io.sui.models.events.EventFilter.MoveModuleEventFilter;
+import io.sui.models.events.SuiEvent;
+import io.sui.models.objects.MoveModule;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,15 +62,15 @@ public class EventClientImplIntTests {
   void subscribeEvent() {
     EventFilter.PackageEventFilter packageEventFilter = new EventFilter.PackageEventFilter();
     packageEventFilter.setSuiPackage("0x2");
-    EventFilter.ModuleEventFilter moduleEventFilter = new ModuleEventFilter();
-    moduleEventFilter.setModule("devnet_nft");
-    EventFilter.EventTypeEventFilter eventTypeEventFilter = new EventTypeEventFilter();
-    eventTypeEventFilter.setEventType(EventType.MoveEvent);
+    MoveModuleEventFilter moveModuleEventFilter = new MoveModuleEventFilter();
+    MoveModule moveModule = new MoveModule();
+    moveModule.setSuiPackage("0x2");
+    moveModule.setModule("devnet_nft");
+    moveModuleEventFilter.setModule(moveModule);
     EventFilter.AllEventFilter allEventFilter = new AllEventFilter();
     allEventFilter.getAll().add(packageEventFilter);
-    allEventFilter.getAll().add(moduleEventFilter);
-    allEventFilter.getAll().add(eventTypeEventFilter);
-    Consumer<EventEnvelope> onNext = System.out::println;
+    allEventFilter.getAll().add(moveModuleEventFilter);
+    Consumer<SuiEvent> onNext = System.out::println;
 
     Consumer<SuiApiException> onError = Throwable::printStackTrace;
     eventClient.subscribeEvent(allEventFilter, onNext, onError);

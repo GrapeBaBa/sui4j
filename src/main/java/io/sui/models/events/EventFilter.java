@@ -18,6 +18,7 @@ package io.sui.models.events;
 
 
 import com.google.common.collect.Lists;
+import io.sui.models.objects.MoveModule;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -146,28 +147,28 @@ public abstract class EventFilter {
     }
   }
 
-  /** The type Module event filter. */
-  public static class ModuleEventFilter extends EventFilter {
+  /** The type Transaction event filter. */
+  public static class TransactionEventFilter extends EventFilter {
 
     @SuppressWarnings("checkstyle:MemberName")
-    private String Module;
+    private String Transaction;
 
     /**
-     * Gets module.
+     * Gets transaction.
      *
-     * @return the module
+     * @return the transaction
      */
-    public String getModule() {
-      return Module;
+    public String getTransaction() {
+      return Transaction;
     }
 
     /**
-     * Sets module.
+     * Sets transaction.
      *
-     * @param module the module
+     * @param transaction the transaction
      */
-    public void setModule(String module) {
-      Module = module;
+    public void setTransaction(String transaction) {
+      Transaction = transaction;
     }
 
     @Override
@@ -175,21 +176,68 @@ public abstract class EventFilter {
       if (this == o) {
         return true;
       }
-      if (!(o instanceof ModuleEventFilter)) {
+      if (!(o instanceof TransactionEventFilter)) {
         return false;
       }
-      ModuleEventFilter moduleEventFilter = (ModuleEventFilter) o;
-      return Module.equals(moduleEventFilter.Module);
+      TransactionEventFilter that = (TransactionEventFilter) o;
+      return Transaction.equals(that.Transaction);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(Module);
+      return Objects.hash(Transaction);
     }
 
     @Override
     public String toString() {
-      return "Module{" + "Module='" + Module + '\'' + '}';
+      return "TransactionEventFilter{" + "Transaction='" + Transaction + '\'' + '}';
+    }
+  }
+
+  /** The type Module event filter. */
+  public static class MoveModuleEventFilter extends EventFilter {
+
+    @SuppressWarnings("checkstyle:MemberName")
+    private MoveModule MoveModule;
+
+    /**
+     * Gets module.
+     *
+     * @return the module
+     */
+    public MoveModule getModule() {
+      return MoveModule;
+    }
+
+    /**
+     * Sets module.
+     *
+     * @param module the module
+     */
+    public void setModule(MoveModule module) {
+      MoveModule = module;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof MoveModuleEventFilter)) {
+        return false;
+      }
+      MoveModuleEventFilter moveModuleEventFilter = (MoveModuleEventFilter) o;
+      return MoveModule.equals(moveModuleEventFilter.MoveModule);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(MoveModule);
+    }
+
+    @Override
+    public String toString() {
+      return "MoveModule{" + "MoveModule='" + MoveModule + '\'' + '}';
     }
   }
 
@@ -291,24 +339,24 @@ public abstract class EventFilter {
   public static class SenderAddressEventFilter extends EventFilter {
 
     @SuppressWarnings("checkstyle:MemberName")
-    private String SenderAddress;
+    private String Sender;
 
     /**
      * Gets sender address.
      *
      * @return the sender address
      */
-    public String getSenderAddress() {
-      return SenderAddress;
+    public String getSender() {
+      return Sender;
     }
 
     /**
      * Sets sender address.
      *
-     * @param senderAddress the sender address
+     * @param sender the sender address
      */
-    public void setSenderAddress(String senderAddress) {
-      SenderAddress = senderAddress;
+    public void setSender(String sender) {
+      Sender = sender;
     }
 
     @Override
@@ -320,64 +368,17 @@ public abstract class EventFilter {
         return false;
       }
       SenderAddressEventFilter that = (SenderAddressEventFilter) o;
-      return SenderAddress.equals(that.SenderAddress);
+      return Sender.equals(that.Sender);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(SenderAddress);
+      return Objects.hash(Sender);
     }
 
     @Override
     public String toString() {
-      return "SenderAddressEventFilter{" + "SenderAddress='" + SenderAddress + '\'' + '}';
-    }
-  }
-
-  /** The type Event type event filter. */
-  public static class EventTypeEventFilter extends EventFilter {
-
-    @SuppressWarnings("checkstyle:MemberName")
-    private EventType EventType;
-
-    /**
-     * Gets event type.
-     *
-     * @return the event type
-     */
-    public EventType getEventType() {
-      return EventType;
-    }
-
-    /**
-     * Sets event type.
-     *
-     * @param eventType the event type
-     */
-    public void setEventType(EventType eventType) {
-      EventType = eventType;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (!(o instanceof EventTypeEventFilter)) {
-        return false;
-      }
-      EventTypeEventFilter that = (EventTypeEventFilter) o;
-      return EventType == that.EventType;
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(EventType);
-    }
-
-    @Override
-    public String toString() {
-      return "EventTypeEventFilter{" + "EventType=" + EventType + '}';
+      return "SenderAddressEventFilter{" + "SenderAddress='" + Sender + '\'' + '}';
     }
   }
 
@@ -548,6 +549,123 @@ public abstract class EventFilter {
     @Override
     public String toString() {
       return "OrEventFilter{" + "Or=" + Arrays.toString(Or) + '}';
+    }
+  }
+
+  /** The type Time range filter. */
+  public static class TimeRangeFilter extends EventFilter {
+
+    /** The type Time range. */
+    public static class TimeRange {
+
+      @SuppressWarnings("checkstyle:MemberName")
+      private Long start_time;
+
+      @SuppressWarnings("checkstyle:MemberName")
+      private Long end_time;
+
+      /**
+       * Gets start time.
+       *
+       * @return the start time
+       */
+      public Long getStart_time() {
+        return start_time;
+      }
+
+      /**
+       * Sets start time.
+       *
+       * @param start_time the start time
+       */
+      @SuppressWarnings("checkstyle:ParameterName")
+      public void setStart_time(Long start_time) {
+        this.start_time = start_time;
+      }
+
+      /**
+       * Gets end time.
+       *
+       * @return the end time
+       */
+      public Long getEnd_time() {
+        return end_time;
+      }
+
+      /**
+       * Sets end time.
+       *
+       * @param end_time the end time
+       */
+      @SuppressWarnings("checkstyle:ParameterName")
+      public void setEnd_time(Long end_time) {
+        this.end_time = end_time;
+      }
+
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof TimeRange)) {
+          return false;
+        }
+        TimeRange timeRange = (TimeRange) o;
+        return start_time.equals(timeRange.start_time) && end_time.equals(timeRange.end_time);
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hash(start_time, end_time);
+      }
+
+      @Override
+      public String toString() {
+        return "TimeRange{" + "start_time=" + start_time + ", end_time=" + end_time + '}';
+      }
+    }
+
+    @SuppressWarnings("checkstyle:MemberName")
+    private TimeRange TimeRange;
+
+    /**
+     * Gets time range.
+     *
+     * @return the time range
+     */
+    public TimeRangeFilter.TimeRange getTimeRange() {
+      return TimeRange;
+    }
+
+    /**
+     * Sets time range.
+     *
+     * @param timeRange the time range
+     */
+    public void setTimeRange(TimeRangeFilter.TimeRange timeRange) {
+      TimeRange = timeRange;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof TimeRangeFilter)) {
+        return false;
+      }
+      TimeRangeFilter that = (TimeRangeFilter) o;
+      return TimeRange.equals(that.TimeRange);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(TimeRange);
+    }
+
+    @Override
+    public String toString() {
+      return "TimeRangeFilter{" + "TimeRange=" + TimeRange + '}';
     }
   }
 }

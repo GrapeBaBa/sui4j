@@ -26,7 +26,7 @@ import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.sui.jsonrpc.JsonRpc20Response.Error;
 import io.sui.jsonrpc.JsonRpc20Response.Error.ErrorCode;
 import io.sui.models.SuiApiException;
-import io.sui.models.events.EventEnvelope;
+import io.sui.models.events.SuiEvent;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.Duration;
@@ -166,7 +166,7 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
   @SuppressWarnings("checkstyle:Indentation")
   @Override
   public Disposable subscribe(
-      JsonRpc20Request request, Consumer<EventEnvelope> onNext, Consumer<SuiApiException> onError) {
+      JsonRpc20Request request, Consumer<SuiEvent> onNext, Consumer<SuiApiException> onError) {
     final String subscribeRequestBodyJsonStr = this.jsonHandler.toJson(request);
     System.out.println(subscribeRequestBodyJsonStr);
     final CompletableFuture<Object> subscriptionResponseFuture = new CompletableFuture<>();
@@ -266,10 +266,10 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
     return future;
   }
 
-  private void unsubscribe(JsonRpc20Request request) throws IOException {
+  private void unsubscribe(JsonRpc20Request request) {
     final Long subscriptionId = requestIdToSubscriptionIds.get(request.getId());
     final JsonRpc20Request unsubscribeRequest =
-        createJsonRpc20Request("sui_unsubscribeEvent", Lists.newArrayList(subscriptionId));
+        createJsonRpc20Request("suix_unsubscribeEvent", Lists.newArrayList(subscriptionId));
     final String unsubscribeRequestBodyJsonStr = jsonHandler.toJson(unsubscribeRequest);
     final CompletableFuture<Object> unsubscribeResultFuture = new CompletableFuture<>();
     requestIdToReplies.put(unsubscribeRequest.getId(), unsubscribeResultFuture);

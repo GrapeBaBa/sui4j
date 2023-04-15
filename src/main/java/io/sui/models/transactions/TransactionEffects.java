@@ -19,6 +19,7 @@ package io.sui.models.transactions;
 
 import io.sui.models.objects.SuiObjectRef;
 import io.sui.models.objects.SuiOwnerObjectRef;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,7 +35,9 @@ public class TransactionEffects {
 
   private ExecutionStatus status;
 
-  private Long executedEpoch;
+  private BigInteger executedEpoch;
+
+  private List<TransactionEffectsModifiedAtVersions> modifiedAtVersions;
 
   private GasCostSummary gasUsed;
 
@@ -102,7 +105,7 @@ public class TransactionEffects {
    *
    * @return the executed epoch
    */
-  public Long getExecutedEpoch() {
+  public BigInteger getExecutedEpoch() {
     return executedEpoch;
   }
 
@@ -111,7 +114,7 @@ public class TransactionEffects {
    *
    * @param executedEpoch the executed epoch
    */
-  public void setExecutedEpoch(Long executedEpoch) {
+  public void setExecutedEpoch(BigInteger executedEpoch) {
     this.executedEpoch = executedEpoch;
   }
 
@@ -332,6 +335,14 @@ public class TransactionEffects {
     this.dependencies = dependencies;
   }
 
+  public List<TransactionEffectsModifiedAtVersions> getModifiedAtVersions() {
+    return modifiedAtVersions;
+  }
+
+  public void setModifiedAtVersions(List<TransactionEffectsModifiedAtVersions> modifiedAtVersions) {
+    this.modifiedAtVersions = modifiedAtVersions;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -344,6 +355,7 @@ public class TransactionEffects {
     return messageVersion.equals(that.messageVersion)
         && status.equals(that.status)
         && executedEpoch.equals(that.executedEpoch)
+        && modifiedAtVersions.equals(that.modifiedAtVersions)
         && gasUsed.equals(that.gasUsed)
         && sharedObjects.equals(that.sharedObjects)
         && transactionDigest.equals(that.transactionDigest)
@@ -364,6 +376,7 @@ public class TransactionEffects {
         messageVersion,
         status,
         executedEpoch,
+        modifiedAtVersions,
         gasUsed,
         sharedObjects,
         transactionDigest,
@@ -388,6 +401,8 @@ public class TransactionEffects {
         + status
         + ", executedEpoch="
         + executedEpoch
+        + ", modifiedAtVersions="
+        + modifiedAtVersions
         + ", gasUsed="
         + gasUsed
         + ", sharedObjects="

@@ -17,6 +17,7 @@
 package io.sui.models.objects;
 
 
+import java.math.BigInteger;
 import java.util.Map;
 import java.util.Objects;
 
@@ -37,7 +38,7 @@ public abstract class SuiRawData {
 
     private Map<String, String> moduleMap;
 
-    private Long version;
+    private BigInteger version;
 
     public String getId() {
       return id;
@@ -63,11 +64,11 @@ public abstract class SuiRawData {
       this.moduleMap = moduleMap;
     }
 
-    public Long getVersion() {
+    public BigInteger getVersion() {
       return version;
     }
 
-    public void setVersion(Long version) {
+    public void setVersion(BigInteger version) {
       this.version = version;
     }
 
@@ -117,7 +118,7 @@ public abstract class SuiRawData {
 
     private String type;
 
-    private Long version;
+    private BigInteger version;
 
     private String bcsBytes;
 
@@ -185,11 +186,11 @@ public abstract class SuiRawData {
       this.bcsBytes = bcsBytes;
     }
 
-    public Long getVersion() {
+    public BigInteger getVersion() {
       return version;
     }
 
-    public void setVersion(Long version) {
+    public void setVersion(BigInteger version) {
       this.version = version;
     }
 
