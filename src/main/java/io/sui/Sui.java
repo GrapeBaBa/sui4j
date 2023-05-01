@@ -42,8 +42,8 @@ import io.sui.crypto.KeyStore;
 import io.sui.crypto.SignatureScheme;
 import io.sui.crypto.SigningException;
 import io.sui.crypto.SuiKeyPair;
-import io.sui.jsonrpc.GsonJsonHandler;
-import io.sui.jsonrpc.JsonHandler;
+import io.sui.json.GsonJsonHandler;
+import io.sui.json.JsonHandler;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
 import io.sui.models.FaucetResponse;
@@ -77,6 +77,7 @@ import io.sui.models.transactions.TransactionBlockResponse;
 import io.sui.models.transactions.TransactionBlockResponseOptions;
 import io.sui.models.transactions.TransactionBlockResponseQuery;
 import io.sui.models.transactions.TransactionEffects;
+import io.sui.models.transactions.TransactionFilter;
 import io.sui.models.transactions.TypeTag;
 import java.util.List;
 import java.util.Map;
@@ -479,6 +480,21 @@ public class Sui {
   public Disposable subscribeEvent(
       EventFilter eventFilter, Consumer<SuiEvent> onNext, Consumer<SuiApiException> onError) {
     return this.eventClient.subscribeEvent(eventFilter, onNext, onError);
+  }
+
+  /**
+   * Subscribe transaction disposable.
+   *
+   * @param transactionFilter the transaction filter
+   * @param onNext the on next
+   * @param onError the on error
+   * @return the disposable
+   */
+  public Disposable subscribeTransaction(
+      TransactionFilter transactionFilter,
+      Consumer<TransactionEffects> onNext,
+      Consumer<SuiApiException> onError) {
+    return this.eventClient.subscribeTransaction(transactionFilter, onNext, onError);
   }
 
   /**

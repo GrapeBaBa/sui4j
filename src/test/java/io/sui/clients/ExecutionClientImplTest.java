@@ -20,8 +20,8 @@ import static io.sui.models.transactions.ExecutionStatus.ExecutionStatusType.suc
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.io.Resources;
-import io.sui.jsonrpc.GsonJsonHandler;
-import io.sui.jsonrpc.JsonHandler;
+import io.sui.json.GsonJsonHandler;
+import io.sui.json.JsonHandler;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
 import io.sui.models.transactions.TransactionEffects;

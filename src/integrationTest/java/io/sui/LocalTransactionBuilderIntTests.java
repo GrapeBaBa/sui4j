@@ -17,8 +17,8 @@
 package io.sui;
 
 
-import io.sui.jsonrpc.GsonJsonHandler;
-import io.sui.jsonrpc.JsonHandler;
+import io.sui.json.GsonJsonHandler;
+import io.sui.json.JsonHandler;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
 import org.junit.jupiter.api.BeforeAll;

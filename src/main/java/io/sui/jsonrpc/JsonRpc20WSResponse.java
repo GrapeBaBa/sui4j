@@ -17,7 +17,6 @@
 package io.sui.jsonrpc;
 
 
-import io.sui.models.events.SuiEvent;
 import java.util.Objects;
 
 /**
@@ -27,14 +26,14 @@ import java.util.Objects;
  * @since 2022.11
  */
 @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-public class JsonRpc20WSResponse {
+public class JsonRpc20WSResponse<T> {
 
   /** The type Params. */
-  public static class Params {
+  public static class Params<T> {
 
     private Long subscription;
 
-    private SuiEvent result;
+    private T result;
 
     /**
      * Gets subscription.
@@ -59,7 +58,7 @@ public class JsonRpc20WSResponse {
      *
      * @return the result
      */
-    public SuiEvent getResult() {
+    public T getResult() {
       return result;
     }
 
@@ -68,7 +67,7 @@ public class JsonRpc20WSResponse {
      *
      * @param result the result
      */
-    public void setResult(SuiEvent result) {
+    public void setResult(T result) {
       this.result = result;
     }
 
@@ -80,8 +79,9 @@ public class JsonRpc20WSResponse {
       if (!(o instanceof Params)) {
         return false;
       }
-      Params params = (Params) o;
-      return subscription.equals(params.subscription) && result.equals(params.result);
+      Params<?> params = (Params<?>) o;
+      return Objects.equals(subscription, params.subscription)
+          && Objects.equals(result, params.result);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class JsonRpc20WSResponse {
 
   private String method;
 
-  private Params params;
+  private Params<T> params;
 
   /**
    * Gets jsonrpc.
@@ -137,21 +137,11 @@ public class JsonRpc20WSResponse {
     this.method = method;
   }
 
-  /**
-   * Gets params.
-   *
-   * @return the params
-   */
-  public Params getParams() {
+  public Params<T> getParams() {
     return params;
   }
 
-  /**
-   * Sets params.
-   *
-   * @param params the params
-   */
-  public void setParams(Params params) {
+  public void setParams(Params<T> params) {
     this.params = params;
   }
 
@@ -163,8 +153,10 @@ public class JsonRpc20WSResponse {
     if (!(o instanceof JsonRpc20WSResponse)) {
       return false;
     }
-    JsonRpc20WSResponse that = (JsonRpc20WSResponse) o;
-    return jsonrpc.equals(that.jsonrpc) && method.equals(that.method) && params.equals(that.params);
+    JsonRpc20WSResponse<?> that = (JsonRpc20WSResponse<?>) o;
+    return Objects.equals(jsonrpc, that.jsonrpc)
+        && Objects.equals(method, that.method)
+        && Objects.equals(params, that.params);
   }
 
   @Override

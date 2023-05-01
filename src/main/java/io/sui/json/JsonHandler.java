@@ -14,9 +14,12 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.jsonrpc;
+package io.sui.json;
 
 
+import io.sui.jsonrpc.JsonRpc20Request;
+import io.sui.jsonrpc.JsonRpc20Response;
+import io.sui.jsonrpc.JsonRpc20WSResponse;
 import io.sui.models.FaucetResponse;
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -40,12 +43,14 @@ public interface JsonHandler {
   <T> JsonRpc20Response<T> fromJson(String response, Type typeT);
 
   /**
-   * From json json rpc 20 ws response.
+   * From ws json json rpc 20 ws response.
    *
    * @param response the response
+   * @param typeT the type t
    * @return the json rpc 20 ws response
    */
-  JsonRpc20WSResponse fromJson(String response);
+  @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+  JsonRpc20WSResponse<?> fromWSJson(String response, Type typeT);
 
   /**
    * From json faucet faucet response.

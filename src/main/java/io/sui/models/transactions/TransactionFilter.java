@@ -17,6 +17,7 @@
 package io.sui.models.transactions;
 
 
+import io.sui.models.transactions.TransactionFilter.FromAndToAddress;
 import java.util.Objects;
 
 /**
@@ -259,6 +260,176 @@ public abstract class TransactionFilter {
     @Override
     public String toString() {
       return "ToAddressFilter{" + "ToAddress='" + ToAddress + '\'' + '}';
+    }
+  }
+
+  /** The type From and to address filter. */
+  public static class FromAndToAddressFilter extends TransactionFilter {
+
+    @SuppressWarnings("checkstyle:MemberName")
+    private FromAndToAddress FromAndToAddress;
+
+    /**
+     * Gets from and to address.
+     *
+     * @return the from and to address
+     */
+    public TransactionFilter.FromAndToAddress getFromAndToAddress() {
+      return FromAndToAddress;
+    }
+
+    /**
+     * Sets from and to address.
+     *
+     * @param fromAndToAddress the from and to address
+     */
+    public void setFromAndToAddress(TransactionFilter.FromAndToAddress fromAndToAddress) {
+      FromAndToAddress = fromAndToAddress;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof FromAndToAddressFilter)) {
+        return false;
+      }
+      FromAndToAddressFilter that = (FromAndToAddressFilter) o;
+      return Objects.equals(FromAndToAddress, that.FromAndToAddress);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(FromAndToAddress);
+    }
+
+    @Override
+    public String toString() {
+      return "FromAndToAddressFilter{" + "FromAndToAddress=" + FromAndToAddress + '}';
+    }
+  }
+
+  /** The type Transaction kind filter. */
+  public static class TransactionKindFilter extends TransactionFilter {
+
+    @SuppressWarnings("checkstyle:MemberName")
+    private String TransactionKind;
+
+    /**
+     * Gets transaction kind.
+     *
+     * @return the transaction kind
+     */
+    public String getTransactionKind() {
+      return TransactionKind;
+    }
+
+    /**
+     * Sets transaction kind.
+     *
+     * @param transactionKind the transaction kind
+     */
+    public void setTransactionKind(String transactionKind) {
+      TransactionKind = transactionKind;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof TransactionKindFilter)) {
+        return false;
+      }
+      TransactionKindFilter that = (TransactionKindFilter) o;
+      return TransactionKind.equals(that.TransactionKind);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(TransactionKind);
+    }
+
+    @Override
+    public String toString() {
+      return "TransactionKindFilter{" + "TransactionKind='" + TransactionKind + '\'' + '}';
+    }
+  }
+
+  /** The type From and to address. */
+  public static class FromAndToAddress {
+
+    @SuppressWarnings("checkstyle:MemberName")
+    private String FromAddress;
+
+    @SuppressWarnings("checkstyle:MemberName")
+    private String ToAddress;
+
+    /**
+     * Gets from address.
+     *
+     * @return the from address
+     */
+    public String getFromAddress() {
+      return FromAddress;
+    }
+
+    /**
+     * Sets from address.
+     *
+     * @param fromAddress the from address
+     */
+    public void setFromAddress(String fromAddress) {
+      FromAddress = fromAddress;
+    }
+
+    /**
+     * Gets to address.
+     *
+     * @return the to address
+     */
+    public String getToAddress() {
+      return ToAddress;
+    }
+
+    /**
+     * Sets to address.
+     *
+     * @param toAddress the to address
+     */
+    public void setToAddress(String toAddress) {
+      ToAddress = toAddress;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof FromAndToAddress)) {
+        return false;
+      }
+      FromAndToAddress that = (FromAndToAddress) o;
+      return Objects.equals(FromAddress, that.FromAddress)
+          && Objects.equals(ToAddress, that.ToAddress);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(FromAddress, ToAddress);
+    }
+
+    @Override
+    public String toString() {
+      return "FromAndToAddress{"
+          + "FromAddress='"
+          + FromAddress
+          + '\''
+          + ", ToAddress='"
+          + ToAddress
+          + '\''
+          + '}';
     }
   }
 }

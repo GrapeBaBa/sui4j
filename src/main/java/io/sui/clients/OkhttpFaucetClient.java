@@ -17,7 +17,7 @@
 package io.sui.clients;
 
 
-import io.sui.jsonrpc.JsonHandler;
+import io.sui.json.JsonHandler;
 import io.sui.models.FaucetResponse;
 import io.sui.models.SuiApiException;
 import java.io.IOException;

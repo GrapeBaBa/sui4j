@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import io.sui.clients.QueryClient;
 import io.sui.clients.QueryClientImpl;
-import io.sui.jsonrpc.GsonJsonHandler;
-import io.sui.jsonrpc.JsonHandler;
+import io.sui.json.GsonJsonHandler;
+import io.sui.json.JsonHandler;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
 import io.sui.models.events.EventQuery.TransactionEventQuery;

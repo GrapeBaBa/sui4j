@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -19,8 +19,8 @@ package io.sui;
 
 import io.sui.clients.ExecutionClient;
 import io.sui.clients.ExecutionClientImpl;
-import io.sui.jsonrpc.GsonJsonHandler;
-import io.sui.jsonrpc.JsonHandler;
+import io.sui.json.GsonJsonHandler;
+import io.sui.json.JsonHandler;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
 import io.sui.models.transactions.TransactionEffects;

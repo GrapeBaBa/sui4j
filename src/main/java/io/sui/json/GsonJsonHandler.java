@@ -14,7 +14,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.jsonrpc;
+package io.sui.json;
 
 
 import com.google.common.primitives.Bytes;
@@ -31,6 +31,10 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.ToNumberPolicy;
 import com.google.gson.internal.bind.TypeAdapters;
 import com.google.gson.reflect.TypeToken;
+import io.sui.jsonrpc.JsonRpc20Request;
+import io.sui.jsonrpc.JsonRpc20Response;
+import io.sui.jsonrpc.JsonRpc20Response.Error.ErrorCode;
+import io.sui.jsonrpc.JsonRpc20WSResponse;
 import io.sui.models.FaucetResponse;
 import io.sui.models.events.EventFilter;
 import io.sui.models.events.EventFilter.PackageEventFilter;
@@ -108,12 +112,10 @@ import java.util.stream.Collectors;
 public class GsonJsonHandler implements JsonHandler {
 
   /** The type Error code deserializer. */
-  public static class ErrorCodeDeserializer
-      implements JsonDeserializer<JsonRpc20Response.Error.ErrorCode> {
+  public static class ErrorCodeDeserializer implements JsonDeserializer<ErrorCode> {
 
     @Override
-    public JsonRpc20Response.Error.ErrorCode deserialize(
-        JsonElement json, Type typeOfT, JsonDeserializationContext context)
+    public ErrorCode deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
         throws JsonParseException {
       return JsonRpc20Response.Error.ErrorCode.valueOfCode(json.getAsInt());
     }
@@ -780,8 +782,9 @@ public class GsonJsonHandler implements JsonHandler {
   }
 
   @Override
-  public JsonRpc20WSResponse fromJson(String response) {
-    return this.gson.fromJson(response, JsonRpc20WSResponse.class);
+  public JsonRpc20WSResponse<?> fromWSJson(String response, Type typeOfT) {
+    Type type = TypeToken.getParameterized(JsonRpc20WSResponse.class, typeOfT).getType();
+    return this.gson.fromJson(response, type);
   }
 
   @Override

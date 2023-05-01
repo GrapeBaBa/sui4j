@@ -39,6 +39,7 @@ import io.sui.models.transactions.StructTag;
 import io.sui.models.transactions.TransactionBlockResponse;
 import io.sui.models.transactions.TransactionBlockResponseOptions;
 import io.sui.models.transactions.TransactionBlockResponseQuery;
+import io.sui.models.transactions.TransactionFilter.FromAddressFilter;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
@@ -59,11 +60,11 @@ import org.junit.jupiter.api.Test;
  */
 public class SuiIntTests {
 
-  //    private static final String BASE_URL = "http://localhost:9000";
-  private static final String BASE_NODE_URL = "https://fullnode.devnet.sui.io:443";
+  private static final String BASE_NODE_URL = "http://localhost:9000";
+  //  private static final String BASE_NODE_URL = "https://fullnode.devnet.sui.io:443";
 
-  //    private static final String BASE_FAUCET_URL = "http://localhost:9123";
-  private static final String BASE_FAUCET_URL = "https://faucet.devnet.sui.io";
+  private static final String BASE_FAUCET_URL = "http://localhost:9123";
+  //  private static final String BASE_FAUCET_URL = "https://faucet.devnet.sui.io";
 
   //  private static final String TEST_KEY_STORE_PATH =
   //      System.getProperty("user.home") + "/.sui/sui_config/sui.keystore";
@@ -332,7 +333,76 @@ public class SuiIntTests {
     Disposable disposable =
         SUI.subscribeEvent(eventFilter, System.out::println, System.out::println);
 
-    TimeUnit.SECONDS.sleep(10);
+    TimeUnit.SECONDS.sleep(60);
+
+    disposable.dispose();
+  }
+
+  @Test
+  @DisplayName("Test subscribeTransaction.")
+  void subscribeTransaction() throws InterruptedException, ExecutionException {
+    ObjectResponseQuery objectResponseQuery = new ObjectResponseQuery();
+    final Optional<String> sender =
+        SUI.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                            .get()
+                            .getData()
+                            .size()
+                        > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+
+    FromAddressFilter transactionFilter = new FromAddressFilter();
+    transactionFilter.setFromAddress(sender.get());
+
+    final SuiObjectResponse suiObjectResponse =
+        SUI.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null)
+            .get()
+            .getData()
+            .get(0);
+    TransactionBlockResponseOptions transactionBlockResponseOptions =
+        new TransactionBlockResponseOptions();
+    transactionBlockResponseOptions.setShowEffects(true);
+    transactionBlockResponseOptions.setShowEvents(true);
+    transactionBlockResponseOptions.setShowInput(true);
+    transactionBlockResponseOptions.setShowObjectChanges(true);
+
+    final io.sui.models.transactions.TypeTag.StructType structType =
+        new io.sui.models.transactions.TypeTag.StructType();
+    io.sui.models.transactions.StructTag structTag = new StructTag();
+    structTag.setAddress("0x02");
+    structTag.setModule("sui");
+    structTag.setName("SUI");
+    structType.setStructTag(structTag);
+
+    Disposable disposable =
+        SUI.subscribeTransaction(transactionFilter, System.out::println, System.out::println);
+
+    CompletableFuture<TransactionBlockResponse> res =
+        SUI.moveCall(
+            sender.get(),
+            "0x02",
+            "pay",
+            "split",
+            Lists.newArrayList(structType),
+            Lists.newArrayList(suiObjectResponse.getData().getObjectId(), 10000L),
+            null,
+            3000000L,
+            null,
+            null,
+            transactionBlockResponseOptions,
+            ExecuteTransactionRequestType.WaitForLocalExecution);
+
+    TimeUnit.SECONDS.sleep(5);
 
     disposable.dispose();
   }

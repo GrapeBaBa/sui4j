@@ -19,14 +19,17 @@ package io.sui.jsonrpc;
 import static org.apache.commons.lang3.StringUtils.replace;
 
 import com.google.common.collect.Lists;
+import com.google.common.reflect.TypeToken;
 import io.reactivex.rxjava3.core.BackpressureStrategy;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.sui.json.JsonHandler;
 import io.sui.jsonrpc.JsonRpc20Response.Error;
 import io.sui.jsonrpc.JsonRpc20Response.Error.ErrorCode;
 import io.sui.models.SuiApiException;
 import io.sui.models.events.SuiEvent;
+import io.sui.models.transactions.TransactionEffects;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.Duration;
@@ -69,10 +72,10 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
   private final ConcurrentHashMap<Long, CompletableFuture<Object>> requestIdToReplies =
       new ConcurrentHashMap<>();
 
-  private final ConcurrentHashMap<Long, PublishSubject<JsonRpc20WSResponse>> requestIdToSubjects =
-      new ConcurrentHashMap<>();
+  private final ConcurrentHashMap<Long, PublishSubject<JsonRpc20WSResponse<?>>>
+      requestIdToSubjects = new ConcurrentHashMap<>();
 
-  private final ConcurrentHashMap<Long, PublishSubject<JsonRpc20WSResponse>>
+  private final ConcurrentHashMap<Long, PublishSubject<JsonRpc20WSResponse<?>>>
       subscriptionIdToSubjects = new ConcurrentHashMap<>();
 
   private final ConcurrentHashMap<Long, Long> requestIdToSubscriptionIds =
@@ -122,7 +125,8 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
 
               @Override
               public void onMessage(WebSocket webSocket, String text) {
-                System.out.println(text);
+                LOGGER.trace("message body: {}", text);
+                System.out.printf("message body: %s%n", text);
                 final Map<String, Object> reply = jsonHandler.fromJsonMap(text);
                 if (null != reply.get("id")) {
                   CompletableFuture<Object> replayFuture =
@@ -144,8 +148,12 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
                   }
                   replayFuture.complete(reply.get("result"));
                 } else {
-                  final JsonRpc20WSResponse message = jsonHandler.fromJson(text);
-                  PublishSubject<JsonRpc20WSResponse> publishSubject =
+                  Type type =
+                      reply.get("method").equals("suix_subscribeTransaction")
+                          ? new TypeToken<TransactionEffects>() {}.getType()
+                          : new TypeToken<SuiEvent>() {}.getType();
+                  final JsonRpc20WSResponse<?> message = jsonHandler.fromWSJson(text, type);
+                  PublishSubject<JsonRpc20WSResponse<?>> publishSubject =
                       subscriptionIdToSubjects.get(message.getParams().getSubscription());
                   publishSubject.onNext(message);
                 }
@@ -163,21 +171,22 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
             });
   }
 
-  @SuppressWarnings("checkstyle:Indentation")
+  @SuppressWarnings({"checkstyle:Indentation", "unchecked"})
   @Override
-  public Disposable subscribe(
-      JsonRpc20Request request, Consumer<SuiEvent> onNext, Consumer<SuiApiException> onError) {
+  public <T> Disposable subscribe(
+      JsonRpc20Request request, Consumer<T> onNext, Consumer<SuiApiException> onError) {
     final String subscribeRequestBodyJsonStr = this.jsonHandler.toJson(request);
-    System.out.println(subscribeRequestBodyJsonStr);
+    LOGGER.info("subscribe request body: {}", subscribeRequestBodyJsonStr);
+    System.out.printf("subscribe request body: %s%n", subscribeRequestBodyJsonStr);
     final CompletableFuture<Object> subscriptionResponseFuture = new CompletableFuture<>();
     this.requestIdToReplies.put(request.getId(), subscriptionResponseFuture);
-    PublishSubject<JsonRpc20WSResponse> subject = PublishSubject.create();
+    PublishSubject<JsonRpc20WSResponse<?>> subject = PublishSubject.create();
     Disposable disposable =
         subject
             .doOnDispose(() -> unsubscribe(request))
             .toFlowable(BackpressureStrategy.BUFFER)
             .subscribe(
-                jsonRpc20Response -> onNext.accept(jsonRpc20Response.getParams().getResult()),
+                jsonRpc20Response -> onNext.accept((T) jsonRpc20Response.getParams().getResult()),
                 throwable -> onError.accept(new SuiApiException(throwable)));
 
     this.requestIdToSubjects.put(request.getId(), subject);
@@ -201,18 +210,18 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
   /**
    * Call completable future.
    *
-   * @param <T> the type parameter
    * @param request the request
    * @param url the url
    * @param typeOfT the type of t
    * @return the completable future
    */
-  public <T> CompletableFuture<JsonRpc20Response<T>> call(
+  public CompletableFuture<JsonRpc20Response<?>> call(
       JsonRpc20Request request, String url, Type typeOfT) {
-    final CompletableFuture<JsonRpc20Response<T>> future = new CompletableFuture<>();
+    final CompletableFuture<JsonRpc20Response<?>> future = new CompletableFuture<>();
     final Request okhttpRequest;
     try {
       final String requestBodyJsonStr = this.jsonHandler.toJson(request);
+      LOGGER.trace("request body: {}", requestBodyJsonStr);
       final RequestBody requestBody =
           RequestBody.create(requestBodyJsonStr, MediaType.get("application/json; charset=utf-8"));
       okhttpRequest =
@@ -231,7 +240,7 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
             new Callback() {
               @Override
               public void onFailure(Call call, IOException e) {
-                final JsonRpc20Response<T> jsonRpc20Response = new JsonRpc20Response<>();
+                final JsonRpc20Response<?> jsonRpc20Response = new JsonRpc20Response<>();
                 JsonRpc20Response.Error error = new JsonRpc20Response.Error();
                 error.setCode(JsonRpc20Response.Error.ErrorCode.IO_ERROR);
                 jsonRpc20Response.setError(error);
@@ -242,7 +251,7 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
               @Override
               public void onResponse(Call call, Response response) {
                 try {
-                  final JsonRpc20Response<T> jsonRpc20Response;
+                  final JsonRpc20Response<?> jsonRpc20Response;
                   if (response.isSuccessful()) {
                     final ResponseBody responseBody = response.body();
                     if (responseBody != null) {
@@ -268,12 +277,14 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
 
   private void unsubscribe(JsonRpc20Request request) {
     final Long subscriptionId = requestIdToSubscriptionIds.get(request.getId());
+    final String method = StringUtils.replace(request.getMethod(), "suix_", "suix_un");
     final JsonRpc20Request unsubscribeRequest =
-        createJsonRpc20Request("suix_unsubscribeEvent", Lists.newArrayList(subscriptionId));
+        createJsonRpc20Request(method, Lists.newArrayList(subscriptionId));
     final String unsubscribeRequestBodyJsonStr = jsonHandler.toJson(unsubscribeRequest);
     final CompletableFuture<Object> unsubscribeResultFuture = new CompletableFuture<>();
     requestIdToReplies.put(unsubscribeRequest.getId(), unsubscribeResultFuture);
-
+    LOGGER.trace("unsubscribe request body: {}", unsubscribeRequestBodyJsonStr);
+    System.out.printf("unsubscribe request body: %s%n", unsubscribeRequestBodyJsonStr);
     final boolean unsubscribeRequestIsAccepted = webSocket.send(unsubscribeRequestBodyJsonStr);
     if (!unsubscribeRequestIsAccepted) {
       requestIdToReplies.remove(unsubscribeRequest.getId());

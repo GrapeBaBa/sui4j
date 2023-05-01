@@ -20,7 +20,6 @@ package io.sui.jsonrpc;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.sui.models.SuiApiException;
-import io.sui.models.events.SuiEvent;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -46,8 +45,8 @@ public abstract class JsonRpcClientProvider {
     return nextId.incrementAndGet();
   }
 
-  public abstract Disposable subscribe(
-      JsonRpc20Request request, Consumer<SuiEvent> onNext, Consumer<SuiApiException> onError);
+  public abstract <T> Disposable subscribe(
+      JsonRpc20Request request, Consumer<T> onNext, Consumer<SuiApiException> onError);
 
   /**
    * Call completable future.
