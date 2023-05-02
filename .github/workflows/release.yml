@@ -23,7 +23,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v2.4.2
 
       - name: Publish package
         run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
@@ -50,7 +50,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v2.4.2
 
       - name: Publish package
         run: ./gradlew publishAllPublicationsToGitHubPackagesRepository
