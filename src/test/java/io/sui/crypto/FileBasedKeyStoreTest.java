@@ -36,7 +36,8 @@ class FileBasedKeyStoreTest {
   @Test
   void getPath() {
     Path keystorePath = Paths.get("src", "test", "resources", "config", "sui.keystore");
-    FileBasedKeyStore fileBasedKeyStore = new FileBasedKeyStore(keystorePath.toAbsolutePath().toString());
+    FileBasedKeyStore fileBasedKeyStore =
+        new FileBasedKeyStore(keystorePath.toAbsolutePath().toString());
     System.out.println(fileBasedKeyStore.getPath());
     Path testPath = Paths.get("config", "sui.keystore");
     assertTrue(keystorePath.endsWith(testPath));
