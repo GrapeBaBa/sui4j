@@ -17,8 +17,8 @@
 package io.sui.clients;
 
 
+import io.sui.models.events.EventFilter;
 import io.sui.models.events.EventId;
-import io.sui.models.events.EventQuery;
 import io.sui.models.events.PaginatedEvents;
 import io.sui.models.objects.Balance;
 import io.sui.models.objects.CheckpointContents;
@@ -132,14 +132,14 @@ public interface QueryClient {
   /**
    * Gets events.
    *
-   * @param query the query
+   * @param eventFilter the event filter
    * @param cursor the cursor
    * @param limit the limit
    * @param isDescOrder the is desc order
    * @return the events
    */
-  CompletableFuture<PaginatedEvents> getEvents(
-      EventQuery query, EventId cursor, int limit, boolean isDescOrder);
+  CompletableFuture<PaginatedEvents> queryEvents(
+      EventFilter eventFilter, EventId cursor, Integer limit, boolean isDescOrder);
 
   /**
    * Gets normalized move modules by package.

@@ -837,7 +837,7 @@ public class LocalTransactionBuilder implements TransactionBuilder {
   //                                new None.Builder();
   //                            transactionDataV1Builder.expiration = expirationBuilder.build();
   //
-  //                            final TransactionData.V1.Builder v1Builder = new V1.Builder();
+  //                            final TransactionBlockData.V1.Builder v1Builder = new V1.Builder();
   //                            v1Builder.value = transactionDataV1Builder.build();
   //
   //                            final TransactionBytes transactionBytes = new TransactionBytes();
@@ -1004,7 +1004,7 @@ public class LocalTransactionBuilder implements TransactionBuilder {
   //                                          transactionDataV1Builder.expiration =
   //                                              expirationBuilder.build();
   //
-  //                                          final TransactionData.V1.Builder v1Builder =
+  //                                          final TransactionBlockData.V1.Builder v1Builder =
   //                                              new V1.Builder();
   //                                          v1Builder.value = transactionDataV1Builder.build();
   //

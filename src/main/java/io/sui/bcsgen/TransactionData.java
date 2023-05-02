@@ -9,7 +9,7 @@ public abstract class TransactionData {
         int index = deserializer.deserialize_variant_index();
         switch (index) {
             case 0: return V1.load(deserializer);
-            default: throw new com.novi.serde.DeserializationError("Unknown variant index for TransactionData: " + index);
+            default: throw new com.novi.serde.DeserializationError("Unknown variant index for TransactionBlockData: " + index);
         }
     }
 

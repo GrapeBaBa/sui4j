@@ -33,7 +33,7 @@ public class TransactionBlockResponse {
 
   private String digest;
 
-  private Transaction transaction;
+  private TransactionBlock transaction;
 
   private TransactionEffects effects;
 
@@ -73,7 +73,7 @@ public class TransactionBlockResponse {
    *
    * @return the transaction
    */
-  public Transaction getTransaction() {
+  public TransactionBlock getTransaction() {
     return transaction;
   }
 
@@ -82,7 +82,7 @@ public class TransactionBlockResponse {
    *
    * @param transaction the transaction
    */
-  public void setTransaction(Transaction transaction) {
+  public void setTransaction(TransactionBlock transaction) {
     this.transaction = transaction;
   }
 

@@ -35,7 +35,7 @@ public class TransactionBlockResponseOptions {
 
   private boolean showObjectChanges;
 
-  //  private boolean show_balance_changes;
+  private boolean showBalanceChanges;
 
   /**
    * Is show input boolean.
@@ -109,6 +109,24 @@ public class TransactionBlockResponseOptions {
     this.showObjectChanges = showObjectChanges;
   }
 
+  /**
+   * Is show balance changes boolean.
+   *
+   * @return the boolean
+   */
+  public boolean isShowBalanceChanges() {
+    return showBalanceChanges;
+  }
+
+  /**
+   * Sets show balance changes.
+   *
+   * @param showBalanceChanges the show balance changes
+   */
+  public void setShowBalanceChanges(boolean showBalanceChanges) {
+    this.showBalanceChanges = showBalanceChanges;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -121,25 +139,28 @@ public class TransactionBlockResponseOptions {
     return showInput == that.showInput
         && showEffects == that.showEffects
         && showEvents == that.showEvents
-        && showObjectChanges == that.showObjectChanges;
+        && showObjectChanges == that.showObjectChanges
+        && showBalanceChanges == that.showBalanceChanges;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(showInput, showEffects, showEvents, showObjectChanges);
+    return Objects.hash(showInput, showEffects, showEvents, showObjectChanges, showBalanceChanges);
   }
 
   @Override
   public String toString() {
     return "TransactionBlockResponseOptions{"
-        + "show_input="
+        + "showInput="
         + showInput
-        + ", show_effects="
+        + ", showEffects="
         + showEffects
-        + ", show_events="
+        + ", showEvents="
         + showEvents
-        + ", show_object_changes="
+        + ", showObjectChanges="
         + showObjectChanges
+        + ", showBalanceChanges="
+        + showBalanceChanges
         + '}';
   }
 }

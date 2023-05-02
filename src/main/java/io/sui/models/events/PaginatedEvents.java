@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -28,16 +28,18 @@ import java.util.Objects;
  */
 public class PaginatedEvents {
 
-  private List<EventEnvelope> data;
+  private List<SuiEvent> data;
 
   private EventId nextCursor;
+
+  private boolean hasNextPage;
 
   /**
    * Gets data.
    *
    * @return the data
    */
-  public List<EventEnvelope> getData() {
+  public List<SuiEvent> getData() {
     return data;
   }
 
@@ -46,7 +48,7 @@ public class PaginatedEvents {
    *
    * @param data the data
    */
-  public void setData(List<EventEnvelope> data) {
+  public void setData(List<SuiEvent> data) {
     this.data = data;
   }
 
@@ -68,6 +70,24 @@ public class PaginatedEvents {
     this.nextCursor = nextCursor;
   }
 
+  /**
+   * Is has next page boolean.
+   *
+   * @return the boolean
+   */
+  public boolean isHasNextPage() {
+    return hasNextPage;
+  }
+
+  /**
+   * Sets has next page.
+   *
+   * @param hasNextPage the has next page
+   */
+  public void setHasNextPage(boolean hasNextPage) {
+    this.hasNextPage = hasNextPage;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -77,16 +97,25 @@ public class PaginatedEvents {
       return false;
     }
     PaginatedEvents that = (PaginatedEvents) o;
-    return data.equals(that.data) && nextCursor.equals(that.nextCursor);
+    return hasNextPage == that.hasNextPage
+        && Objects.equals(data, that.data)
+        && Objects.equals(nextCursor, that.nextCursor);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(data, nextCursor);
+    return Objects.hash(data, nextCursor, hasNextPage);
   }
 
   @Override
   public String toString() {
-    return "PaginatedEvents{" + "data=" + data + ", nextCursor=" + nextCursor + '}';
+    return "PaginatedEvents{"
+        + "data="
+        + data
+        + ", nextCursor="
+        + nextCursor
+        + ", hasNextPage="
+        + hasNextPage
+        + '}';
   }
 }

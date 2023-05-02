@@ -21,8 +21,8 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import io.sui.jsonrpc.JsonRpc20Request;
 import io.sui.jsonrpc.JsonRpcClientProvider;
+import io.sui.models.events.EventFilter;
 import io.sui.models.events.EventId;
-import io.sui.models.events.EventQuery;
 import io.sui.models.events.PaginatedEvents;
 import io.sui.models.objects.Balance;
 import io.sui.models.objects.CheckpointContents;
@@ -157,13 +157,13 @@ public class QueryClientImpl implements QueryClient {
   }
 
   @Override
-  public CompletableFuture<PaginatedEvents> getEvents(
-      EventQuery query, EventId cursor, int limit, boolean isDescOrder) {
+  public CompletableFuture<PaginatedEvents> queryEvents(
+      EventFilter eventFilter, EventId cursor, Integer limit, boolean isDescOrder) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_getEvents", Lists.newArrayList(query, cursor, limit, isDescOrder));
+            "suix_queryEvents", Lists.newArrayList(eventFilter, cursor, limit, isDescOrder));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getEvents", request, new TypeToken<PaginatedEvents>() {}.getType());
+        "/suix_queryEvents", request, new TypeToken<PaginatedEvents>() {}.getType());
   }
 
   @Override

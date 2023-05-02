@@ -26,7 +26,7 @@ import java.util.Objects;
  * @author grapebaba
  * @since 2022.11
  */
-public class TransactionData {
+public class TransactionBlockData {
 
   private String messageVersion = "v1";
 
@@ -73,10 +73,10 @@ public class TransactionData {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof TransactionData)) {
+    if (!(o instanceof TransactionBlockData)) {
       return false;
     }
-    TransactionData that = (TransactionData) o;
+    TransactionBlockData that = (TransactionBlockData) o;
     return messageVersion.equals(that.messageVersion)
         && gasData.equals(that.gasData)
         && sender.equals(that.sender)
@@ -90,7 +90,7 @@ public class TransactionData {
 
   @Override
   public String toString() {
-    return "TransactionData{"
+    return "TransactionBlockData{"
         + "messageVersion='"
         + messageVersion
         + '\''

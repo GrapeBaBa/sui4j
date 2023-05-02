@@ -27,6 +27,7 @@ import io.sui.crypto.KeyResponse;
 import io.sui.crypto.SignatureScheme;
 import io.sui.models.FaucetResponse;
 import io.sui.models.events.EventFilter.AllEventFilter;
+import io.sui.models.events.PaginatedEvents;
 import io.sui.models.objects.Balance;
 import io.sui.models.objects.ObjectDataOptions;
 import io.sui.models.objects.ObjectResponseQuery;
@@ -325,6 +326,11 @@ public class SuiIntTests {
     System.out.println(res.get());
   }
 
+  /**
+   * Subscribe event.
+   *
+   * @throws InterruptedException the interrupted exception
+   */
   @Test
   @DisplayName("Test subscribeEvent.")
   void subscribeEvent() throws InterruptedException {
@@ -333,11 +339,17 @@ public class SuiIntTests {
     Disposable disposable =
         SUI.subscribeEvent(eventFilter, System.out::println, System.out::println);
 
-    TimeUnit.SECONDS.sleep(60);
+    TimeUnit.SECONDS.sleep(10);
 
     disposable.dispose();
   }
 
+  /**
+   * Subscribe transaction.
+   *
+   * @throws InterruptedException the interrupted exception
+   * @throws ExecutionException the execution exception
+   */
   @Test
   @DisplayName("Test subscribeTransaction.")
   void subscribeTransaction() throws InterruptedException, ExecutionException {
@@ -387,26 +399,31 @@ public class SuiIntTests {
     Disposable disposable =
         SUI.subscribeTransaction(transactionFilter, System.out::println, System.out::println);
 
-    CompletableFuture<TransactionBlockResponse> res =
-        SUI.moveCall(
-            sender.get(),
-            "0x02",
-            "pay",
-            "split",
-            Lists.newArrayList(structType),
-            Lists.newArrayList(suiObjectResponse.getData().getObjectId(), 10000L),
-            null,
-            3000000L,
-            null,
-            null,
-            transactionBlockResponseOptions,
-            ExecuteTransactionRequestType.WaitForLocalExecution);
+    SUI.moveCall(
+        sender.get(),
+        "0x02",
+        "pay",
+        "split",
+        Lists.newArrayList(structType),
+        Lists.newArrayList(suiObjectResponse.getData().getObjectId(), 10000L),
+        null,
+        3000000L,
+        null,
+        null,
+        transactionBlockResponseOptions,
+        ExecuteTransactionRequestType.WaitForLocalExecution);
 
     TimeUnit.SECONDS.sleep(5);
 
     disposable.dispose();
   }
 
+  /**
+   * Sponsored transaction.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
   @Test
   @DisplayName("Test sponsoredTransaction.")
   void sponsoredTransaction() throws ExecutionException, InterruptedException {
@@ -508,6 +525,12 @@ public class SuiIntTests {
     System.out.println(res.get());
   }
 
+  /**
+   * Gets all coins.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
   @Test
   @DisplayName("Test getAllCoins.")
   void getAllCoins() throws ExecutionException, InterruptedException {
@@ -535,6 +558,12 @@ public class SuiIntTests {
     System.out.printf("paginated coins:%s%n", res.get());
   }
 
+  /**
+   * Gets balance.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
   @Test
   @DisplayName("Test getBalance.")
   void getBalance() throws ExecutionException, InterruptedException {
@@ -828,5 +857,19 @@ public class SuiIntTests {
     CompletableFuture<List<SuiObjectResponse>> res1 =
         SUI.multiGetObjects(objects, new ObjectDataOptions());
     System.out.printf("object responses:%s%n", res1.get());
+  }
+
+  /**
+   * Gets events.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test queryEvents.")
+  void queryEvents() throws ExecutionException, InterruptedException {
+    AllEventFilter eventFilter = new AllEventFilter();
+    CompletableFuture<PaginatedEvents> res = SUI.queryEvents(eventFilter, null, 10, false);
+    System.out.println(res.get());
   }
 }

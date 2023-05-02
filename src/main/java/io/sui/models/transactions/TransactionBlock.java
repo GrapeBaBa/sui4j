@@ -26,11 +26,11 @@ import java.util.Objects;
  * @author grapebaba
  * @since 2022.11
  */
-public class Transaction {
+public class TransactionBlock {
 
   private List<String> txSignatures;
 
-  private TransactionData data;
+  private TransactionBlockData data;
 
   /**
    * Gets tx signatures.
@@ -55,7 +55,7 @@ public class Transaction {
    *
    * @return the data
    */
-  public TransactionData getData() {
+  public TransactionBlockData getData() {
     return data;
   }
 
@@ -64,7 +64,7 @@ public class Transaction {
    *
    * @param data the data
    */
-  public void setData(TransactionData data) {
+  public void setData(TransactionBlockData data) {
     this.data = data;
   }
 
@@ -73,10 +73,10 @@ public class Transaction {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof Transaction)) {
+    if (!(o instanceof TransactionBlock)) {
       return false;
     }
-    Transaction that = (Transaction) o;
+    TransactionBlock that = (TransactionBlock) o;
     return txSignatures.equals(that.txSignatures) && data.equals(that.data);
   }
 

@@ -82,10 +82,6 @@ import io.sui.models.transactions.Command.SplitCoin;
 import io.sui.models.transactions.Command.SplitCoinCommand;
 import io.sui.models.transactions.Command.TransferObjects;
 import io.sui.models.transactions.Command.TransferObjectsCommand;
-import io.sui.models.transactions.ExecuteTransactionResponse;
-import io.sui.models.transactions.ExecuteTransactionResponse.EffectsCertResponse;
-import io.sui.models.transactions.ExecuteTransactionResponse.ImmediateReturnResponse;
-import io.sui.models.transactions.ExecuteTransactionResponse.TxCertResponse;
 import io.sui.models.transactions.MoveFunction;
 import io.sui.models.transactions.ParsedPublishResponse;
 import io.sui.models.transactions.ParsedTransactionResponseKind;
@@ -706,30 +702,6 @@ public class GsonJsonHandler implements JsonHandler {
     }
   }
 
-  /** The type Execute transaction response deserializer. */
-  public class ExecuteTransactionResponseDeserializer
-      implements JsonDeserializer<ExecuteTransactionResponse> {
-
-    @Override
-    public ExecuteTransactionResponse deserialize(
-        JsonElement json, Type typeOfT, JsonDeserializationContext context)
-        throws JsonParseException {
-      if (json.getAsJsonObject().get("ImmediateReturn") != null
-          && !json.getAsJsonObject().get("ImmediateReturn").isJsonNull()) {
-        return gson.fromJson(json, ImmediateReturnResponse.class);
-      }
-      if (json.getAsJsonObject().get("TxCert") != null
-          && !json.getAsJsonObject().get("TxCert").isJsonNull()) {
-        return gson.fromJson(json, TxCertResponse.class);
-      }
-      if (json.getAsJsonObject().get("EffectsCert") != null
-          && !json.getAsJsonObject().get("EffectsCert").isJsonNull()) {
-        return gson.fromJson(json, EffectsCertResponse.class);
-      }
-      return null;
-    }
-  }
-
   private final Gson gson;
 
   /** Instantiates a new Gson json handler. */
@@ -760,8 +732,6 @@ public class GsonJsonHandler implements JsonHandler {
             .registerTypeAdapter(MoveFunctionArgType.class, new MoveFunctionArgTypeDeserializer())
             .registerTypeAdapter(InputObjectKind.class, new InputObjectKindDeserializer())
             .registerTypeAdapter(MoveFunction.class, new MoveFunctionSerializer())
-            .registerTypeAdapter(
-                ExecuteTransactionResponse.class, new ExecuteTransactionResponseDeserializer())
             .registerTypeAdapter(StructType.class, new TypeTagSerializer())
             .registerTypeAdapter(VectorType.class, new TypeTagSerializer())
             .registerTypeAdapter(TypeTag.class, new TypeTagSerializer())
