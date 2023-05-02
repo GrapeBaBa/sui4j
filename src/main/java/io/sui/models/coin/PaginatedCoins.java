@@ -14,7 +14,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models.objects;
+package io.sui.models.coin;
 
 
 import java.util.List;

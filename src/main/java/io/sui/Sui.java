@@ -48,15 +48,20 @@ import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.jsonrpc.OkHttpJsonRpcClientProvider;
 import io.sui.models.FaucetResponse;
 import io.sui.models.SuiApiException;
+import io.sui.models.coin.Balance;
+import io.sui.models.coin.CoinMetadata;
+import io.sui.models.coin.CoinSupply;
+import io.sui.models.coin.PaginatedCoins;
 import io.sui.models.events.EventFilter;
 import io.sui.models.events.EventId;
 import io.sui.models.events.PaginatedEvents;
 import io.sui.models.events.SuiEvent;
-import io.sui.models.objects.Balance;
+import io.sui.models.governance.DelegatedStake;
+import io.sui.models.governance.SuiCommitteeInfo;
+import io.sui.models.governance.SystemStateSummary;
+import io.sui.models.governance.ValidatorsApy;
 import io.sui.models.objects.CheckpointContents;
 import io.sui.models.objects.CheckpointSummary;
-import io.sui.models.objects.CoinMetadata;
-import io.sui.models.objects.CommitteeInfoResponse;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
@@ -64,7 +69,6 @@ import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectDataOptions;
 import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.ObjectResponseQuery;
-import io.sui.models.objects.PaginatedCoins;
 import io.sui.models.objects.PaginatedObjectsResponse;
 import io.sui.models.objects.SuiObjectRef;
 import io.sui.models.objects.SuiObjectResponse;
@@ -78,6 +82,7 @@ import io.sui.models.transactions.TransactionBlockResponseQuery;
 import io.sui.models.transactions.TransactionEffects;
 import io.sui.models.transactions.TransactionFilter;
 import io.sui.models.transactions.TypeTag;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
@@ -643,7 +648,7 @@ public class Sui {
    * @param epoch the epoch
    * @return the committee info
    */
-  public CompletableFuture<CommitteeInfoResponse> getCommitteeInfo(Long epoch) {
+  public CompletableFuture<SuiCommitteeInfo> getCommitteeInfo(BigInteger epoch) {
     return queryClient.getCommitteeInfo(epoch);
   }
 
@@ -787,7 +792,7 @@ public class Sui {
    * @return the completable future
    */
   public CompletableFuture<PaginatedCoins> getCoins(
-      String address, String coinType, String cursor, long limit) {
+      String address, String coinType, String cursor, Integer limit) {
     return queryClient.getCoins(address, coinType, cursor, limit);
   }
 
@@ -842,6 +847,54 @@ public class Sui {
   public CompletableFuture<CheckpointSummary> getCheckpointSummaryByDigest(
       String checkpointDigest) {
     return queryClient.getCheckpointSummaryByDigest(checkpointDigest);
+  }
+
+  /**
+   * Gets validators apy.
+   *
+   * @return the validators apy
+   */
+  public CompletableFuture<ValidatorsApy> getValidatorsApy() {
+    return queryClient.getValidatorsApy();
+  }
+
+  /**
+   * Gets total supply.
+   *
+   * @param coin the coin
+   * @return the total supply
+   */
+  public CompletableFuture<CoinSupply> getTotalSupply(String coin) {
+    return queryClient.getTotalSupply(coin);
+  }
+
+  /**
+   * Gets stakes by ids.
+   *
+   * @param stakeIds the stake ids
+   * @return the stakes by ids
+   */
+  public CompletableFuture<List<DelegatedStake>> getStakesByIds(List<String> stakeIds) {
+    return queryClient.getStakesByIds(stakeIds);
+  }
+
+  /**
+   * Gets stakes.
+   *
+   * @param owner the owner
+   * @return the stakes
+   */
+  public CompletableFuture<List<DelegatedStake>> getStakes(String owner) {
+    return queryClient.getStakes(owner);
+  }
+
+  /**
+   * Gets latest sui system state.
+   *
+   * @return the latest sui system state
+   */
+  public CompletableFuture<SystemStateSummary> getLatestSuiSystemState() {
+    return queryClient.getLatestSuiSystemState();
   }
 
   /**

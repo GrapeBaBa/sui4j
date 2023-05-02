@@ -21,14 +21,19 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import io.sui.jsonrpc.JsonRpc20Request;
 import io.sui.jsonrpc.JsonRpcClientProvider;
+import io.sui.models.coin.Balance;
+import io.sui.models.coin.CoinMetadata;
+import io.sui.models.coin.CoinSupply;
+import io.sui.models.coin.PaginatedCoins;
 import io.sui.models.events.EventFilter;
 import io.sui.models.events.EventId;
 import io.sui.models.events.PaginatedEvents;
-import io.sui.models.objects.Balance;
+import io.sui.models.governance.DelegatedStake;
+import io.sui.models.governance.SuiCommitteeInfo;
+import io.sui.models.governance.SystemStateSummary;
+import io.sui.models.governance.ValidatorsApy;
 import io.sui.models.objects.CheckpointContents;
 import io.sui.models.objects.CheckpointSummary;
-import io.sui.models.objects.CoinMetadata;
-import io.sui.models.objects.CommitteeInfoResponse;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
@@ -36,7 +41,6 @@ import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectDataOptions;
 import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.ObjectResponseQuery;
-import io.sui.models.objects.PaginatedCoins;
 import io.sui.models.objects.PaginatedObjectsResponse;
 import io.sui.models.objects.SuiObjectRef;
 import io.sui.models.objects.SuiObjectResponse;
@@ -46,6 +50,7 @@ import io.sui.models.transactions.PaginatedTransactionResponse;
 import io.sui.models.transactions.TransactionBlockResponse;
 import io.sui.models.transactions.TransactionBlockResponseOptions;
 import io.sui.models.transactions.TransactionBlockResponseQuery;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -179,12 +184,12 @@ public class QueryClientImpl implements QueryClient {
   }
 
   @Override
-  public CompletableFuture<CommitteeInfoResponse> getCommitteeInfo(Long epoch) {
+  public CompletableFuture<SuiCommitteeInfo> getCommitteeInfo(BigInteger epoch) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_getCommitteeInfo", Lists.newArrayList(epoch));
+            "suix_getCommitteeInfo", Lists.newArrayList(epoch.toString()));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getCommitteeInfo", request, new TypeToken<CommitteeInfoResponse>() {}.getType());
+        "/suix_getCommitteeInfo", request, new TypeToken<SuiCommitteeInfo>() {}.getType());
   }
 
   @Override
@@ -268,11 +273,14 @@ public class QueryClientImpl implements QueryClient {
 
   @Override
   public CompletableFuture<CoinMetadata> getCoinMetadata(String coinType) {
+    if (StringUtils.isEmpty(coinType)) {
+      coinType = DEFAULT_COIN_TYPE;
+    }
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_getCoinMetadata", Lists.newArrayList(coinType));
+            "suix_getCoinMetadata", Lists.newArrayList(coinType));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getCoinMetadata", request, new TypeToken<CoinMetadata>() {}.getType());
+        "/suix_getCoinMetadata", request, new TypeToken<CoinMetadata>() {}.getType());
   }
 
   @Override
@@ -288,9 +296,9 @@ public class QueryClientImpl implements QueryClient {
   public CompletableFuture<List<Balance>> getAllBalances(String address) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_getAllBalances", Lists.newArrayList(address));
+            "suix_getAllBalances", Lists.newArrayList(address));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getAllBalances", request, new TypeToken<List<Balance>>() {}.getType());
+        "/suix_getAllBalances", request, new TypeToken<List<Balance>>() {}.getType());
   }
 
   @Override
@@ -311,9 +319,9 @@ public class QueryClientImpl implements QueryClient {
     }
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
-            "sui_getCoins", Lists.newArrayList(address, coinType, cursor, limit));
+            "suix_getCoins", Lists.newArrayList(address, coinType, cursor, limit));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_getCoins", request, new TypeToken<PaginatedCoins>() {}.getType());
+        "/suix_getCoins", request, new TypeToken<PaginatedCoins>() {}.getType());
   }
 
   @Override
@@ -368,5 +376,51 @@ public class QueryClientImpl implements QueryClient {
         "/sui_getCheckpointSummaryByDigest",
         request,
         new TypeToken<CheckpointSummary>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<ValidatorsApy> getValidatorsApy() {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "suix_getValidatorsApy", Lists.newArrayList());
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/suix_getValidatorsApy", request, new TypeToken<ValidatorsApy>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<CoinSupply> getTotalSupply(String coin) {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "suix_getTotalSupply", Lists.newArrayList(coin));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/suix_getTotalSupply", request, new TypeToken<CoinSupply>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<List<DelegatedStake>> getStakesByIds(List<String> stakedSuiIds) {
+    List<List<String>> params = Lists.newArrayList();
+    params.add(stakedSuiIds);
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request("suix_getStakesByIds", params);
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/suix_getStakesByIds", request, new TypeToken<List<DelegatedStake>>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<List<DelegatedStake>> getStakes(String owner) {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "suix_getStakes", Lists.newArrayList(owner));
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/suix_getStakes", request, new TypeToken<List<DelegatedStake>>() {}.getType());
+  }
+
+  @Override
+  public CompletableFuture<SystemStateSummary> getLatestSuiSystemState() {
+    final JsonRpc20Request request =
+        this.jsonRpcClientProvider.createJsonRpc20Request(
+            "suix_getLatestSuiSystemState", Lists.newArrayList());
+    return this.jsonRpcClientProvider.callAndUnwrapResponse(
+        "/suix_getLatestSuiSystemState", request, new TypeToken<SystemStateSummary>() {}.getType());
   }
 }

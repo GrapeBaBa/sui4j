@@ -14,7 +14,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models.objects;
+package io.sui.models.coin;
 
 
 import com.google.common.base.Objects;
@@ -31,7 +31,7 @@ public class Balance {
 
   private String coinType;
 
-  private Long coinObjectCount;
+  private Integer coinObjectCount;
 
   private BigInteger totalBalance;
 
@@ -45,11 +45,11 @@ public class Balance {
     this.coinType = coinType;
   }
 
-  public Long getCoinObjectCount() {
+  public Integer getCoinObjectCount() {
     return coinObjectCount;
   }
 
-  public void setCoinObjectCount(Long coinObjectCount) {
+  public void setCoinObjectCount(Integer coinObjectCount) {
     this.coinObjectCount = coinObjectCount;
   }
 

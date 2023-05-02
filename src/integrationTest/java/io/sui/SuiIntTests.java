@@ -22,16 +22,23 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.sui.bcsgen.Argument;
 import io.sui.bcsgen.Intent;
 import io.sui.bcsgen.TransactionData;
+import io.sui.clients.QueryClient;
 import io.sui.clients.TransactionBlock;
 import io.sui.crypto.KeyResponse;
 import io.sui.crypto.SignatureScheme;
 import io.sui.models.FaucetResponse;
+import io.sui.models.coin.Balance;
+import io.sui.models.coin.CoinMetadata;
+import io.sui.models.coin.CoinSupply;
+import io.sui.models.coin.PaginatedCoins;
 import io.sui.models.events.EventFilter.AllEventFilter;
 import io.sui.models.events.PaginatedEvents;
-import io.sui.models.objects.Balance;
+import io.sui.models.governance.DelegatedStake;
+import io.sui.models.governance.SuiCommitteeInfo;
+import io.sui.models.governance.SystemStateSummary;
+import io.sui.models.governance.ValidatorsApy;
 import io.sui.models.objects.ObjectDataOptions;
 import io.sui.models.objects.ObjectResponseQuery;
-import io.sui.models.objects.PaginatedCoins;
 import io.sui.models.objects.PaginatedObjectsResponse;
 import io.sui.models.objects.SuiObjectResponse;
 import io.sui.models.transactions.ExecuteTransactionRequestType;
@@ -41,6 +48,7 @@ import io.sui.models.transactions.TransactionBlockResponse;
 import io.sui.models.transactions.TransactionBlockResponseOptions;
 import io.sui.models.transactions.TransactionBlockResponseQuery;
 import io.sui.models.transactions.TransactionFilter.FromAddressFilter;
+import java.math.BigInteger;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
@@ -870,6 +878,215 @@ public class SuiIntTests {
   void queryEvents() throws ExecutionException, InterruptedException {
     AllEventFilter eventFilter = new AllEventFilter();
     CompletableFuture<PaginatedEvents> res = SUI.queryEvents(eventFilter, null, 10, false);
+    System.out.println(res.get());
+  }
+
+  /**
+   * Gets validators apy.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getValidatorsApy.")
+  void getValidatorsApy() throws ExecutionException, InterruptedException {
+    CompletableFuture<ValidatorsApy> res = SUI.getValidatorsApy();
+    System.out.println(res.get());
+  }
+
+  /**
+   * Gets total supply.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getTotalSupply.")
+  void getTotalSupply() throws ExecutionException, InterruptedException {
+    CompletableFuture<CoinSupply> res = SUI.getTotalSupply("0x2::sui::SUI");
+    System.out.println(res.get());
+  }
+
+  /**
+   * Gets stakes by ids.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getStakesByIds.")
+  void getStakesByIds() throws ExecutionException, InterruptedException {
+    ObjectResponseQuery objectResponseQuery = new ObjectResponseQuery();
+    objectResponseQuery.setOptions(new ObjectDataOptions());
+    final Optional<String> sender =
+        SUI.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                            .get()
+                            .getData()
+                            .size()
+                        > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+    List<String> objects =
+        SUI.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null).get().getData()
+            .stream()
+            .map(suiObjectResponse -> suiObjectResponse.getData().getObjectId())
+            .collect(Collectors.toList());
+    CompletableFuture<List<DelegatedStake>> res = SUI.getStakesByIds(Lists.newArrayList());
+    res.whenComplete(
+        (delegatedStake, throwable) -> {
+          if (throwable != null) {
+            System.out.println(throwable.getMessage());
+          } else {
+            System.out.println(delegatedStake);
+          }
+        });
+  }
+
+  /**
+   * Gets stakes.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getStakes.")
+  void getStakes() throws ExecutionException, InterruptedException {
+    ObjectResponseQuery objectResponseQuery = new ObjectResponseQuery();
+    objectResponseQuery.setOptions(new ObjectDataOptions());
+    final Optional<String> sender =
+        SUI.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                            .get()
+                            .getData()
+                            .size()
+                        > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+    CompletableFuture<List<DelegatedStake>> res = SUI.getStakes(sender.get());
+    System.out.println(res.get());
+  }
+
+  /**
+   * Gets latest sui system state.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getLatestSuiSystemState.")
+  void getLatestSuiSystemState() throws ExecutionException, InterruptedException {
+    CompletableFuture<SystemStateSummary> res = SUI.getLatestSuiSystemState();
+    System.out.println(res.get());
+  }
+
+  /**
+   * Gets committee info.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getLatestSuiSystemState.")
+  void getCommitteeInfo() throws ExecutionException, InterruptedException {
+    CompletableFuture<SuiCommitteeInfo> res = SUI.getCommitteeInfo(BigInteger.ONE);
+    System.out.println(res.get());
+  }
+
+  /**
+   * Gets coins.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getCoins.")
+  void getCoins() throws ExecutionException, InterruptedException {
+    ObjectResponseQuery objectResponseQuery = new ObjectResponseQuery();
+    objectResponseQuery.setOptions(new ObjectDataOptions());
+    final Optional<String> sender =
+        SUI.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, 10)
+                            .get()
+                            .getData()
+                            .size()
+                        > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+    CompletableFuture<PaginatedCoins> res = SUI.getCoins(sender.get(), null, null, 10);
+    System.out.println(res.get());
+  }
+
+  /**
+   * Gets coin metadata.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getCoinMetadata.")
+  void getCoinMetadata() throws ExecutionException, InterruptedException {
+    CompletableFuture<CoinMetadata> res = SUI.getCoinMetadata(QueryClient.DEFAULT_COIN_TYPE);
+    System.out.println(res.get());
+  }
+
+  /**
+   * Gets all balances.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getAllBalances.")
+  void getAllBalances() throws ExecutionException, InterruptedException {
+    ObjectResponseQuery objectResponseQuery = new ObjectResponseQuery();
+    objectResponseQuery.setOptions(new ObjectDataOptions());
+    final Optional<String> sender =
+        SUI.addresses().stream()
+            .filter(
+                s -> {
+                  try {
+                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                            .get()
+                            .getData()
+                            .size()
+                        > 1;
+                  } catch (InterruptedException | ExecutionException e) {
+                    return false;
+                  }
+                })
+            .findFirst();
+    if (!sender.isPresent()) {
+      Assertions.fail();
+    }
+    CompletableFuture<List<Balance>> res = SUI.getAllBalances(sender.get());
     System.out.println(res.get());
   }
 }

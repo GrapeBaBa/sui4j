@@ -17,14 +17,19 @@
 package io.sui.clients;
 
 
+import io.sui.models.coin.Balance;
+import io.sui.models.coin.CoinMetadata;
+import io.sui.models.coin.CoinSupply;
+import io.sui.models.coin.PaginatedCoins;
 import io.sui.models.events.EventFilter;
 import io.sui.models.events.EventId;
 import io.sui.models.events.PaginatedEvents;
-import io.sui.models.objects.Balance;
+import io.sui.models.governance.DelegatedStake;
+import io.sui.models.governance.SuiCommitteeInfo;
+import io.sui.models.governance.SystemStateSummary;
+import io.sui.models.governance.ValidatorsApy;
 import io.sui.models.objects.CheckpointContents;
 import io.sui.models.objects.CheckpointSummary;
-import io.sui.models.objects.CoinMetadata;
-import io.sui.models.objects.CommitteeInfoResponse;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
@@ -32,7 +37,6 @@ import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectDataOptions;
 import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.ObjectResponseQuery;
-import io.sui.models.objects.PaginatedCoins;
 import io.sui.models.objects.PaginatedObjectsResponse;
 import io.sui.models.objects.SuiObjectRef;
 import io.sui.models.objects.SuiObjectResponse;
@@ -42,6 +46,7 @@ import io.sui.models.transactions.PaginatedTransactionResponse;
 import io.sui.models.transactions.TransactionBlockResponse;
 import io.sui.models.transactions.TransactionBlockResponseOptions;
 import io.sui.models.transactions.TransactionBlockResponseQuery;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -156,7 +161,7 @@ public interface QueryClient {
    * @param epoch the epoch
    * @return the committee info
    */
-  CompletableFuture<CommitteeInfoResponse> getCommitteeInfo(Long epoch);
+  CompletableFuture<SuiCommitteeInfo> getCommitteeInfo(BigInteger epoch);
 
   /**
    * Gets move function arg types.
@@ -326,4 +331,42 @@ public interface QueryClient {
    * @return the checkpoint summary based on the checkpoint digest
    */
   CompletableFuture<CheckpointSummary> getCheckpointSummaryByDigest(String checkpointDigest);
+
+  /**
+   * Gets validators apy.
+   *
+   * @return the validators apy
+   */
+  CompletableFuture<ValidatorsApy> getValidatorsApy();
+
+  /**
+   * Gets total supply.
+   *
+   * @param coin the coin
+   * @return the total supply
+   */
+  CompletableFuture<CoinSupply> getTotalSupply(String coin);
+
+  /**
+   * Gets stakes by ids.
+   *
+   * @param stakedSuiIds the staked sui ids
+   * @return the stakes by ids
+   */
+  CompletableFuture<List<DelegatedStake>> getStakesByIds(List<String> stakedSuiIds);
+
+  /**
+   * Gets stakes.
+   *
+   * @param owner the owner
+   * @return the stakes
+   */
+  CompletableFuture<List<DelegatedStake>> getStakes(String owner);
+
+  /**
+   * Gets latest sui system state.
+   *
+   * @return the latest sui system state
+   */
+  CompletableFuture<SystemStateSummary> getLatestSuiSystemState();
 }

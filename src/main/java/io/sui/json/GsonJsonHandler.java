@@ -41,7 +41,7 @@ import io.sui.models.events.EventFilter.PackageEventFilter;
 import io.sui.models.events.EventKind;
 import io.sui.models.events.EventQuery;
 import io.sui.models.events.EventQuery.AllQuery;
-import io.sui.models.objects.CommitteeInfo;
+import io.sui.models.governance.Validator;
 import io.sui.models.objects.InputObjectKind;
 import io.sui.models.objects.InputObjectKind.ImmOrOwnedMoveObjectKind;
 import io.sui.models.objects.InputObjectKind.MovePackageKind;
@@ -601,17 +601,16 @@ public class GsonJsonHandler implements JsonHandler {
   }
 
   /** The type Committee info deserializer. */
-  public static class CommitteeInfoDeserializer implements JsonDeserializer<CommitteeInfo> {
+  public static class CommitteeInfoDeserializer implements JsonDeserializer<Validator> {
 
     @Override
-    public CommitteeInfo deserialize(
-        JsonElement json, Type typeOfT, JsonDeserializationContext context)
+    public Validator deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
         throws JsonParseException {
       List<JsonElement> committeeInfoStr = json.getAsJsonArray().asList();
-      CommitteeInfo committeeInfo = new CommitteeInfo();
-      committeeInfo.setAuthorityName(committeeInfoStr.get(0).getAsString());
-      committeeInfo.setStakeUnit(committeeInfoStr.get(1).getAsLong());
-      return committeeInfo;
+      Validator validator = new Validator();
+      validator.setAuthorityName(committeeInfoStr.get(0).getAsString());
+      validator.setStakeUnit(committeeInfoStr.get(1).getAsBigInteger());
+      return validator;
     }
   }
 
@@ -728,7 +727,7 @@ public class GsonJsonHandler implements JsonHandler {
             .registerTypeAdapter(MoveModule.class, new MoveModuleSerializer())
             .registerTypeAdapter(EventQuery.class, new EventQuerySerializer())
             .registerTypeAdapter(MoveNormalizedType.class, new MoveNormalizedTypeDeserializer())
-            .registerTypeAdapter(CommitteeInfo.class, new CommitteeInfoDeserializer())
+            .registerTypeAdapter(Validator.class, new CommitteeInfoDeserializer())
             .registerTypeAdapter(MoveFunctionArgType.class, new MoveFunctionArgTypeDeserializer())
             .registerTypeAdapter(InputObjectKind.class, new InputObjectKindDeserializer())
             .registerTypeAdapter(MoveFunction.class, new MoveFunctionSerializer())

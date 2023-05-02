@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -14,9 +14,10 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package io.sui.models.objects;
+package io.sui.models.governance;
 
 
+import java.math.BigInteger;
 import java.util.Objects;
 
 /**
@@ -25,11 +26,11 @@ import java.util.Objects;
  * @author grapebaba
  * @since 2022.11
  */
-public class CommitteeInfo {
+public class Validator {
 
   private String authorityName;
 
-  private Long stakeUnit;
+  private BigInteger stakeUnit;
 
   /**
    * Gets authority name.
@@ -54,7 +55,7 @@ public class CommitteeInfo {
    *
    * @return the stake unit
    */
-  public Long getStakeUnit() {
+  public BigInteger getStakeUnit() {
     return stakeUnit;
   }
 
@@ -63,7 +64,7 @@ public class CommitteeInfo {
    *
    * @param stakeUnit the stake unit
    */
-  public void setStakeUnit(Long stakeUnit) {
+  public void setStakeUnit(BigInteger stakeUnit) {
     this.stakeUnit = stakeUnit;
   }
 
@@ -72,10 +73,10 @@ public class CommitteeInfo {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof CommitteeInfo)) {
+    if (!(o instanceof Validator)) {
       return false;
     }
-    CommitteeInfo that = (CommitteeInfo) o;
+    Validator that = (Validator) o;
     return authorityName.equals(that.authorityName) && stakeUnit.equals(that.stakeUnit);
   }
 
@@ -86,7 +87,7 @@ public class CommitteeInfo {
 
   @Override
   public String toString() {
-    return "CommitteeInfo{"
+    return "Validator{"
         + "authorityName='"
         + authorityName
         + '\''
