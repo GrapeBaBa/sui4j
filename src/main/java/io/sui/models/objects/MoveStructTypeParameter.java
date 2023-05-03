@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -29,8 +29,7 @@ public class MoveStructTypeParameter {
 
   private MoveAbilitySet constraints;
 
-  @SuppressWarnings("checkstyle:MemberName")
-  private boolean is_phantom;
+  private boolean isPhantom;
 
   /**
    * Gets constraints.
@@ -55,18 +54,12 @@ public class MoveStructTypeParameter {
    *
    * @return the boolean
    */
-  public boolean isIs_phantom() {
-    return is_phantom;
+  public boolean isPhantom() {
+    return isPhantom;
   }
 
-  /**
-   * Sets is phantom.
-   *
-   * @param is_phantom the is phantom
-   */
-  @SuppressWarnings("checkstyle:ParameterName")
-  public void setIs_phantom(boolean is_phantom) {
-    this.is_phantom = is_phantom;
+  public void setPhantom(boolean phantom) {
+    this.isPhantom = phantom;
   }
 
   @Override
@@ -78,12 +71,12 @@ public class MoveStructTypeParameter {
       return false;
     }
     MoveStructTypeParameter that = (MoveStructTypeParameter) o;
-    return is_phantom == that.is_phantom && constraints.equals(that.constraints);
+    return isPhantom == that.isPhantom && constraints.equals(that.constraints);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(constraints, is_phantom);
+    return Objects.hash(constraints, isPhantom);
   }
 
   @Override
@@ -92,7 +85,7 @@ public class MoveStructTypeParameter {
         + "constraints="
         + constraints
         + ", is_phantom="
-        + is_phantom
+        + isPhantom
         + '}';
   }
 }

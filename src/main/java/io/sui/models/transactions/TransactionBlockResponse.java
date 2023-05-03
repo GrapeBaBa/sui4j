@@ -35,7 +35,7 @@ public class TransactionBlockResponse {
 
   private TransactionBlock transaction;
 
-  private TransactionEffects effects;
+  private TransactionBlockEffects effects;
 
   private List<SuiEvent> events;
 
@@ -91,7 +91,7 @@ public class TransactionBlockResponse {
    *
    * @return the effects
    */
-  public TransactionEffects getEffects() {
+  public TransactionBlockEffects getEffects() {
     return effects;
   }
 
@@ -100,7 +100,7 @@ public class TransactionBlockResponse {
    *
    * @param effects the effects
    */
-  public void setEffects(TransactionEffects effects) {
+  public void setEffects(TransactionBlockEffects effects) {
     this.effects = effects;
   }
 

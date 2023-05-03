@@ -17,7 +17,6 @@
 package io.sui.models.objects;
 
 
-import io.sui.models.objects.ObjectResponse.ObjectResponseDetails;
 import java.math.BigInteger;
 import java.util.Objects;
 
@@ -27,7 +26,7 @@ import java.util.Objects;
  * @author grapebaba
  * @since 2022.11
  */
-public class SuiObjectData implements ObjectResponseDetails {
+public class SuiObjectData {
 
   private String objectId;
 

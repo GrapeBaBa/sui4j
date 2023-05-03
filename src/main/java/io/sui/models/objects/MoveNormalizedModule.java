@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -29,8 +29,7 @@ import java.util.Objects;
  */
 public class MoveNormalizedModule {
 
-  @SuppressWarnings("checkstyle:MemberName")
-  private Integer file_format_version;
+  private Integer fileFormatVersion;
 
   private String address;
 
@@ -40,26 +39,25 @@ public class MoveNormalizedModule {
 
   private Map<String, MoveNormalizedStruct> structs;
 
-  @SuppressWarnings("checkstyle:MemberName")
-  private Map<String, MoveNormalizedFunction> exposed_functions;
+  private Map<String, MoveNormalizedFunction> exposedFunctions;
 
   /**
    * Gets file format version.
    *
    * @return the file format version
    */
-  public Integer getFile_format_version() {
-    return file_format_version;
+  public Integer getFileFormatVersion() {
+    return fileFormatVersion;
   }
 
   /**
    * Sets file format version.
    *
-   * @param file_format_version the file format version
+   * @param fileFormatVersion the file format version
    */
   @SuppressWarnings("checkstyle:ParameterName")
-  public void setFile_format_version(Integer file_format_version) {
-    this.file_format_version = file_format_version;
+  public void setFileFormatVersion(Integer fileFormatVersion) {
+    this.fileFormatVersion = fileFormatVersion;
   }
 
   /**
@@ -139,18 +137,18 @@ public class MoveNormalizedModule {
    *
    * @return the exposed functions
    */
-  public Map<String, MoveNormalizedFunction> getExposed_functions() {
-    return exposed_functions;
+  public Map<String, MoveNormalizedFunction> getExposedFunctions() {
+    return exposedFunctions;
   }
 
   /**
    * Sets exposed functions.
    *
-   * @param exposed_functions the exposed functions
+   * @param exposedFunctions the exposed functions
    */
   @SuppressWarnings("checkstyle:ParameterName")
-  public void setExposed_functions(Map<String, MoveNormalizedFunction> exposed_functions) {
-    this.exposed_functions = exposed_functions;
+  public void setExposedFunctions(Map<String, MoveNormalizedFunction> exposedFunctions) {
+    this.exposedFunctions = exposedFunctions;
   }
 
   @Override
@@ -162,24 +160,24 @@ public class MoveNormalizedModule {
       return false;
     }
     MoveNormalizedModule that = (MoveNormalizedModule) o;
-    return file_format_version.equals(that.file_format_version)
+    return fileFormatVersion.equals(that.fileFormatVersion)
         && address.equals(that.address)
         && name.equals(that.name)
         && friends.equals(that.friends)
         && structs.equals(that.structs)
-        && exposed_functions.equals(that.exposed_functions);
+        && exposedFunctions.equals(that.exposedFunctions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(file_format_version, address, name, friends, structs, exposed_functions);
+    return Objects.hash(fileFormatVersion, address, name, friends, structs, exposedFunctions);
   }
 
   @Override
   public String toString() {
     return "MoveNormalizedModule{"
         + "file_format_version="
-        + file_format_version
+        + fileFormatVersion
         + ", address='"
         + address
         + '\''
@@ -191,7 +189,7 @@ public class MoveNormalizedModule {
         + ", structs="
         + structs
         + ", exposed_functions="
-        + exposed_functions
+        + exposedFunctions
         + '}';
   }
 }

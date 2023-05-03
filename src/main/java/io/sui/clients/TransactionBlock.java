@@ -101,7 +101,6 @@ public class TransactionBlock {
   private static final Struct RESOLVED_SUI_ID = new Struct();
   private static final Struct RESOLVED_STD_OPTION = new Struct();
   private static final String GAS_COIN_TYPE = "0x2::coin::Coin<0x2::sui::SUI>";
-  private static final String SUI_FRAMEWORK_ADDRESS = "0x0000000000000000000000000000000000000002";
 
   static {
     RESOLVED_ASCII_STR.setAddress("0x1");
@@ -626,7 +625,7 @@ public class TransactionBlock {
     objectDataOptions.setShowBcs(true);
     objectResponseQuery.setOptions(objectDataOptions);
     return queryClient
-        .getObjectsOwnedByAddress(signer, objectResponseQuery, null, null)
+        .getOwnedObjects(signer, objectResponseQuery, null, null)
         .thenCompose(
             (Function<PaginatedObjectsResponse, CompletableFuture<SuiObjectRef>>)
                 paginatedObjectsResponse -> {

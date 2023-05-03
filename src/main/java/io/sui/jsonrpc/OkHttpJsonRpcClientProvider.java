@@ -29,7 +29,7 @@ import io.sui.jsonrpc.JsonRpc20Response.Error;
 import io.sui.jsonrpc.JsonRpc20Response.Error.ErrorCode;
 import io.sui.models.SuiApiException;
 import io.sui.models.events.SuiEvent;
-import io.sui.models.transactions.TransactionEffects;
+import io.sui.models.transactions.TransactionBlockEffects;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.Duration;
@@ -48,6 +48,7 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,24 +110,25 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
             new Request.Builder().url(wsUrl).get().build(),
             new WebSocketListener() {
               @Override
-              public void onClosed(WebSocket webSocket, int code, String reason) {
+              public void onClosed(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
                 super.onClosed(webSocket, code, reason);
               }
 
               @Override
-              public void onClosing(WebSocket webSocket, int code, String reason) {
+              public void onClosing(
+                  @NotNull WebSocket webSocket, int code, @NotNull String reason) {
                 super.onClosing(webSocket, code, reason);
               }
 
               @Override
-              public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+              public void onFailure(
+                  @NotNull WebSocket webSocket, @NotNull Throwable t, Response response) {
                 super.onFailure(webSocket, t, response);
               }
 
               @Override
-              public void onMessage(WebSocket webSocket, String text) {
+              public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
                 LOGGER.trace("message body: {}", text);
-                System.out.printf("message body: %s%n", text);
                 final Map<String, Object> reply = jsonHandler.fromJsonMap(text);
                 if (null != reply.get("id")) {
                   CompletableFuture<Object> replayFuture =
@@ -150,7 +152,7 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
                 } else {
                   Type type =
                       reply.get("method").equals("suix_subscribeTransaction")
-                          ? new TypeToken<TransactionEffects>() {}.getType()
+                          ? new TypeToken<TransactionBlockEffects>() {}.getType()
                           : new TypeToken<SuiEvent>() {}.getType();
                   final JsonRpc20WSResponse<?> message = jsonHandler.fromWSJson(text, type);
                   PublishSubject<JsonRpc20WSResponse<?>> publishSubject =
@@ -160,12 +162,12 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
               }
 
               @Override
-              public void onMessage(WebSocket webSocket, ByteString bytes) {
+              public void onMessage(@NotNull WebSocket webSocket, @NotNull ByteString bytes) {
                 super.onMessage(webSocket, bytes);
               }
 
               @Override
-              public void onOpen(WebSocket webSocket, Response response) {
+              public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
                 super.onOpen(webSocket, response);
               }
             });
@@ -176,8 +178,7 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
   public <T> Disposable subscribe(
       JsonRpc20Request request, Consumer<T> onNext, Consumer<SuiApiException> onError) {
     final String subscribeRequestBodyJsonStr = this.jsonHandler.toJson(request);
-    LOGGER.info("subscribe request body: {}", subscribeRequestBodyJsonStr);
-    System.out.printf("subscribe request body: %s%n", subscribeRequestBodyJsonStr);
+    LOGGER.trace("subscribe request body: {}", subscribeRequestBodyJsonStr);
     final CompletableFuture<Object> subscriptionResponseFuture = new CompletableFuture<>();
     this.requestIdToReplies.put(request.getId(), subscriptionResponseFuture);
     PublishSubject<JsonRpc20WSResponse<?>> subject = PublishSubject.create();
@@ -215,6 +216,7 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
    * @param typeOfT the type of t
    * @return the completable future
    */
+  @SuppressWarnings("unchecked")
   public CompletableFuture<JsonRpc20Response<?>> call(
       JsonRpc20Request request, String url, Type typeOfT) {
     final CompletableFuture<JsonRpc20Response<?>> future = new CompletableFuture<>();
@@ -239,7 +241,7 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
         .enqueue(
             new Callback() {
               @Override
-              public void onFailure(Call call, IOException e) {
+              public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 final JsonRpc20Response<?> jsonRpc20Response = new JsonRpc20Response<>();
                 JsonRpc20Response.Error error = new JsonRpc20Response.Error();
                 error.setCode(JsonRpc20Response.Error.ErrorCode.IO_ERROR);
@@ -249,7 +251,7 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
               }
 
               @Override
-              public void onResponse(Call call, Response response) {
+              public void onResponse(@NotNull Call call, @NotNull Response response) {
                 try {
                   final JsonRpc20Response<?> jsonRpc20Response;
                   if (response.isSuccessful()) {

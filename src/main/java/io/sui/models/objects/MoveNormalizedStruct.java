@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -30,8 +30,7 @@ public class MoveNormalizedStruct {
 
   private MoveAbilitySet abilities;
 
-  @SuppressWarnings("checkstyle:MemberName")
-  private List<MoveStructTypeParameter> type_parameters;
+  private List<MoveStructTypeParameter> typeParameters;
 
   private List<MoveNormalizedField> fields;
 
@@ -58,18 +57,18 @@ public class MoveNormalizedStruct {
    *
    * @return the type parameters
    */
-  public List<MoveStructTypeParameter> getType_parameters() {
-    return type_parameters;
+  public List<MoveStructTypeParameter> getTypeParameters() {
+    return typeParameters;
   }
 
   /**
    * Sets type parameters.
    *
-   * @param type_parameters the type parameters
+   * @param typeParameters the type parameters
    */
   @SuppressWarnings("checkstyle:ParameterName")
-  public void setType_parameters(List<MoveStructTypeParameter> type_parameters) {
-    this.type_parameters = type_parameters;
+  public void setTypeParameters(List<MoveStructTypeParameter> typeParameters) {
+    this.typeParameters = typeParameters;
   }
 
   /**
@@ -100,13 +99,13 @@ public class MoveNormalizedStruct {
     }
     MoveNormalizedStruct that = (MoveNormalizedStruct) o;
     return abilities.equals(that.abilities)
-        && type_parameters.equals(that.type_parameters)
+        && typeParameters.equals(that.typeParameters)
         && fields.equals(that.fields);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(abilities, type_parameters, fields);
+    return Objects.hash(abilities, typeParameters, fields);
   }
 
   @Override
@@ -115,7 +114,7 @@ public class MoveNormalizedStruct {
         + "abilities="
         + abilities
         + ", type_parameters="
-        + type_parameters
+        + typeParameters
         + ", fields="
         + fields
         + '}';

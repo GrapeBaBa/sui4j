@@ -26,7 +26,7 @@ import java.util.Objects;
  * @author grapebaba
  * @since 2022.11
  */
-public class PaginatedTransactionResponse {
+public class PaginatedTransactionBlockResponse {
 
   private List<TransactionBlockResponse> data;
 
@@ -93,10 +93,10 @@ public class PaginatedTransactionResponse {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof PaginatedTransactionResponse)) {
+    if (!(o instanceof PaginatedTransactionBlockResponse)) {
       return false;
     }
-    PaginatedTransactionResponse that = (PaginatedTransactionResponse) o;
+    PaginatedTransactionBlockResponse that = (PaginatedTransactionBlockResponse) o;
     return hasNextPage == that.hasNextPage
         && data.equals(that.data)
         && nextCursor.equals(that.nextCursor);
@@ -104,7 +104,7 @@ public class PaginatedTransactionResponse {
 
   @Override
   public String toString() {
-    return "PaginatedTransactionResponse{"
+    return "PaginatedTransactionBlockResponse{"
         + "data="
         + data
         + ", nextCursor='"

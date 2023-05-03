@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -30,16 +30,13 @@ public class MoveNormalizedFunction {
 
   private MoveVisibility visibility;
 
-  @SuppressWarnings("checkstyle:MemberName")
-  private boolean is_entry;
+  private boolean isEntry;
 
-  @SuppressWarnings("checkstyle:MemberName")
-  private List<MoveAbilitySet> type_parameters;
+  private List<MoveAbilitySet> typeParameters;
 
   private List<MoveNormalizedType> parameters;
 
-  @SuppressWarnings("checkstyle:MemberName")
-  private List<MoveNormalizedType> return_;
+  private List<MoveNormalizedType> returnType;
 
   /**
    * Gets visibility.
@@ -64,18 +61,18 @@ public class MoveNormalizedFunction {
    *
    * @return the boolean
    */
-  public boolean isIs_entry() {
-    return is_entry;
+  public boolean isEntry() {
+    return isEntry;
   }
 
   /**
    * Sets is entry.
    *
-   * @param is_entry the is entry
+   * @param entry the is entry
    */
   @SuppressWarnings("checkstyle:ParameterName")
-  public void setIs_entry(boolean is_entry) {
-    this.is_entry = is_entry;
+  public void setEntry(boolean entry) {
+    this.isEntry = entry;
   }
 
   /**
@@ -83,18 +80,18 @@ public class MoveNormalizedFunction {
    *
    * @return the type parameters
    */
-  public List<MoveAbilitySet> getType_parameters() {
-    return type_parameters;
+  public List<MoveAbilitySet> getTypeParameters() {
+    return typeParameters;
   }
 
   /**
    * Sets type parameters.
    *
-   * @param type_parameters the type parameters
+   * @param typeParameters the type parameters
    */
   @SuppressWarnings("checkstyle:ParameterName")
-  public void setType_parameters(List<MoveAbilitySet> type_parameters) {
-    this.type_parameters = type_parameters;
+  public void setTypeParameters(List<MoveAbilitySet> typeParameters) {
+    this.typeParameters = typeParameters;
   }
 
   /**
@@ -120,18 +117,18 @@ public class MoveNormalizedFunction {
    *
    * @return the return
    */
-  public List<MoveNormalizedType> getReturn_() {
-    return return_;
+  public List<MoveNormalizedType> getReturnType() {
+    return returnType;
   }
 
   /**
    * Sets return.
    *
-   * @param return_ the return
+   * @param returnType the return
    */
   @SuppressWarnings("checkstyle:ParameterName")
-  public void setReturn_(List<MoveNormalizedType> return_) {
-    this.return_ = return_;
+  public void setReturnType(List<MoveNormalizedType> returnType) {
+    this.returnType = returnType;
   }
 
   @Override
@@ -143,16 +140,16 @@ public class MoveNormalizedFunction {
       return false;
     }
     MoveNormalizedFunction that = (MoveNormalizedFunction) o;
-    return is_entry == that.is_entry
+    return isEntry == that.isEntry
         && visibility == that.visibility
-        && type_parameters.equals(that.type_parameters)
+        && typeParameters.equals(that.typeParameters)
         && parameters.equals(that.parameters)
-        && return_.equals(that.return_);
+        && returnType.equals(that.returnType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(visibility, is_entry, type_parameters, parameters, return_);
+    return Objects.hash(visibility, isEntry, typeParameters, parameters, returnType);
   }
 
   @Override
@@ -161,13 +158,13 @@ public class MoveNormalizedFunction {
         + "visibility="
         + visibility
         + ", is_entry="
-        + is_entry
+        + isEntry
         + ", type_parameters="
-        + type_parameters
+        + typeParameters
         + ", parameters="
         + parameters
-        + ", return_="
-        + return_
+        + ", returnType="
+        + returnType
         + '}';
   }
 }

@@ -22,16 +22,16 @@ import io.reactivex.rxjava3.functions.Consumer;
 import io.sui.models.SuiApiException;
 import io.sui.models.events.EventFilter;
 import io.sui.models.events.SuiEvent;
-import io.sui.models.transactions.TransactionEffects;
+import io.sui.models.transactions.TransactionBlockEffects;
 import io.sui.models.transactions.TransactionFilter;
 
 /**
- * The interface Event client.
+ * The interface SubscribeClient.
  *
  * @author grapebaba
  * @since 2022.12
  */
-public interface EventClient {
+public interface SubscribeClient {
 
   /**
    * Subscribe event disposable.
@@ -54,6 +54,6 @@ public interface EventClient {
    */
   Disposable subscribeTransaction(
       TransactionFilter transactionFilter,
-      Consumer<TransactionEffects> onNext,
+      Consumer<TransactionBlockEffects> onNext,
       Consumer<SuiApiException> onError);
 }

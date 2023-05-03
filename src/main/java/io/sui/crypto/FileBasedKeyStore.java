@@ -84,7 +84,7 @@ public class FileBasedKeyStore extends AbstractKeyStore {
   private void save() {
     List<String> address =
         FileBasedKeyStore.super.keys.values().stream()
-            .map(item -> item.encodePrivateKey())
+            .map(SuiKeyPair::encodePrivateKey)
             .collect(Collectors.toList());
     Type listType = new TypeToken<List<String>>() {}.getType();
 

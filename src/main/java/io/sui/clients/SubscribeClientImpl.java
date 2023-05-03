@@ -25,7 +25,7 @@ import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.models.SuiApiException;
 import io.sui.models.events.EventFilter;
 import io.sui.models.events.SuiEvent;
-import io.sui.models.transactions.TransactionEffects;
+import io.sui.models.transactions.TransactionBlockEffects;
 import io.sui.models.transactions.TransactionFilter;
 
 /**
@@ -34,11 +34,11 @@ import io.sui.models.transactions.TransactionFilter;
  * @author grapebaba
  * @since 2022.12
  */
-public class EventClientImpl implements EventClient {
+public class SubscribeClientImpl implements SubscribeClient {
 
   private final JsonRpcClientProvider jsonRpcClientProvider;
 
-  public EventClientImpl(JsonRpcClientProvider jsonRpcClientProvider) {
+  public SubscribeClientImpl(JsonRpcClientProvider jsonRpcClientProvider) {
     this.jsonRpcClientProvider = jsonRpcClientProvider;
   }
 
@@ -54,7 +54,7 @@ public class EventClientImpl implements EventClient {
   @Override
   public Disposable subscribeTransaction(
       TransactionFilter transactionFilter,
-      Consumer<TransactionEffects> onNext,
+      Consumer<TransactionBlockEffects> onNext,
       Consumer<SuiApiException> onError) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(

@@ -33,31 +33,43 @@ import io.sui.models.coin.CoinSupply;
 import io.sui.models.coin.PaginatedCoins;
 import io.sui.models.events.EventFilter.AllEventFilter;
 import io.sui.models.events.PaginatedEvents;
+import io.sui.models.events.SuiEvent;
 import io.sui.models.governance.DelegatedStake;
 import io.sui.models.governance.SuiCommitteeInfo;
 import io.sui.models.governance.SystemStateSummary;
 import io.sui.models.governance.ValidatorsApy;
+import io.sui.models.objects.Checkpoint;
+import io.sui.models.objects.MoveFunctionArgType;
+import io.sui.models.objects.MoveNormalizedFunction;
+import io.sui.models.objects.MoveNormalizedModule;
+import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectDataOptions;
 import io.sui.models.objects.ObjectResponseQuery;
+import io.sui.models.objects.PaginatedCheckpoint;
 import io.sui.models.objects.PaginatedObjectsResponse;
 import io.sui.models.objects.SuiObjectResponse;
 import io.sui.models.transactions.ExecuteTransactionRequestType;
-import io.sui.models.transactions.PaginatedTransactionResponse;
+import io.sui.models.transactions.PaginatedTransactionBlockResponse;
 import io.sui.models.transactions.StructTag;
 import io.sui.models.transactions.TransactionBlockResponse;
 import io.sui.models.transactions.TransactionBlockResponseOptions;
 import io.sui.models.transactions.TransactionBlockResponseQuery;
 import io.sui.models.transactions.TransactionFilter.FromAddressFilter;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -70,23 +82,32 @@ import org.junit.jupiter.api.Test;
 public class SuiIntTests {
 
   private static final String BASE_NODE_URL = "http://localhost:9000";
-  //  private static final String BASE_NODE_URL = "https://fullnode.devnet.sui.io:443";
+  // private static final String BASE_NODE_URL = "https://fullnode.devnet.sui.io:443";
 
   private static final String BASE_FAUCET_URL = "http://localhost:9123";
-  //  private static final String BASE_FAUCET_URL = "https://faucet.devnet.sui.io";
+  // private static final String BASE_FAUCET_URL = "https://faucet.devnet.sui.io";
 
   //  private static final String TEST_KEY_STORE_PATH =
   //      System.getProperty("user.home") + "/.sui/sui_config/sui.keystore";
 
   private static final String KEY_STORE_PATH =
-      Paths.get("src/integrationTest/sui.keystore").toAbsolutePath().toString();
+      Paths.get("src", "integrationTest", "sui.keystore").toAbsolutePath().toString();
 
   private static final Sui SUI = new Sui(BASE_NODE_URL, BASE_FAUCET_URL, KEY_STORE_PATH);
 
+  @BeforeAll
+  static void setUp() {
+    newAddress();
+    requestSuiFromFaucet();
+  }
+
+  @AfterAll
+  static void tearDown() throws IOException {
+    Files.delete(Paths.get("src", "integrationTest", "sui.keystore").toAbsolutePath());
+  }
+
   /** New address. */
-  @Test
-  @DisplayName("Test newAddress.")
-  void newAddress() {
+  static void newAddress() {
     KeyResponse res1 = SUI.newAddress(SignatureScheme.ED25519);
     System.out.printf("mnemonic+address:%s%n", res1);
     System.out.println();
@@ -101,9 +122,7 @@ public class SuiIntTests {
   }
 
   /** Request sui from faucet. */
-  @Test
-  @DisplayName("Test requestSuiFromFaucet.")
-  void requestSuiFromFaucet() {
+  static void requestSuiFromFaucet() {
     SUI.addresses()
         .forEach(
             s -> {
@@ -135,7 +154,7 @@ public class SuiIntTests {
             .filter(
                 s -> {
                   try {
-                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                    return SUI.getOwnedObjects(s, objectResponseQuery, null, null)
                             .get()
                             .getData()
                             .size()
@@ -149,10 +168,7 @@ public class SuiIntTests {
       Assertions.fail();
     }
     final SuiObjectResponse suiObjectResponse =
-        SUI.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null)
-            .get()
-            .getData()
-            .get(0);
+        SUI.getOwnedObjects(sender.get(), objectResponseQuery, null, null).get().getData().get(0);
     TransactionBlockResponseOptions transactionBlockResponseOptions =
         new TransactionBlockResponseOptions();
     transactionBlockResponseOptions.setShowEffects(true);
@@ -201,7 +217,7 @@ public class SuiIntTests {
             .filter(
                 s -> {
                   try {
-                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                    return SUI.getOwnedObjects(s, objectResponseQuery, null, null)
                             .get()
                             .getData()
                             .size()
@@ -217,9 +233,7 @@ public class SuiIntTests {
           SUI.addresses().stream().filter(s -> !s.equals(sender.get())).findFirst();
       if (recipient.isPresent()) {
         List<SuiObjectResponse> objects =
-            SUI.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null)
-                .get()
-                .getData();
+            SUI.getOwnedObjects(sender.get(), objectResponseQuery, null, null).get().getData();
         TransactionBlockResponseOptions transactionBlockResponseOptions =
             new TransactionBlockResponseOptions();
         transactionBlockResponseOptions.setShowEffects(true);
@@ -272,7 +286,7 @@ public class SuiIntTests {
             .filter(
                 s -> {
                   try {
-                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                    return SUI.getOwnedObjects(s, objectResponseQuery, null, null)
                             .get()
                             .getData()
                             .size()
@@ -367,7 +381,7 @@ public class SuiIntTests {
             .filter(
                 s -> {
                   try {
-                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                    return SUI.getOwnedObjects(s, objectResponseQuery, null, null)
                             .get()
                             .getData()
                             .size()
@@ -385,10 +399,7 @@ public class SuiIntTests {
     transactionFilter.setFromAddress(sender.get());
 
     final SuiObjectResponse suiObjectResponse =
-        SUI.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null)
-            .get()
-            .getData()
-            .get(0);
+        SUI.getOwnedObjects(sender.get(), objectResponseQuery, null, null).get().getData().get(0);
     TransactionBlockResponseOptions transactionBlockResponseOptions =
         new TransactionBlockResponseOptions();
     transactionBlockResponseOptions.setShowEffects(true);
@@ -442,7 +453,7 @@ public class SuiIntTests {
             .filter(
                 s -> {
                   try {
-                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                    return SUI.getOwnedObjects(s, objectResponseQuery, null, null)
                             .get()
                             .getData()
                             .size()
@@ -471,7 +482,7 @@ public class SuiIntTests {
     }
 
     List<SuiObjectResponse> objects =
-        SUI.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null).get().getData();
+        SUI.getOwnedObjects(sender.get(), objectResponseQuery, null, null).get().getData();
 
     CompletableFuture<TransactionBlockResponse> res =
         SUI.newTransactionBlock()
@@ -549,7 +560,7 @@ public class SuiIntTests {
             .filter(
                 s -> {
                   try {
-                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                    return SUI.getOwnedObjects(s, objectResponseQuery, null, null)
                             .get()
                             .getData()
                             .size()
@@ -582,7 +593,7 @@ public class SuiIntTests {
             .filter(
                 s -> {
                   try {
-                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                    return SUI.getOwnedObjects(s, objectResponseQuery, null, null)
                             .get()
                             .getData()
                             .size()
@@ -616,7 +627,7 @@ public class SuiIntTests {
             .filter(
                 s -> {
                   try {
-                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                    return SUI.getOwnedObjects(s, objectResponseQuery, null, null)
                             .get()
                             .getData()
                             .size()
@@ -673,7 +684,7 @@ public class SuiIntTests {
             .filter(
                 s -> {
                   try {
-                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                    return SUI.getOwnedObjects(s, objectResponseQuery, null, null)
                             .get()
                             .getData()
                             .size()
@@ -695,14 +706,14 @@ public class SuiIntTests {
     transactionBlockResponseOptions.setShowObjectChanges(true);
 
     String dest =
-        SUI.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null)
+        SUI.getOwnedObjects(sender.get(), objectResponseQuery, null, null)
             .get()
             .getData()
             .get(0)
             .getData()
             .getObjectId();
     List<String> source =
-        SUI.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null).get().getData()
+        SUI.getOwnedObjects(sender.get(), objectResponseQuery, null, null).get().getData()
             .subList(1, 2).stream()
             .map(suiObjectResponse -> suiObjectResponse.getData().getObjectId())
             .collect(Collectors.toList());
@@ -741,14 +752,14 @@ public class SuiIntTests {
    * @throws InterruptedException the interrupted exception
    */
   @Test
-  @DisplayName("Test getObjectsOwnedByAddress.")
+  @DisplayName("Test getOwnedObjects.")
   void getObjectsOwnedByAddress() throws ExecutionException, InterruptedException {
     final Optional<String> sender =
         SUI.addresses().stream()
             .filter(
                 s -> {
                   try {
-                    return SUI.getObjectsOwnedByAddress(s, new ObjectResponseQuery(), null, null)
+                    return SUI.getOwnedObjects(s, new ObjectResponseQuery(), null, null)
                             .get()
                             .getData()
                             .size()
@@ -763,7 +774,7 @@ public class SuiIntTests {
     }
     System.out.println(sender.get());
     CompletableFuture<PaginatedObjectsResponse> res =
-        SUI.getObjectsOwnedByAddress(sender.get(), null, null, null);
+        SUI.getOwnedObjects(sender.get(), null, null, null);
     System.out.printf("paginated objects:%s%n", res.get());
   }
 
@@ -777,7 +788,7 @@ public class SuiIntTests {
   @DisplayName("Test queryTransactionBlocks.")
   void queryTransactionBlocks() throws ExecutionException, InterruptedException {
     TransactionBlockResponseQuery query = new TransactionBlockResponseQuery();
-    CompletableFuture<PaginatedTransactionResponse> res =
+    CompletableFuture<PaginatedTransactionBlockResponse> res =
         SUI.queryTransactionBlocks(query, null, 10, false);
 
     System.out.printf("paginated transaction blocks:%s%n", res.get());
@@ -793,7 +804,7 @@ public class SuiIntTests {
   @DisplayName("Test getTransactionBlock.")
   void getTransactionBlock() throws ExecutionException, InterruptedException {
     TransactionBlockResponseQuery query = new TransactionBlockResponseQuery();
-    CompletableFuture<PaginatedTransactionResponse> res =
+    CompletableFuture<PaginatedTransactionBlockResponse> res =
         SUI.queryTransactionBlocks(query, null, 10, false);
 
     TransactionBlockResponseOptions options = new TransactionBlockResponseOptions();
@@ -814,7 +825,7 @@ public class SuiIntTests {
   @DisplayName("Test multiGetTransactionBlocks.")
   void multiGetTransactionBlocks() throws ExecutionException, InterruptedException {
     TransactionBlockResponseQuery query = new TransactionBlockResponseQuery();
-    CompletableFuture<PaginatedTransactionResponse> res =
+    CompletableFuture<PaginatedTransactionBlockResponse> res =
         SUI.queryTransactionBlocks(query, null, 10, false);
 
     TransactionBlockResponseOptions options = new TransactionBlockResponseOptions();
@@ -844,7 +855,7 @@ public class SuiIntTests {
             .filter(
                 s -> {
                   try {
-                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                    return SUI.getOwnedObjects(s, objectResponseQuery, null, null)
                             .get()
                             .getData()
                             .size()
@@ -858,8 +869,7 @@ public class SuiIntTests {
       Assertions.fail();
     }
     List<String> objects =
-        SUI.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null).get().getData()
-            .stream()
+        SUI.getOwnedObjects(sender.get(), objectResponseQuery, null, null).get().getData().stream()
             .map(suiObjectResponse -> suiObjectResponse.getData().getObjectId())
             .collect(Collectors.toList());
     CompletableFuture<List<SuiObjectResponse>> res1 =
@@ -923,7 +933,7 @@ public class SuiIntTests {
             .filter(
                 s -> {
                   try {
-                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                    return SUI.getOwnedObjects(s, objectResponseQuery, null, null)
                             .get()
                             .getData()
                             .size()
@@ -937,8 +947,7 @@ public class SuiIntTests {
       Assertions.fail();
     }
     List<String> objects =
-        SUI.getObjectsOwnedByAddress(sender.get(), objectResponseQuery, null, null).get().getData()
-            .stream()
+        SUI.getOwnedObjects(sender.get(), objectResponseQuery, null, null).get().getData().stream()
             .map(suiObjectResponse -> suiObjectResponse.getData().getObjectId())
             .collect(Collectors.toList());
     CompletableFuture<List<DelegatedStake>> res = SUI.getStakesByIds(Lists.newArrayList());
@@ -968,7 +977,7 @@ public class SuiIntTests {
             .filter(
                 s -> {
                   try {
-                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                    return SUI.getOwnedObjects(s, objectResponseQuery, null, null)
                             .get()
                             .getData()
                             .size()
@@ -1027,7 +1036,7 @@ public class SuiIntTests {
             .filter(
                 s -> {
                   try {
-                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, 10)
+                    return SUI.getOwnedObjects(s, objectResponseQuery, null, 10)
                             .get()
                             .getData()
                             .size()
@@ -1073,7 +1082,7 @@ public class SuiIntTests {
             .filter(
                 s -> {
                   try {
-                    return SUI.getObjectsOwnedByAddress(s, objectResponseQuery, null, null)
+                    return SUI.getOwnedObjects(s, objectResponseQuery, null, null)
                             .get()
                             .getData()
                             .size()
@@ -1087,6 +1096,117 @@ public class SuiIntTests {
       Assertions.fail();
     }
     CompletableFuture<List<Balance>> res = SUI.getAllBalances(sender.get());
+    System.out.println(res.get());
+  }
+
+  /**
+   * Gets checkpoint.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getCheckpoint.")
+  void getCheckpoint() throws ExecutionException, InterruptedException {
+    CompletableFuture<Checkpoint> res = SUI.getCheckpoint(BigInteger.ZERO.toString());
+    System.out.println(res.get());
+  }
+
+  /**
+   * Gets checkpoints.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getCheckpoints.")
+  void getCheckpoints() throws ExecutionException, InterruptedException {
+    CompletableFuture<PaginatedCheckpoint> res = SUI.getCheckpoints(null, 10, true);
+    System.out.println(res.get());
+  }
+
+  /**
+   * Gets events.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getEvents.")
+  void getEvents() throws ExecutionException, InterruptedException {
+    AllEventFilter eventFilter = new AllEventFilter();
+    CompletableFuture<PaginatedEvents> res = SUI.queryEvents(eventFilter, null, 10, false);
+    CompletableFuture<List<SuiEvent>> res1 =
+        SUI.getEvents(res.get().getData().get(0).getId().getTxDigest());
+    System.out.println(res1.get());
+  }
+
+  /**
+   * Gets latest checkpoint sequence number.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getLatestCheckpointSequenceNumber.")
+  void getLatestCheckpointSequenceNumber() throws ExecutionException, InterruptedException {
+    CompletableFuture<BigInteger> res = SUI.getLatestCheckpointSequenceNumber();
+    System.out.println(res.get());
+  }
+
+  /**
+   * Gets normalized move modules by package.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getLatestCheckpointSequenceNumber.")
+  void getNormalizedMoveModulesByPackage() throws ExecutionException, InterruptedException {
+    CompletableFuture<Map<String, MoveNormalizedModule>> res =
+        SUI.getNormalizedMoveModulesByPackage("0x2");
+    System.out.println(res.get());
+  }
+
+  /**
+   * Gets normalized move struct.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getNormalizedMoveStruct.")
+  void getNormalizedMoveStruct() throws ExecutionException, InterruptedException {
+    CompletableFuture<MoveNormalizedStruct> res = SUI.getNormalizedMoveStruct("0x2", "bag", "Bag");
+    System.out.println(res.get());
+  }
+
+  /**
+   * Gets normalized move module.
+   *
+   * @throws ExecutionException the execution exception
+   * @throws InterruptedException the interrupted exception
+   */
+  @Test
+  @DisplayName("Test getNormalizedMoveModule.")
+  void getNormalizedMoveModule() throws ExecutionException, InterruptedException {
+    CompletableFuture<MoveNormalizedModule> res = SUI.getNormalizedMoveModule("0x2", "bag");
+    System.out.println(res.get());
+  }
+
+  @Test
+  @DisplayName("Test getMoveFunctionArgTypes.")
+  void getMoveFunctionArgTypes() throws ExecutionException, InterruptedException {
+    CompletableFuture<List<MoveFunctionArgType>> res =
+        SUI.getMoveFunctionArgTypes("0x2", "bag", "add");
+    System.out.println(res.get());
+  }
+
+  @Test
+  @DisplayName("Test getNormalizedMoveFunction.")
+  void getNormalizedMoveFunction() throws ExecutionException, InterruptedException {
+    CompletableFuture<MoveNormalizedFunction> res =
+        SUI.getNormalizedMoveFunction("0x2", "bag", "add");
     System.out.println(res.get());
   }
 }

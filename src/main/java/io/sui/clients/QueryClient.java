@@ -24,25 +24,23 @@ import io.sui.models.coin.PaginatedCoins;
 import io.sui.models.events.EventFilter;
 import io.sui.models.events.EventId;
 import io.sui.models.events.PaginatedEvents;
+import io.sui.models.events.SuiEvent;
 import io.sui.models.governance.DelegatedStake;
 import io.sui.models.governance.SuiCommitteeInfo;
 import io.sui.models.governance.SystemStateSummary;
 import io.sui.models.governance.ValidatorsApy;
-import io.sui.models.objects.CheckpointContents;
-import io.sui.models.objects.CheckpointSummary;
+import io.sui.models.objects.Checkpoint;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectDataOptions;
-import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.ObjectResponseQuery;
+import io.sui.models.objects.PaginatedCheckpoint;
 import io.sui.models.objects.PaginatedObjectsResponse;
 import io.sui.models.objects.SuiObjectRef;
 import io.sui.models.objects.SuiObjectResponse;
-import io.sui.models.objects.SuiSystemState;
-import io.sui.models.objects.ValidatorMetadata;
-import io.sui.models.transactions.PaginatedTransactionResponse;
+import io.sui.models.transactions.PaginatedTransactionBlockResponse;
 import io.sui.models.transactions.TransactionBlockResponse;
 import io.sui.models.transactions.TransactionBlockResponseOptions;
 import io.sui.models.transactions.TransactionBlockResponseQuery;
@@ -80,7 +78,7 @@ public interface QueryClient {
    * @param limit the limit
    * @return the objects owned by address
    */
-  CompletableFuture<PaginatedObjectsResponse> getObjectsOwnedByAddress(
+  CompletableFuture<PaginatedObjectsResponse> getOwnedObjects(
       String address, ObjectResponseQuery query, String cursor, Integer limit);
 
   /**
@@ -119,20 +117,6 @@ public interface QueryClient {
    */
   CompletableFuture<List<SuiObjectResponse>> multiGetObjects(
       List<String> objectIds, ObjectDataOptions options);
-
-  /**
-   * Gets sui system state.
-   *
-   * @return the sui system state
-   */
-  CompletableFuture<SuiSystemState> getSuiSystemState();
-
-  /**
-   * Return all validators available for stake delegation.
-   *
-   * @return all validators available for stake delegation.
-   */
-  CompletableFuture<List<ValidatorMetadata>> getValidators();
 
   /**
    * Gets events.
@@ -206,15 +190,6 @@ public interface QueryClient {
       String suiPackage, String module, String struct);
 
   /**
-   * Try get past object completable future.
-   *
-   * @param objectId the object id
-   * @param version the version
-   * @return the completable future
-   */
-  CompletableFuture<ObjectResponse> tryGetPastObject(String objectId, long version);
-
-  /**
    * Gets transactions.
    *
    * @param query the query
@@ -223,19 +198,8 @@ public interface QueryClient {
    * @param isDescOrder the is desc order
    * @return the transactions
    */
-  CompletableFuture<PaginatedTransactionResponse> queryTransactionBlocks(
+  CompletableFuture<PaginatedTransactionBlockResponse> queryTransactionBlocks(
       TransactionBlockResponseQuery query, String cursor, Integer limit, boolean isDescOrder);
-
-  /**
-   * Query objects completable future.
-   *
-   * @param query the query
-   * @param cursor the cursor
-   * @param limit the limit
-   * @return the completable future
-   */
-  CompletableFuture<PaginatedObjectsResponse> queryObjects(
-      ObjectResponseQuery query, String cursor, Integer limit);
 
   /**
    * Gets coin metadata.
@@ -301,36 +265,12 @@ public interface QueryClient {
   CompletableFuture<Balance> getBalance(String address, String coinType);
 
   /**
-   * Return contents of a checkpoint, namely a list of execution digests.
+   * Return a checkpoint based on a checkpoint sequence number or digest.
    *
-   * @param seqNum the sequence number
-   * @return the contents of a checkpoint
-   */
-  CompletableFuture<CheckpointContents> getCheckpointContents(long seqNum);
-
-  /**
-   * Return contents of a checkpoint based on checkpoint content digest.
-   *
-   * @param checkpointDigest the checkpoint digest
-   * @return the contents of a checkpoint
-   */
-  CompletableFuture<CheckpointContents> getCheckpointContentsByDigest(String checkpointDigest);
-
-  /**
-   * Return a checkpoint summary based on a checkpoint sequence number.
-   *
-   * @param seqNum the checkpoint sequence number
+   * @param checkpointId the checkpoint sequence number
    * @return the checkpoint summary based on the checkpoint sequence number
    */
-  CompletableFuture<CheckpointSummary> getCheckpointSummary(Long seqNum);
-
-  /**
-   * Return a checkpoint summary based on checkpoint digest.
-   *
-   * @param checkpointDigest the checkpoint digest
-   * @return the checkpoint summary based on the checkpoint digest
-   */
-  CompletableFuture<CheckpointSummary> getCheckpointSummaryByDigest(String checkpointDigest);
+  CompletableFuture<Checkpoint> getCheckpoint(String checkpointId);
 
   /**
    * Gets validators apy.
@@ -369,4 +309,30 @@ public interface QueryClient {
    * @return the latest sui system state
    */
   CompletableFuture<SystemStateSummary> getLatestSuiSystemState();
+
+  /**
+   * Gets checkpoints.
+   *
+   * @param cursor the cursor
+   * @param limit the limit
+   * @param isDescOrder the is desc order
+   * @return the checkpoints
+   */
+  CompletableFuture<PaginatedCheckpoint> getCheckpoints(
+      String cursor, Integer limit, boolean isDescOrder);
+
+  /**
+   * Gets events.
+   *
+   * @param transactionDigest the transaction digest
+   * @return the events
+   */
+  CompletableFuture<List<SuiEvent>> getEvents(String transactionDigest);
+
+  /**
+   * Gets latest checkpoint sequence number.
+   *
+   * @return the latest checkpoint sequence number
+   */
+  CompletableFuture<BigInteger> getLatestCheckpointSequenceNumber();
 }

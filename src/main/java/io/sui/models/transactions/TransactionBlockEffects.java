@@ -29,7 +29,7 @@ import java.util.Objects;
  * @author grapebaba
  * @since 2022.11
  */
-public class TransactionEffects {
+public class TransactionBlockEffects {
 
   private String messageVersion = "v1";
 
@@ -37,7 +37,7 @@ public class TransactionEffects {
 
   private BigInteger executedEpoch;
 
-  private List<TransactionEffectsModifiedAtVersions> modifiedAtVersions;
+  private List<TransactionBlockEffectsModifiedAtVersions> modifiedAtVersions;
 
   private GasCostSummary gasUsed;
 
@@ -335,11 +335,12 @@ public class TransactionEffects {
     this.dependencies = dependencies;
   }
 
-  public List<TransactionEffectsModifiedAtVersions> getModifiedAtVersions() {
+  public List<TransactionBlockEffectsModifiedAtVersions> getModifiedAtVersions() {
     return modifiedAtVersions;
   }
 
-  public void setModifiedAtVersions(List<TransactionEffectsModifiedAtVersions> modifiedAtVersions) {
+  public void setModifiedAtVersions(
+      List<TransactionBlockEffectsModifiedAtVersions> modifiedAtVersions) {
     this.modifiedAtVersions = modifiedAtVersions;
   }
 
@@ -348,10 +349,10 @@ public class TransactionEffects {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof TransactionEffects)) {
+    if (!(o instanceof TransactionBlockEffects)) {
       return false;
     }
-    TransactionEffects that = (TransactionEffects) o;
+    TransactionBlockEffects that = (TransactionBlockEffects) o;
     return messageVersion.equals(that.messageVersion)
         && status.equals(that.status)
         && executedEpoch.equals(that.executedEpoch)
@@ -393,7 +394,7 @@ public class TransactionEffects {
 
   @Override
   public String toString() {
-    return "TransactionEffects{"
+    return "TransactionBlockEffects{"
         + "messageVersion='"
         + messageVersion
         + '\''

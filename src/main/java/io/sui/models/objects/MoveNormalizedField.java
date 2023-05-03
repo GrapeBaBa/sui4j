@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 281165273grape@gmail.com
+ * Copyright 2022-2023 281165273grape@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with
@@ -29,8 +29,7 @@ public class MoveNormalizedField {
 
   private String name;
 
-  @SuppressWarnings("checkstyle:MemberName")
-  private MoveNormalizedType type_;
+  private MoveNormalizedType type;
 
   /**
    * Gets name.
@@ -55,18 +54,18 @@ public class MoveNormalizedField {
    *
    * @return the type
    */
-  public MoveNormalizedType getType_() {
-    return type_;
+  public MoveNormalizedType getType() {
+    return type;
   }
 
   /**
    * Sets type.
    *
-   * @param type_ the type
+   * @param type the type
    */
   @SuppressWarnings("checkstyle:ParameterName")
-  public void setType_(MoveNormalizedType type_) {
-    this.type_ = type_;
+  public void setType(MoveNormalizedType type) {
+    this.type = type;
   }
 
   @Override
@@ -78,16 +77,16 @@ public class MoveNormalizedField {
       return false;
     }
     MoveNormalizedField that = (MoveNormalizedField) o;
-    return name.equals(that.name) && type_.equals(that.type_);
+    return name.equals(that.name) && type.equals(that.type);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, type_);
+    return Objects.hash(name, type);
   }
 
   @Override
   public String toString() {
-    return "MoveNormalizedField{" + "name='" + name + '\'' + ", type_=" + type_ + '}';
+    return "MoveNormalizedField{" + "name='" + name + '\'' + ", type_=" + type + '}';
   }
 }

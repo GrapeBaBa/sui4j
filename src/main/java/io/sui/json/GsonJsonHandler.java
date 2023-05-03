@@ -17,7 +17,6 @@
 package io.sui.json;
 
 
-import com.google.common.primitives.Bytes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -38,18 +37,13 @@ import io.sui.jsonrpc.JsonRpc20WSResponse;
 import io.sui.models.FaucetResponse;
 import io.sui.models.events.EventFilter;
 import io.sui.models.events.EventFilter.PackageEventFilter;
-import io.sui.models.events.EventKind;
-import io.sui.models.events.EventQuery;
-import io.sui.models.events.EventQuery.AllQuery;
 import io.sui.models.governance.Validator;
-import io.sui.models.objects.InputObjectKind;
-import io.sui.models.objects.InputObjectKind.ImmOrOwnedMoveObjectKind;
-import io.sui.models.objects.InputObjectKind.MovePackageKind;
-import io.sui.models.objects.InputObjectKind.SharedMoveObjectKind;
+import io.sui.models.objects.MoveAbilitySet;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveFunctionArgType.ObjectValueKindMoveFunctionArgType;
 import io.sui.models.objects.MoveFunctionArgType.PureFunctionMoveFunctionArgType;
 import io.sui.models.objects.MoveModule;
+import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedType;
 import io.sui.models.objects.MoveNormalizedType.MoveNormalizedStructType;
 import io.sui.models.objects.MoveNormalizedType.MoveNormalizedTypeParameterType;
@@ -57,19 +51,15 @@ import io.sui.models.objects.MoveNormalizedType.MutableReferenceMoveNormalizedTy
 import io.sui.models.objects.MoveNormalizedType.ReferenceMoveNormalizedType;
 import io.sui.models.objects.MoveNormalizedType.TypeMoveNormalizedType;
 import io.sui.models.objects.MoveNormalizedType.VectorReferenceMoveNormalizedType;
+import io.sui.models.objects.MoveVisibility;
 import io.sui.models.objects.ObjectChange;
 import io.sui.models.objects.ObjectChange.ObjectChangeType;
-import io.sui.models.objects.ObjectResponse;
-import io.sui.models.objects.ObjectStatus;
-import io.sui.models.objects.SuiObjectData;
 import io.sui.models.objects.SuiObjectOwner;
-import io.sui.models.objects.SuiObjectRef;
 import io.sui.models.objects.SuiParsedData;
 import io.sui.models.objects.SuiRawData;
 import io.sui.models.transactions.Argument;
 import io.sui.models.transactions.Argument.NestedResult;
 import io.sui.models.transactions.Argument.NestedResultArgument;
-import io.sui.models.transactions.AuthorityQuorumSignInfo;
 import io.sui.models.transactions.Command;
 import io.sui.models.transactions.Command.MakeMoveVec;
 import io.sui.models.transactions.Command.MakeMoveVecCommand;
@@ -83,21 +73,14 @@ import io.sui.models.transactions.Command.SplitCoinCommand;
 import io.sui.models.transactions.Command.TransferObjects;
 import io.sui.models.transactions.Command.TransferObjectsCommand;
 import io.sui.models.transactions.MoveFunction;
-import io.sui.models.transactions.ParsedPublishResponse;
-import io.sui.models.transactions.ParsedTransactionResponseKind;
-import io.sui.models.transactions.ParsedTransactionResponseKind.ParsedMergeCoinResponseKind;
-import io.sui.models.transactions.ParsedTransactionResponseKind.ParsedPublishResponseKind;
-import io.sui.models.transactions.ParsedTransactionResponseKind.ParsedSplitCoinResponseKind;
 import io.sui.models.transactions.TransactionKind;
 import io.sui.models.transactions.TypeTag;
 import io.sui.models.transactions.TypeTag.StructType;
 import io.sui.models.transactions.TypeTag.VectorType;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * The type Gson json handler.
@@ -257,92 +240,6 @@ public class GsonJsonHandler implements JsonHandler {
     }
   }
 
-  /** The type Get object response details deserializer. */
-  public class GetObjectResponseDeserializer implements JsonDeserializer<ObjectResponse> {
-
-    @Override
-    public ObjectResponse deserialize(
-        JsonElement json, Type typeOfT, JsonDeserializationContext context)
-        throws JsonParseException {
-      if (json.isJsonObject()) {
-        if (json.getAsJsonObject().get("status").getAsString().equals(ObjectStatus.Exists.name())) {
-          ObjectResponse objectResponse = new ObjectResponse();
-          objectResponse.setStatus(ObjectStatus.Exists);
-          objectResponse.setDetails(
-              gson.fromJson(json.getAsJsonObject().get("details"), SuiObjectData.class));
-          return objectResponse;
-        } else if (json.getAsJsonObject()
-            .get("status")
-            .getAsString()
-            .equals(ObjectStatus.notExists.name())) {
-          ObjectResponse objectResponse = new ObjectResponse();
-          objectResponse.setStatus(ObjectStatus.notExists);
-          objectResponse.setDetails(
-              gson.fromJson(
-                  json.getAsJsonObject().get("details"),
-                  ObjectResponse.ObjectIdResponseDetails.class));
-          return objectResponse;
-        } else if (json.getAsJsonObject()
-            .get("status")
-            .getAsString()
-            .equals(ObjectStatus.Deleted.name())) {
-          ObjectResponse objectResponse = new ObjectResponse();
-          objectResponse.setStatus(ObjectStatus.Deleted);
-          objectResponse.setDetails(
-              gson.fromJson(json.getAsJsonObject().get("details"), SuiObjectRef.class));
-          return objectResponse;
-        }
-      }
-      return null;
-    }
-  }
-
-  /** The type Event kind deserializer. */
-  public class EventKindDeserializer implements JsonDeserializer<EventKind> {
-
-    @Override
-    public EventKind deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-        throws JsonParseException {
-      if (json.getAsJsonObject().get("moveEvent") != null
-          && !json.getAsJsonObject().get("moveEvent").isJsonNull()) {
-        return gson.fromJson(json, EventKind.MoveEventKind.class);
-      }
-      if (json.getAsJsonObject().get("publish") != null
-          && !json.getAsJsonObject().get("publish").isJsonNull()) {
-        return gson.fromJson(json, EventKind.PublishEventKind.class);
-      }
-      if (json.getAsJsonObject().get("coinBalanceChange") != null
-          && !json.getAsJsonObject().get("coinBalanceChange").isJsonNull()) {
-        return gson.fromJson(json, EventKind.CoinBalanceChangeEventKind.class);
-      }
-      if (json.getAsJsonObject().get("transferObject") != null
-          && !json.getAsJsonObject().get("transferObject").isJsonNull()) {
-        return gson.fromJson(json, EventKind.TransferObjectEventKind.class);
-      }
-      if (json.getAsJsonObject().get("mutateObject") != null
-          && !json.getAsJsonObject().get("mutateObject").isJsonNull()) {
-        return gson.fromJson(json, EventKind.MutateObjectEventKind.class);
-      }
-      if (json.getAsJsonObject().get("deleteObject") != null
-          && !json.getAsJsonObject().get("deleteObject").isJsonNull()) {
-        return gson.fromJson(json, EventKind.DeleteObjectEventKind.class);
-      }
-      if (json.getAsJsonObject().get("newObject") != null
-          && !json.getAsJsonObject().get("newObject").isJsonNull()) {
-        return gson.fromJson(json, EventKind.NewObjectEventKind.class);
-      }
-      if (json.getAsJsonObject().get("epochChange") != null
-          && !json.getAsJsonObject().get("epochChange").isJsonNull()) {
-        return gson.fromJson(json, EventKind.EpochChangeEventKind.class);
-      }
-      if (json.getAsJsonObject().get("checkpoint") != null
-          && !json.getAsJsonObject().get("checkpoint").isJsonNull()) {
-        return gson.fromJson(json, EventKind.CheckpointEventKind.class);
-      }
-      return null;
-    }
-  }
-
   /** The type Move call deserializer. */
   public class MoveCallDeserializer implements JsonDeserializer<MoveCall> {
 
@@ -450,54 +347,6 @@ public class GsonJsonHandler implements JsonHandler {
     }
   }
 
-  /** The type Parsed transaction response kind deserializer. */
-  public class ParsedTransactionResponseKindDeserializer
-      implements JsonDeserializer<ParsedTransactionResponseKind> {
-
-    @Override
-    public ParsedTransactionResponseKind deserialize(
-        JsonElement json, Type typeOfT, JsonDeserializationContext context)
-        throws JsonParseException {
-      if (json.getAsJsonObject().get("Publish") != null
-          && !json.getAsJsonObject().get("Publish").isJsonNull()) {
-        return gson.fromJson(json, ParsedPublishResponseKind.class);
-      }
-      if (json.getAsJsonObject().get("SplitCoin") != null
-          && !json.getAsJsonObject().get("SplitCoin").isJsonNull()) {
-        return gson.fromJson(json, ParsedSplitCoinResponseKind.class);
-      }
-      if (json.getAsJsonObject().get("MergeCoin") != null
-          && !json.getAsJsonObject().get("MergeCoin").isJsonNull()) {
-        return gson.fromJson(json, ParsedMergeCoinResponseKind.class);
-      }
-      return null;
-    }
-  }
-
-  /** The type Parsed publish response deserializer. */
-  public class ParsedPublishResponseDeserializer
-      implements JsonDeserializer<ParsedPublishResponse> {
-
-    @Override
-    public ParsedPublishResponse deserialize(
-        JsonElement json, Type typeOfT, JsonDeserializationContext context)
-        throws JsonParseException {
-      ParsedPublishResponse parsedPublishResponse = new ParsedPublishResponse();
-      SuiObjectData updatedGas =
-          gson.fromJson(json.getAsJsonObject().get("updatedGas"), SuiObjectData.class);
-      parsedPublishResponse.setUpdatedGas(updatedGas);
-      List<SuiObjectData> createdObjects =
-          gson.fromJson(
-              json.getAsJsonObject().get("createdObjects"),
-              new com.google.common.reflect.TypeToken<List<SuiObjectData>>() {}.getType());
-      parsedPublishResponse.setCreatedObjects(createdObjects);
-      SuiObjectRef suiPackage =
-          gson.fromJson(json.getAsJsonObject().get("package"), SuiObjectRef.class);
-      parsedPublishResponse.setSuiPackage(suiPackage);
-      return parsedPublishResponse;
-    }
-  }
-
   /** The type Transaction kind deserializer. */
   public class TransactionKindDeserializer implements JsonDeserializer<TransactionKind> {
 
@@ -514,37 +363,6 @@ public class GsonJsonHandler implements JsonHandler {
         return gson.fromJson(json, TransactionKind.GenesisTransactionKind.class);
       }
       return null;
-    }
-  }
-
-  /** The type Authority quorum sign info deserializer. */
-  public static class AuthorityQuorumSignInfoDeserializer
-      implements JsonDeserializer<AuthorityQuorumSignInfo> {
-
-    @Override
-    public AuthorityQuorumSignInfo deserialize(
-        JsonElement json, Type typeOfT, JsonDeserializationContext context)
-        throws JsonParseException {
-      AuthorityQuorumSignInfo authorityQuorumSignInfo = new AuthorityQuorumSignInfo();
-      authorityQuorumSignInfo.setEpoch(json.getAsJsonObject().get("epoch").getAsLong());
-      authorityQuorumSignInfo.setSignersMap(
-          Bytes.toArray(
-              json.getAsJsonObject().get("signers_map").getAsJsonArray().asList().stream()
-                  .map(JsonElement::getAsByte)
-                  .collect(Collectors.toList())));
-      List<String> signatures = new ArrayList<>();
-      if (json.getAsJsonObject().get("signature") != null
-          && json.getAsJsonObject().get("signature").isJsonPrimitive()) {
-        String signature = json.getAsJsonObject().get("signature").getAsString();
-        signatures.add(signature);
-      } else {
-        signatures.addAll(
-            json.getAsJsonObject().get("signature").getAsJsonArray().asList().stream()
-                .map(JsonElement::getAsString)
-                .collect(Collectors.toList()));
-      }
-      authorityQuorumSignInfo.setSignature(signatures);
-      return authorityQuorumSignInfo;
     }
   }
 
@@ -587,19 +405,6 @@ public class GsonJsonHandler implements JsonHandler {
     }
   }
 
-  /** The type Event query serializer. */
-  public class EventQuerySerializer implements JsonSerializer<EventQuery> {
-
-    @Override
-    public JsonElement serialize(EventQuery src, Type typeOfSrc, JsonSerializationContext context) {
-      if (src instanceof EventQuery.AllQuery) {
-        return new JsonPrimitive(AllQuery.All.name());
-      }
-
-      return gson.toJsonTree(src, typeOfSrc);
-    }
-  }
-
   /** The type Committee info deserializer. */
   public static class CommitteeInfoDeserializer implements JsonDeserializer<Validator> {
 
@@ -611,6 +416,34 @@ public class GsonJsonHandler implements JsonHandler {
       validator.setAuthorityName(committeeInfoStr.get(0).getAsString());
       validator.setStakeUnit(committeeInfoStr.get(1).getAsBigInteger());
       return validator;
+    }
+  }
+
+  /** The type Move normalized function type deserializer. */
+  public class MoveNormalizedFunctionTypeDeserializer
+      implements JsonDeserializer<MoveNormalizedFunction> {
+
+    @Override
+    public MoveNormalizedFunction deserialize(
+        JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        throws JsonParseException {
+      MoveNormalizedFunction moveNormalizedFunction = new MoveNormalizedFunction();
+      moveNormalizedFunction.setEntry(json.getAsJsonObject().get("isEntry").getAsBoolean());
+      moveNormalizedFunction.setTypeParameters(
+          gson.fromJson(
+              json.getAsJsonObject().get("typeParameters"),
+              new com.google.common.reflect.TypeToken<List<MoveAbilitySet>>() {}.getType()));
+      moveNormalizedFunction.setParameters(
+          gson.fromJson(
+              json.getAsJsonObject().get("parameters"),
+              new com.google.common.reflect.TypeToken<List<MoveNormalizedType>>() {}.getType()));
+      moveNormalizedFunction.setVisibility(
+          gson.fromJson(json.getAsJsonObject().get("visibility"), MoveVisibility.class));
+      moveNormalizedFunction.setReturnType(
+          gson.fromJson(
+              json.getAsJsonObject().get("return"),
+              new com.google.common.reflect.TypeToken<List<MoveNormalizedType>>() {}.getType()));
+      return moveNormalizedFunction;
     }
   }
 
@@ -669,29 +502,6 @@ public class GsonJsonHandler implements JsonHandler {
     }
   }
 
-  /** The type Input object kind deserializer. */
-  public class InputObjectKindDeserializer implements JsonDeserializer<InputObjectKind> {
-
-    @Override
-    public InputObjectKind deserialize(
-        JsonElement json, Type typeOfT, JsonDeserializationContext context)
-        throws JsonParseException {
-      if (json.getAsJsonObject().get("ImmOrOwnedMoveObject") != null
-          && !json.getAsJsonObject().get("ImmOrOwnedMoveObject").isJsonNull()) {
-        return gson.fromJson(json, ImmOrOwnedMoveObjectKind.class);
-      }
-      if (json.getAsJsonObject().get("SharedMoveObject") != null
-          && !json.getAsJsonObject().get("SharedMoveObject").isJsonNull()) {
-        return gson.fromJson(json, SharedMoveObjectKind.class);
-      }
-      if (json.getAsJsonObject().get("MovePackage") != null
-          && !json.getAsJsonObject().get("MovePackage").isJsonNull()) {
-        return gson.fromJson(json, MovePackageKind.class);
-      }
-      return null;
-    }
-  }
-
   /** The type Type tag serializer. */
   public static class TypeTagSerializer implements JsonSerializer<TypeTag> {
 
@@ -713,23 +523,12 @@ public class GsonJsonHandler implements JsonHandler {
                 JsonRpc20Response.Error.ErrorCode.class, new ErrorCodeDeserializer())
             .registerTypeAdapter(SuiObjectOwner.class, new SuiObjectOwnerDeserializer())
             .registerTypeAdapter(SuiRawData.class, new SuiRawDataDeserializer())
-            .registerTypeAdapter(ObjectResponse.class, new GetObjectResponseDeserializer())
-            .registerTypeAdapter(EventKind.class, new EventKindDeserializer())
             .registerTypeAdapter(MoveCall.class, new MoveCallDeserializer())
-            .registerTypeAdapter(
-                ParsedTransactionResponseKind.class,
-                new ParsedTransactionResponseKindDeserializer())
-            .registerTypeAdapter(
-                ParsedPublishResponse.class, new ParsedPublishResponseDeserializer())
             .registerTypeAdapter(TransactionKind.class, new TransactionKindDeserializer())
-            .registerTypeAdapter(
-                AuthorityQuorumSignInfo.class, new AuthorityQuorumSignInfoDeserializer())
             .registerTypeAdapter(MoveModule.class, new MoveModuleSerializer())
-            .registerTypeAdapter(EventQuery.class, new EventQuerySerializer())
             .registerTypeAdapter(MoveNormalizedType.class, new MoveNormalizedTypeDeserializer())
             .registerTypeAdapter(Validator.class, new CommitteeInfoDeserializer())
             .registerTypeAdapter(MoveFunctionArgType.class, new MoveFunctionArgTypeDeserializer())
-            .registerTypeAdapter(InputObjectKind.class, new InputObjectKindDeserializer())
             .registerTypeAdapter(MoveFunction.class, new MoveFunctionSerializer())
             .registerTypeAdapter(StructType.class, new TypeTagSerializer())
             .registerTypeAdapter(VectorType.class, new TypeTagSerializer())
@@ -741,6 +540,8 @@ public class GsonJsonHandler implements JsonHandler {
             .registerTypeAdapter(ObjectChange.class, new ObjectChangeDeserializer())
             .registerTypeAdapter(SuiParsedData.class, new SuiParsedDataDeserializer())
             .registerTypeAdapter(BigInteger.class, TypeAdapters.BIG_INTEGER)
+            .registerTypeAdapter(
+                MoveNormalizedFunction.class, new MoveNormalizedFunctionTypeDeserializer())
             .create();
   }
 
@@ -759,11 +560,6 @@ public class GsonJsonHandler implements JsonHandler {
   @Override
   public FaucetResponse fromJsonFaucet(String response) {
     return this.gson.fromJson(response, FaucetResponse.class);
-  }
-
-  @Override
-  public JsonRpc20Request fromJsonReq(String request) {
-    return this.gson.fromJson(request, JsonRpc20Request.class);
   }
 
   @Override

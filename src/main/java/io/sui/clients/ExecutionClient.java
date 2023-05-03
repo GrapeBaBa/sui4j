@@ -18,9 +18,9 @@ package io.sui.clients;
 
 
 import io.sui.models.transactions.ExecuteTransactionRequestType;
+import io.sui.models.transactions.TransactionBlockEffects;
 import io.sui.models.transactions.TransactionBlockResponse;
 import io.sui.models.transactions.TransactionBlockResponseOptions;
-import io.sui.models.transactions.TransactionEffects;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -38,7 +38,7 @@ public interface ExecutionClient {
    * @param txBytes the tx bytes
    * @return the completable future
    */
-  CompletableFuture<TransactionEffects> dryRunTransaction(String txBytes);
+  CompletableFuture<TransactionBlockEffects> dryRunTransaction(String txBytes);
 
   /**
    * Execute transaction completable future.

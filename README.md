@@ -18,7 +18,7 @@ upcoming TestNet launch.
 
 ## Using
 
-The latest 0.4.3 version tested with sui devnet-0.24.0 version.
+The latest 1.0.0-alpha version tested with sui v1.0.0 version.(dynamic field api will be added soon)
 
 ### Maven
 
@@ -27,7 +27,7 @@ The latest 0.4.3 version tested with sui devnet-0.24.0 version.
 <dependency>
 <groupId>me.grapebaba</groupId>
 <artifactId>sui4j</artifactId>
-<version>0.4.3</version>
+<version>1.0.0-alpha</version>
 </dependency>
 ```
 
@@ -35,7 +35,7 @@ The latest 0.4.3 version tested with sui devnet-0.24.0 version.
 
 ```groovy
 // https://mvnrepository.com/artifact/me.grapebaba/sui4j
-implementation 'me.grapebaba:sui4j:0.4.3'
+implementation 'me.grapebaba:sui4j:1.0.0-alpha'
 ```
 
 ## Building Locally

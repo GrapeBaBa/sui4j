@@ -1,8 +1,0 @@
-{
-  "jsonrpc": "2.0",
-  "result": {
-    "status": "NotExists",
-    "details": "0xa204b49f2a65eb3d418ccae864b331c524c2fa76"
-  },
-  "id": 1
-}

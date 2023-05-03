@@ -69,14 +69,6 @@ public interface JsonHandler {
   Map<String, Object> fromJsonMap(String json);
 
   /**
-   * From json json rpc 20 request.
-   *
-   * @param request the request
-   * @return the json rpc 20 request
-   */
-  JsonRpc20Request fromJsonReq(String request);
-
-  /**
    * To json string.
    *
    * @param request the request

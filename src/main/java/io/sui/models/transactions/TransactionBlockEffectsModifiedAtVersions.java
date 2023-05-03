@@ -26,7 +26,7 @@ import java.util.Objects;
  * @author grapebaba
  * @since 2023.04
  */
-public class TransactionEffectsModifiedAtVersions {
+public class TransactionBlockEffectsModifiedAtVersions {
 
   private String objectId;
 
@@ -73,10 +73,10 @@ public class TransactionEffectsModifiedAtVersions {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof TransactionEffectsModifiedAtVersions)) {
+    if (!(o instanceof TransactionBlockEffectsModifiedAtVersions)) {
       return false;
     }
-    TransactionEffectsModifiedAtVersions that = (TransactionEffectsModifiedAtVersions) o;
+    TransactionBlockEffectsModifiedAtVersions that = (TransactionBlockEffectsModifiedAtVersions) o;
     return objectId.equals(that.objectId) && sequenceNumber.equals(that.sequenceNumber);
   }
 
@@ -87,7 +87,7 @@ public class TransactionEffectsModifiedAtVersions {
 
   @Override
   public String toString() {
-    return "TransactionEffectsModifiedAtVersions{"
+    return "TransactionBlockEffectsModifiedAtVersions{"
         + "objectId='"
         + objectId
         + '\''

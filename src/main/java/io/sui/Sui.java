@@ -27,14 +27,14 @@ import io.sui.bcsgen.SuiAddress;
 import io.sui.bcsgen.SuiAddress.Builder;
 import io.sui.bcsgen.TransactionData;
 import io.sui.clients.BcsSerializationException;
-import io.sui.clients.EventClient;
-import io.sui.clients.EventClientImpl;
 import io.sui.clients.ExecutionClient;
 import io.sui.clients.ExecutionClientImpl;
 import io.sui.clients.FaucetClient;
 import io.sui.clients.OkhttpFaucetClient;
 import io.sui.clients.QueryClient;
 import io.sui.clients.QueryClientImpl;
+import io.sui.clients.SubscribeClient;
+import io.sui.clients.SubscribeClientImpl;
 import io.sui.clients.TransactionBlock;
 import io.sui.crypto.FileBasedKeyStore;
 import io.sui.crypto.KeyResponse;
@@ -60,26 +60,22 @@ import io.sui.models.governance.DelegatedStake;
 import io.sui.models.governance.SuiCommitteeInfo;
 import io.sui.models.governance.SystemStateSummary;
 import io.sui.models.governance.ValidatorsApy;
-import io.sui.models.objects.CheckpointContents;
-import io.sui.models.objects.CheckpointSummary;
+import io.sui.models.objects.Checkpoint;
 import io.sui.models.objects.MoveFunctionArgType;
 import io.sui.models.objects.MoveNormalizedFunction;
 import io.sui.models.objects.MoveNormalizedModule;
 import io.sui.models.objects.MoveNormalizedStruct;
 import io.sui.models.objects.ObjectDataOptions;
-import io.sui.models.objects.ObjectResponse;
 import io.sui.models.objects.ObjectResponseQuery;
+import io.sui.models.objects.PaginatedCheckpoint;
 import io.sui.models.objects.PaginatedObjectsResponse;
-import io.sui.models.objects.SuiObjectRef;
 import io.sui.models.objects.SuiObjectResponse;
-import io.sui.models.objects.SuiSystemState;
-import io.sui.models.objects.ValidatorMetadata;
 import io.sui.models.transactions.ExecuteTransactionRequestType;
-import io.sui.models.transactions.PaginatedTransactionResponse;
+import io.sui.models.transactions.PaginatedTransactionBlockResponse;
+import io.sui.models.transactions.TransactionBlockEffects;
 import io.sui.models.transactions.TransactionBlockResponse;
 import io.sui.models.transactions.TransactionBlockResponseOptions;
 import io.sui.models.transactions.TransactionBlockResponseQuery;
-import io.sui.models.transactions.TransactionEffects;
 import io.sui.models.transactions.TransactionFilter;
 import io.sui.models.transactions.TypeTag;
 import java.math.BigInteger;
@@ -106,7 +102,7 @@ public class Sui {
 
   private final ExecutionClient executionClient;
 
-  private final EventClient eventClient;
+  private final SubscribeClient subscribeClient;
 
   private final FaucetClient faucetClient;
 
@@ -124,7 +120,7 @@ public class Sui {
         new OkHttpJsonRpcClientProvider(fullNodeEndpoint, jsonHandler);
     this.queryClient = new QueryClientImpl(jsonRpcClientProvider);
     this.executionClient = new ExecutionClientImpl(jsonRpcClientProvider);
-    this.eventClient = new EventClientImpl(jsonRpcClientProvider);
+    this.subscribeClient = new SubscribeClientImpl(jsonRpcClientProvider);
     this.faucetClient = new OkhttpFaucetClient(faucetEndpoint, jsonHandler);
   }
 
@@ -483,7 +479,7 @@ public class Sui {
    */
   public Disposable subscribeEvent(
       EventFilter eventFilter, Consumer<SuiEvent> onNext, Consumer<SuiApiException> onError) {
-    return this.eventClient.subscribeEvent(eventFilter, onNext, onError);
+    return this.subscribeClient.subscribeEvent(eventFilter, onNext, onError);
   }
 
   /**
@@ -496,9 +492,9 @@ public class Sui {
    */
   public Disposable subscribeTransaction(
       TransactionFilter transactionFilter,
-      Consumer<TransactionEffects> onNext,
+      Consumer<TransactionBlockEffects> onNext,
       Consumer<SuiApiException> onError) {
-    return this.eventClient.subscribeTransaction(transactionFilter, onNext, onError);
+    return this.subscribeClient.subscribeTransaction(transactionFilter, onNext, onError);
   }
 
   /**
@@ -522,9 +518,9 @@ public class Sui {
    * @param limit the limit
    * @return the objects owned by address
    */
-  public CompletableFuture<PaginatedObjectsResponse> getObjectsOwnedByAddress(
+  public CompletableFuture<PaginatedObjectsResponse> getOwnedObjects(
       String address, ObjectResponseQuery query, String cursor, Integer limit) {
-    return queryClient.getObjectsOwnedByAddress(address, query, cursor, limit);
+    return queryClient.getOwnedObjects(address, query, cursor, limit);
   }
 
   /**
@@ -557,22 +553,9 @@ public class Sui {
    * @param isDescOrder the is desc order
    * @return the completable future
    */
-  public CompletableFuture<PaginatedTransactionResponse> queryTransactionBlocks(
+  public CompletableFuture<PaginatedTransactionBlockResponse> queryTransactionBlocks(
       TransactionBlockResponseQuery query, String cursor, Integer limit, boolean isDescOrder) {
     return queryClient.queryTransactionBlocks(query, cursor, limit, isDescOrder);
-  }
-
-  /**
-   * Query objects completable future.
-   *
-   * @param query the query
-   * @param cursor the cursor
-   * @param limit the limit
-   * @return the completable future
-   */
-  public CompletableFuture<PaginatedObjectsResponse> queryObjects(
-      ObjectResponseQuery query, String cursor, Integer limit) {
-    return queryClient.queryObjects(query, cursor, limit);
   }
 
   /**
@@ -597,24 +580,6 @@ public class Sui {
   public CompletableFuture<List<SuiObjectResponse>> multiGetObjects(
       List<String> objectIds, ObjectDataOptions options) {
     return queryClient.multiGetObjects(objectIds, options);
-  }
-
-  /**
-   * Gets all validators available for stake delegation.
-   *
-   * @return all validators available for stake delegation.
-   */
-  public CompletableFuture<List<ValidatorMetadata>> getValidators() {
-    return queryClient.getValidators();
-  }
-
-  /**
-   * Gets the Sui system state.
-   *
-   * @return the Sui system state
-   */
-  public CompletableFuture<SuiSystemState> getSuiSystemState() {
-    return queryClient.getSuiSystemState();
   }
 
   /**
@@ -704,29 +669,17 @@ public class Sui {
   }
 
   /**
-   * Try get past object completable future.
+   * Gets checkpoints.
    *
-   * @param objectId the object id
-   * @param version the version
-   * @return the completable future
+   * @param cursor the cursor
+   * @param limit the limit
+   * @param isDescOrder the is desc order
+   * @return the checkpoints
    */
-  public CompletableFuture<ObjectResponse> tryGetPastObject(String objectId, long version) {
-    return queryClient.tryGetPastObject(objectId, version);
+  public CompletableFuture<PaginatedCheckpoint> getCheckpoints(
+      String cursor, Integer limit, boolean isDescOrder) {
+    return queryClient.getCheckpoints(cursor, limit, isDescOrder);
   }
-
-  //  /**
-  //   * Gets transactions.
-  //   *
-  //   * @param query       the query
-  //   * @param cursor      the cursor
-  //   * @param limit       the limit
-  //   * @param isDescOrder the is desc order
-  //   * @return the transactions
-  //   */
-  //  public CompletableFuture<PaginatedTransactionResponse> getTransactions(
-  //      TransactionFilter query, String cursor, int limit, boolean isDescOrder) {
-  //    return queryClient.queryTransactionBlocks(query, cursor, limit, isDescOrder);
-  //  }
 
   /**
    * Gets coin metadata.
@@ -745,18 +698,6 @@ public class Sui {
    */
   public CompletableFuture<Long> getReferenceGasPrice() {
     return queryClient.getReferenceGasPrice();
-  }
-
-  /**
-   * Gets object ref.
-   *
-   * @param id the id
-   * @param objectDataOptions the object data options
-   * @return the object ref
-   */
-  public CompletableFuture<SuiObjectRef> getObjectRef(
-      String id, ObjectDataOptions objectDataOptions) {
-    return queryClient.getObjectRef(id, objectDataOptions);
   }
 
   /**
@@ -808,45 +749,13 @@ public class Sui {
   }
 
   /**
-   * get contents of a checkpoint, namely a list of execution digests.
+   * get a checkpoint based on a checkpoint sequence number or digest.
    *
-   * @param seqNum the sequence number
+   * @param checkpointId the checkpoint sequence number or digest
    * @return the completable future
    */
-  public CompletableFuture<CheckpointContents> getCheckpointContents(long seqNum) {
-    return queryClient.getCheckpointContents(seqNum);
-  }
-
-  /**
-   * get contents of a checkpoint based on checkpoint content digest.
-   *
-   * @param checkpointDigest the checkpoint digest
-   * @return the completable future
-   */
-  public CompletableFuture<CheckpointContents> getCheckpointContentsByDigest(
-      String checkpointDigest) {
-    return queryClient.getCheckpointContentsByDigest(checkpointDigest);
-  }
-
-  /**
-   * get a checkpoint summary based on a checkpoint sequence number.
-   *
-   * @param seqNum the checkpoint sequence number
-   * @return the completable future
-   */
-  public CompletableFuture<CheckpointSummary> getCheckpointSummary(Long seqNum) {
-    return queryClient.getCheckpointSummary(seqNum);
-  }
-
-  /**
-   * get a checkpoint summary based on checkpoint digest.
-   *
-   * @param checkpointDigest the checkpoint digest
-   * @return the completable future
-   */
-  public CompletableFuture<CheckpointSummary> getCheckpointSummaryByDigest(
-      String checkpointDigest) {
-    return queryClient.getCheckpointSummaryByDigest(checkpointDigest);
+  public CompletableFuture<Checkpoint> getCheckpoint(String checkpointId) {
+    return queryClient.getCheckpoint(checkpointId);
   }
 
   /**
@@ -898,12 +807,31 @@ public class Sui {
   }
 
   /**
+   * Gets events.
+   *
+   * @param transactionDigest the transaction digest
+   * @return the events
+   */
+  public CompletableFuture<List<SuiEvent>> getEvents(String transactionDigest) {
+    return queryClient.getEvents(transactionDigest);
+  }
+
+  /**
+   * Gets latest checkpoint sequence number.
+   *
+   * @return the latest checkpoint sequence number
+   */
+  public CompletableFuture<BigInteger> getLatestCheckpointSequenceNumber() {
+    return queryClient.getLatestCheckpointSequenceNumber();
+  }
+
+  /**
    * Dry run transaction completable future.
    *
    * @param txBytes the tx bytes
    * @return the completable future
    */
-  public CompletableFuture<TransactionEffects> dryRunTransaction(String txBytes) {
+  public CompletableFuture<TransactionBlockEffects> dryRunTransaction(String txBytes) {
     return executionClient.dryRunTransaction(txBytes);
   }
 

@@ -22,9 +22,9 @@ import com.google.common.reflect.TypeToken;
 import io.sui.jsonrpc.JsonRpc20Request;
 import io.sui.jsonrpc.JsonRpcClientProvider;
 import io.sui.models.transactions.ExecuteTransactionRequestType;
+import io.sui.models.transactions.TransactionBlockEffects;
 import io.sui.models.transactions.TransactionBlockResponse;
 import io.sui.models.transactions.TransactionBlockResponseOptions;
-import io.sui.models.transactions.TransactionEffects;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -48,12 +48,12 @@ public class ExecutionClientImpl implements ExecutionClient {
   }
 
   @Override
-  public CompletableFuture<TransactionEffects> dryRunTransaction(String txBytes) {
+  public CompletableFuture<TransactionBlockEffects> dryRunTransaction(String txBytes) {
     final JsonRpc20Request request =
         this.jsonRpcClientProvider.createJsonRpc20Request(
             "sui_dryRunTransaction", Lists.newArrayList(txBytes));
     return this.jsonRpcClientProvider.callAndUnwrapResponse(
-        "/sui_dryRunTransaction", request, new TypeToken<TransactionEffects>() {}.getType());
+        "/sui_dryRunTransaction", request, new TypeToken<TransactionBlockEffects>() {}.getType());
   }
 
   @Override

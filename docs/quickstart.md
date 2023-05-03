@@ -7,7 +7,7 @@
 <dependency>
 <groupId>me.grapebaba</groupId>
 <artifactId>sui4j</artifactId>
-<version>0.4.3</version>
+<version>1.0.0-alpha</version>
 </dependency>
 ```
 
@@ -15,7 +15,7 @@
 
 ```groovy
 // https://mvnrepository.com/artifact/me.grapebaba/sui4j
-implementation 'me.grapebaba:sui4j:0.4.3'
+implementation 'me.grapebaba:sui4j:1.0.0-alpha'
 ```
 
 ## Use Sui4j
