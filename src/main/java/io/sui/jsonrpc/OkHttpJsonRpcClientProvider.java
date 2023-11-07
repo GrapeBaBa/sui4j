@@ -270,6 +270,13 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
                   future.complete(jsonRpc20Response);
                 } catch (Throwable throwable) {
                   future.completeExceptionally(throwable);
+                } finally {
+                  try {
+                    // close response
+                    response.close();
+                  } catch (Exception e) {
+                    LOGGER.warn("close response exception ..", e);
+                  }
                 }
               }
             });
