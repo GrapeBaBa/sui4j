@@ -228,7 +228,7 @@ public class OkHttpJsonRpcClientProvider extends JsonRpcClientProvider {
           RequestBody.create(requestBodyJsonStr, MediaType.get("application/json; charset=utf-8"));
       okhttpRequest =
           new Request.Builder()
-              .url(String.format("%s%s", this.baseUrl, url))
+              .url(this.baseUrl) // fix request failure issue
               .post(requestBody)
               .build();
     } catch (Throwable throwable) {
